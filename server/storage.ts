@@ -336,4 +336,136 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { db } from './db';
+import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
+
+export class DatabaseStorage implements IStorage {
+  // Categories
+  async getCategories(): Promise<Category[]> {
+    return await db.select().from(categories);
+  }
+
+  async getCategoryById(id: number): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.id, id));
+    return category;
+  }
+
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
+    return category;
+  }
+
+  async createCategory(category: InsertCategory): Promise<Category> {
+    const [inserted] = await db.insert(categories).values(category).returning();
+    return inserted;
+  }
+
+  // Services
+  async getServices(): Promise<Service[]> {
+    return await db.select().from(services);
+  }
+
+  async getServiceById(id: number): Promise<Service | undefined> {
+    const [service] = await db.select().from(services).where(eq(services.id, id));
+    return service;
+  }
+
+  async getServiceBySlug(slug: string): Promise<Service | undefined> {
+    const [service] = await db.select().from(services).where(eq(services.slug, slug));
+    return service;
+  }
+
+  async getServicesByCategory(categoryId: number): Promise<Service[]> {
+    return await db.select().from(services).where(eq(services.categoryId, categoryId));
+  }
+
+  async createService(service: InsertService): Promise<Service> {
+    const [inserted] = await db.insert(services).values({
+      ...service,
+      lastChecked: new Date(),
+      uptimePercentage: 100
+    }).returning();
+    return inserted;
+  }
+
+  async updateServiceStatus(id: number, status: UpdateServiceStatus): Promise<Service | undefined> {
+    const [updated] = await db.update(services)
+      .set({
+        status: status.status,
+        lastChecked: new Date(),
+        responseTime: status.responseTime !== undefined ? status.responseTime : undefined,
+      })
+      .where(eq(services.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Uptime History
+  async getUptimeHistory(serviceId: number, limit = 7): Promise<UptimeHistory[]> {
+    return await db.select()
+      .from(uptimeHistory)
+      .where(eq(uptimeHistory.serviceId, serviceId))
+      .orderBy(desc(uptimeHistory.date))
+      .limit(limit);
+  }
+
+  async createUptimeHistory(history: InsertUptimeHistory): Promise<UptimeHistory> {
+    const [inserted] = await db.insert(uptimeHistory).values(history).returning();
+    return inserted;
+  }
+
+  // Incidents
+  async getIncidents(serviceId: number, limit = 5): Promise<Incident[]> {
+    return await db.select()
+      .from(incidents)
+      .where(eq(incidents.serviceId, serviceId))
+      .orderBy(desc(incidents.startTime))
+      .limit(limit);
+  }
+
+  async createIncident(incident: InsertIncident): Promise<Incident> {
+    const [inserted] = await db.insert(incidents).values(incident).returning();
+    return inserted;
+  }
+
+  async updateIncident(id: number, incidentUpdate: Partial<InsertIncident>): Promise<Incident | undefined> {
+    const [updated] = await db.update(incidents)
+      .set(incidentUpdate)
+      .where(eq(incidents.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Stats
+  async getStatusSummary(): Promise<{
+    operational: number;
+    degraded: number;
+    down: number;
+    lastChecked: Date;
+  }> {
+    // Get counts of services by status
+    const results = await db.execute(sql`
+      SELECT 
+        SUM(CASE WHEN status = ${StatusType.UP} THEN 1 ELSE 0 END) as operational,
+        SUM(CASE WHEN status = ${StatusType.DEGRADED} THEN 1 ELSE 0 END) as degraded,
+        SUM(CASE WHEN status = ${StatusType.DOWN} THEN 1 ELSE 0 END) as down,
+        MAX(last_checked) as last_checked
+      FROM ${services}
+    `);
+    
+    const summary = results.rows[0];
+    
+    return {
+      operational: Number(summary.operational) || 0,
+      degraded: Number(summary.degraded) || 0,
+      down: Number(summary.down) || 0,
+      lastChecked: summary.last_checked ? new Date(summary.last_checked) : new Date()
+    };
+  }
+}
+
+// Uncomment to use memory storage for development
+// export const storage = new MemStorage(); 
+
+// Use database storage
+export const storage = new DatabaseStorage();

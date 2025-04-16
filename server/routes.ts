@@ -2,7 +2,8 @@ import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { updateServiceStatusSchema } from "@shared/schema";
-import { ValidationError, fromZodError } from "zod-validation-error";
+import { fromZodError } from "zod-validation-error";
+import { checkAllServices } from "./service-checker";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes with /api prefix
@@ -147,26 +148,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Run check now (simulate checking all services)
+  // Run check now (real check of all services)
   apiRouter.post("/check-now", async (_req, res) => {
     try {
-      // Simulate checking services by updating last checked time
-      const services = await storage.getServices();
-      
-      // Promise for all service updates
-      const updatePromises = services.map(service => {
-        return storage.updateServiceStatus(service.id, { 
-          status: service.status as any,
-          responseTime: service.responseTime
-        });
-      });
-      
-      await Promise.all(updatePromises);
+      console.log("Starting service check of all services...");
+      const lastChecked = await checkAllServices();
       const summary = await storage.getStatusSummary();
+      
+      console.log("Service check completed. Results:", {
+        operational: summary.operational,
+        degraded: summary.degraded,
+        down: summary.down
+      });
       
       res.json({ 
         message: "Service check completed",
-        lastChecked: summary.lastChecked
+        lastChecked: lastChecked
       });
     } catch (error) {
       console.error("Error running service check:", error);
