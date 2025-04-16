@@ -13,6 +13,7 @@ const Footer: React.FC = () => {
             <a href="#" className="text-sm text-gray-400 hover:text-white">Terms</a>
             <a href="#" className="text-sm text-gray-400 hover:text-white">Privacy</a>
             <Link href="/info" className="text-sm text-gray-400 hover:text-white">Info</Link>
+            <Link href="/admin" className="text-sm text-gray-400 hover:text-white">Admin</Link>
           </div>
         </div>
       </div>

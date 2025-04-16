@@ -1,7 +1,7 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { updateServiceStatusSchema } from "@shared/schema";
+import { updateServiceStatusSchema, insertIncidentSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 import { checkAllServices } from "./service-checker";
 
@@ -168,6 +168,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error running service check:", error);
       res.status(500).json({ message: "Failed to run service check" });
+    }
+  });
+
+  // Create incident
+  apiRouter.post("/incidents", async (req, res) => {
+    try {
+      const parseResult = insertIncidentSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        const errorMessage = fromZodError(parseResult.error).message;
+        return res.status(400).json({ message: errorMessage });
+      }
+
+      const incident = parseResult.data;
+      const createdIncident = await storage.createIncident(incident);
+      
+      res.status(201).json(createdIncident);
+    } catch (error) {
+      console.error("Error creating incident:", error);
+      res.status(500).json({ message: "Failed to create incident" });
+    }
+  });
+
+  // Update incident (mark as resolved)
+  apiRouter.patch("/incidents/:id", async (req, res) => {
+    try {
+      const incidentId = parseInt(req.params.id, 10);
+      if (isNaN(incidentId)) {
+        return res.status(400).json({ message: "Invalid incident ID" });
+      }
+
+      const { endTime, status } = req.body;
+      
+      // Update the incident
+      const updatedIncident = await storage.updateIncident(incidentId, { 
+        endTime: endTime || new Date().toISOString(),
+        status
+      });
+      
+      if (!updatedIncident) {
+        return res.status(404).json({ message: "Incident not found" });
+      }
+
+      res.json(updatedIncident);
+    } catch (error) {
+      console.error(`Error updating incident ${req.params.id}:`, error);
+      res.status(500).json({ message: "Failed to update incident" });
     }
   });
 
