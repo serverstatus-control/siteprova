@@ -5,12 +5,13 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User, UserRole, insertUserSchema } from "@shared/schema";
+import { UserRole, insertUserSchema, type User } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
 // Declare custom Express.User type
 declare global {
   namespace Express {
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface User extends User {}
   }
 }
@@ -75,7 +76,7 @@ export function setupAuth(app: Express) {
   );
 
   // Serialize user to store in session
-  passport.serializeUser((user, done) => {
+  passport.serializeUser((user: Express.User, done) => {
     done(null, user.id);
   });
 
@@ -135,7 +136,7 @@ export function setupAuth(app: Express) {
 
   // Login endpoint
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string } | undefined) => {
       if (err) {
         return next(err);
       }

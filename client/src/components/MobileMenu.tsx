@@ -1,6 +1,9 @@
 import React from 'react';
+import { Link, useLocation } from 'wouter';
 import { Category, StatusSummary } from '../types';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuth } from '@/hooks/use-auth';
+import { UserRole } from '@shared/schema';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -15,9 +18,22 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   categories, 
   statusSummary 
 }) => {
+  const { user, logoutMutation } = useAuth();
+  const [_, navigate] = useLocation();
+  
   const formattedLastUpdate = statusSummary?.lastChecked 
     ? formatDistanceToNow(new Date(statusSummary.lastChecked), { addSuffix: true }) 
     : 'Unknown';
+    
+  const handleLogout = () => {
+    logoutMutation.mutate();
+    onClose();
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -71,6 +87,47 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           </div>
 
           <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Account</div>
+            <ul>
+              {/* Admin link - only show for admin users */}
+              {user?.role === UserRole.ADMIN && (
+                <li className="mb-1">
+                  <button 
+                    className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                    onClick={() => handleNavigate('/admin')}
+                  >
+                    <i className="fas fa-shield-alt w-5 mr-2"></i>
+                    <span>Admin</span>
+                  </button>
+                </li>
+              )}
+              
+              {/* Authentication links */}
+              {user ? (
+                <li className="mb-1">
+                  <button 
+                    className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                    onClick={handleLogout}
+                  >
+                    <i className="fas fa-sign-out-alt w-5 mr-2"></i>
+                    <span>Logout ({user.username})</span>
+                  </button>
+                </li>
+              ) : (
+                <li className="mb-1">
+                  <button 
+                    className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                    onClick={() => handleNavigate('/auth')}
+                  >
+                    <i className="fas fa-sign-in-alt w-5 mr-2"></i>
+                    <span>Login</span>
+                  </button>
+                </li>
+              )}
+            </ul>
+          </div>
+          
+          <div className="mt-6">
             <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Links</div>
             <ul>
               <li className="mb-1">

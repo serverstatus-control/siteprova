@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch }) => {
             <i className="fas fa-bars text-xl"></i>
           </button>
           <Link href="/">
-            <a className="font-bold text-xl md:text-2xl tracking-tight text-white cursor-pointer">SERVER STATUS</a>
+            <span className="font-bold text-xl md:text-2xl tracking-tight text-white cursor-pointer">SERVER STATUS</span>
           </Link>
           <span className="hidden md:inline-flex items-center bg-dark-lighter px-2 py-1 rounded text-xs font-mono">v0.3.0</span>
         </div>
