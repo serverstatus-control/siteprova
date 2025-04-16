@@ -4,8 +4,12 @@ import { storage } from "./storage";
 import { updateServiceStatusSchema, insertIncidentSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 import { checkAllServices } from "./service-checker";
+import { setupAuth } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup authentication
+  setupAuth(app);
+  
   // API routes with /api prefix
   const apiRouter = express.Router();
 

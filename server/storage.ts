@@ -3,17 +3,22 @@ import {
   services,
   uptimeHistory,
   incidents,
+  users,
   type Category,
   type Service,
   type UptimeHistory,
   type Incident,
+  type User,
   type InsertCategory,
   type InsertService,
   type InsertUptimeHistory,
   type InsertIncident,
+  type InsertUser,
   StatusType,
   type UpdateServiceStatus
 } from "@shared/schema";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
 
 export interface IStorage {
   // Categories
@@ -348,6 +353,18 @@ import { db } from './db';
 import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
 
 export class DatabaseStorage implements IStorage {
+  sessionStore: any;
+
+  constructor() {
+    const PostgresStore = connectPg(session);
+    this.sessionStore = new PostgresStore({
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.NODE_ENV === "production"
+      },
+      createTableIfMissing: true
+    });
+  }
   // Categories
   async getCategories(): Promise<Category[]> {
     return await db.select().from(categories);
@@ -442,6 +459,22 @@ export class DatabaseStorage implements IStorage {
       .where(eq(incidents.id, id))
       .returning();
     return updated;
+  }
+  
+  // Users
+  async getUserById(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const [inserted] = await db.insert(users).values(user).returning();
+    return inserted;
   }
 
   // Stats
