@@ -173,7 +173,11 @@ export function setupAuth(app: Express) {
     }
     
     // Return user without password
-    const { password, ...userWithoutPassword } = req.user;
-    res.json(userWithoutPassword);
+    if (req.user) {
+      const { password, ...userWithoutPassword } = req.user as User;
+      res.json(userWithoutPassword);
+    } else {
+      res.status(401).json({ message: "Not authenticated" });
+    }
   });
 }
