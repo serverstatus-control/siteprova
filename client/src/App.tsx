@@ -4,13 +4,17 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import ServiceDetail from "@/pages/service-detail";
 import AdminPage from "@/pages/admin-page";
+import AuthPage from "@/pages/auth-page";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
       <Route path="/services/:slug" component={ServiceDetail}/>
-      <Route path="/admin" component={AdminPage}/>
+      <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true}/>
+      <Route path="/auth" component={AuthPage}/>
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
@@ -19,10 +23,10 @@ function Router() {
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Router />
       <Toaster />
-    </>
+    </AuthProvider>
   );
 }
 

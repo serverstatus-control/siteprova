@@ -1,4 +1,15 @@
 import React, { useState } from 'react';
+import { Link, useLocation } from 'wouter';
+import { useAuth } from '@/hooks/use-auth';
+import { UserRole } from '@shared/schema';
+import { Button } from '@/components/ui/button';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { User, LogOut, Shield, LogIn } from 'lucide-react';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -7,11 +18,17 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { user, logoutMutation } = useAuth();
+  const [_, navigate] = useLocation();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
     onSearch(term);
+  };
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
   };
 
   return (
@@ -25,7 +42,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch }) => {
           >
             <i className="fas fa-bars text-xl"></i>
           </button>
-          <h1 className="font-bold text-xl md:text-2xl tracking-tight text-white">SERVER STATUS</h1>
+          <Link href="/">
+            <a className="font-bold text-xl md:text-2xl tracking-tight text-white cursor-pointer">SERVER STATUS</a>
+          </Link>
           <span className="hidden md:inline-flex items-center bg-dark-lighter px-2 py-1 rounded text-xs font-mono">v0.3.0</span>
         </div>
         <div className="flex items-center space-x-4">
@@ -40,12 +59,43 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch }) => {
             />
             <i className="fas fa-search absolute left-3 top-2.5 text-gray-500"></i>
           </div>
-          <a href="#" className="hidden md:block text-gray-400 hover:text-white">
-            <i className="fas fa-bell"></i>
-          </a>
-          <a href="#" className="hidden md:block text-gray-400 hover:text-white">
-            <i className="fas fa-cog"></i>
-          </a>
+          
+          {/* Admin button - only show for admin users */}
+          {user?.role === UserRole.ADMIN && (
+            <Link href="/admin">
+              <Button variant="ghost" className="hidden md:flex gap-1 text-gray-400 hover:text-white">
+                <Shield className="h-4 w-4" />
+                <span>Admin</span>
+              </Button>
+            </Link>
+          )}
+          
+          {/* Authentication UI */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex gap-1 text-gray-400 hover:text-white">
+                  <User className="h-4 w-4" />
+                  <span className="hidden md:inline">{user.username}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="flex items-center gap-2" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button 
+              variant="ghost" 
+              className="flex gap-1 text-gray-400 hover:text-white"
+              onClick={() => navigate('/auth')}
+            >
+              <LogIn className="h-4 w-4" />
+              <span className="hidden md:inline">Login</span>
+            </Button>
+          )}
         </div>
       </div>
     </header>
