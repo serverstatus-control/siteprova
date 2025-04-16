@@ -8,6 +8,11 @@ export const StatusType = {
   DOWN: "down"
 } as const;
 
+export const UserRole = {
+  USER: "user",
+  ADMIN: "admin"
+} as const;
+
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
@@ -44,6 +49,15 @@ export const incidents = pgTable("incidents", {
   startTime: timestamp("start_time").notNull(),
   endTime: timestamp("end_time"),
   status: text("status").notNull(),
+});
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  email: text("email").notNull().unique(),
+  role: text("role").notNull().default(UserRole.USER),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const insertCategorySchema = createInsertSchema(categories).pick({
@@ -83,12 +97,27 @@ export const updateServiceStatusSchema = z.object({
   responseTime: z.number().optional(),
 });
 
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
+  email: true,
+  role: true,
+});
+
+export const loginUserSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type InsertUptimeHistory = z.infer<typeof insertUptimeHistorySchema>;
 export type InsertIncident = z.infer<typeof insertIncidentSchema>;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type LoginUser = z.infer<typeof loginUserSchema>;
 export type Category = typeof categories.$inferSelect;
 export type Service = typeof services.$inferSelect;
 export type UptimeHistory = typeof uptimeHistory.$inferSelect;
 export type Incident = typeof incidents.$inferSelect;
+export type User = typeof users.$inferSelect;
 export type UpdateServiceStatus = z.infer<typeof updateServiceStatusSchema>;

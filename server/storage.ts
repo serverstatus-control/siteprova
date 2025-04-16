@@ -39,6 +39,11 @@ export interface IStorage {
   createIncident(incident: InsertIncident): Promise<Incident>;
   updateIncident(id: number, incident: Partial<InsertIncident>): Promise<Incident | undefined>;
 
+  // Users
+  getUserById(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+
   // Stats
   getStatusSummary(): Promise<{
     operational: number;
@@ -46,6 +51,9 @@ export interface IStorage {
     down: number;
     lastChecked: Date;
   }>;
+  
+  // Session store for authentication
+  sessionStore: any;
 }
 
 export class MemStorage implements IStorage {
