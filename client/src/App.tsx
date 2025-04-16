@@ -6,6 +6,7 @@ import ServiceDetail from "@/pages/service-detail";
 import AdminPage from "@/pages/admin-page";
 import AuthPage from "@/pages/auth-page";
 import { AuthProvider } from "@/hooks/use-auth";
+import { SettingsProvider } from "@/hooks/use-settings";
 import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
@@ -23,10 +24,12 @@ function Router() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router />
-      <Toaster />
-    </AuthProvider>
+    <SettingsProvider>
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
+    </SettingsProvider>
   );
 }
 

@@ -4,6 +4,10 @@ import { Service } from '../types';
 import StatusBadge from './StatusBadge';
 import { formatDistanceToNow } from 'date-fns';
 import { getServiceIcon } from '../lib/icons';
+import { useSettings } from '@/hooks/use-settings';
+import { Button } from '@/components/ui/button';
+import { Star, StarOff } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ServiceCardProps {
   service: Service;
@@ -12,6 +16,7 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
   const {
+    id,
     name,
     logo,
     status,
@@ -19,6 +24,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
     lastChecked,
     slug
   } = service;
+
+  const { isFavorite, addFavorite, removeFavorite, t } = useSettings();
+  const isFav = isFavorite(id);
 
   // Create a status history visualization with 7 days
   const statusHistory = [];
@@ -41,19 +49,29 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
     formatDistanceToNow(new Date(lastChecked), { addSuffix: false }) + ' ago' : 
     'Unknown';
 
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (isFav) {
+      removeFavorite(id);
+    } else {
+      addFavorite(id);
+    }
+  };
+
   return (
-    <div className="bg-dark-light rounded-lg overflow-hidden border border-dark-lighter hover:border-gray-600 transition-all">
+    <div className="relative bg-card rounded-lg overflow-hidden border border-border hover:border-border/80 transition-all">
       <div className="p-4" onClick={onClick}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-dark-lighter rounded-full flex items-center justify-center mr-3">
+            <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center mr-3">
               <i className={logo || getServiceIcon(name)}></i>
             </div>
             <h3 className="font-medium">{name}</h3>
           </div>
           <StatusBadge status={status} />
         </div>
-        <div className="text-xs text-gray-400 mb-3">
+        <div className="text-xs text-muted-foreground mb-3">
           <div className="flex items-center justify-between mb-1">
             <span>Last check:</span>
             <span className="font-mono">{formattedLastChecked}</span>
@@ -67,9 +85,32 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
           {statusHistory}
         </div>
       </div>
-      <Link to={`/services/${slug}`} className="block bg-dark-lighter py-2 px-4 text-center text-sm hover:bg-dark-light">
-        View Details
-      </Link>
+      <div className="flex items-center">
+        <Link to={`/services/${slug}`} className="block flex-1 bg-muted py-2 px-4 text-center text-sm hover:bg-background transition-colors">
+          View Details
+        </Link>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-full rounded-none aspect-square bg-muted hover:bg-background border-l border-border" 
+                onClick={handleFavoriteToggle}
+              >
+                {isFav ? (
+                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                ) : (
+                  <StarOff className="h-4 w-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isFav ? t.removeFromFavorites : t.addToFavorites}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
   );
 };

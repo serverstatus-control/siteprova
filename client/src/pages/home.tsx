@@ -118,7 +118,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="bg-dark text-gray-100 font-sans min-h-screen">
-      <Header onMenuToggle={toggleMobileMenu} onSearch={handleSearch} />
+      <Header onMenuToggle={toggleMobileMenu} onSearch={handleSearch} services={services} />
       
       <div className="flex min-h-[calc(100vh-64px)]">
         <Sidebar categories={categories} statusSummary={statusSummary} />
