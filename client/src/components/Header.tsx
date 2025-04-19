@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({
                 {t.serverStatus}
               </span>
               <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">
-                v0.3.1
+                v: 0.3.00
               </span>
             </Link>
           </div>
