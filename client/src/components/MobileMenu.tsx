@@ -114,15 +114,26 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   </button>
                 </li>
               ) : (
-                <li className="mb-1">
-                  <button 
-                    className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
-                    onClick={() => handleNavigate('/auth')}
-                  >
-                    <i className="fas fa-sign-in-alt w-5 mr-2"></i>
-                    <span>Login</span>
-                  </button>
-                </li>
+                <>
+                  <li className="mb-1">
+                    <button 
+                      className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                      onClick={() => handleNavigate('/auth')}
+                    >
+                      <i className="fas fa-sign-in-alt w-5 mr-2"></i>
+                      <span>Login</span>
+                    </button>
+                  </li>
+                  <li className="mb-1">
+                    <button 
+                      className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                      onClick={() => handleNavigate('/auth?tab=register')}
+                    >
+                      <i className="fas fa-user-plus w-5 mr-2"></i>
+                      <span>Sign up</span>
+                    </button>
+                  </li>
+                </>
               )}
             </ul>
           </div>
