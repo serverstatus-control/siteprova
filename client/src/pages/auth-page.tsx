@@ -27,7 +27,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
-  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [location] = useLocation();
+  const urlParams = new URLSearchParams(location.split('?')[1]);
+  const tabParam = urlParams.get('tab');
+  const [activeTab, setActiveTab] = useState<"login" | "register">(
+    tabParam === "register" ? "register" : "login"
+  );
   const { user, loginMutation, registerMutation } = useAuth();
   const [_, navigate] = useLocation();
 
