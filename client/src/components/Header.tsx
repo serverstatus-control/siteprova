@@ -145,6 +145,16 @@ const Header: React.FC<HeaderProps> = ({
               </DropdownMenu>
             )}
 
+            <Link href="/info">
+              <Button
+                variant="ghost"
+                className="hidden md:flex gap-1 text-muted-foreground hover:text-foreground"
+              >
+                <i className="fas fa-info-circle h-4 w-4"></i>
+                <span>Info</span>
+              </Button>
+            </Link>
+
             {user?.role === UserRole.ADMIN && (
               <Link href="/admin">
                 <Button
