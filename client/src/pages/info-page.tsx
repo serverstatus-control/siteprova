@@ -54,37 +54,37 @@ const InfoPage: React.FC = () => {
           statusSummary={statusSummary}
         />
         
-        <main className="flex-1 lg:ml-64 pb-12">
-          <div className="container mx-auto px-4 py-12">
-            <div className="mb-6">
+        <main className="flex-1 w-full lg:ml-64 pb-6 sm:pb-12">
+          <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-12">
+            <div className="mb-4 sm:mb-6 px-2">
               <Link href="/" className="text-primary hover:text-primary/80 mb-4 inline-flex items-center">
                 <i className="fas fa-arrow-left mr-2"></i>
                 Torna alla Dashboard
               </Link>
             </div>
 
-            <Card className="max-w-3xl mx-auto">
+            <Card className="max-w-3xl mx-auto w-full px-4 sm:px-6">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl md:text-3xl">Info & Contatti</CardTitle>
                 <CardDescription>Informazioni sul nostro servizio e come contattarci</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="p-4 rounded-lg bg-muted/50">
+                <div className="p-3 sm:p-4 rounded-lg bg-muted/50">
                   <h3 className="text-lg font-medium mb-2">Supporto Tecnico</h3>
-                  <p className="mb-2">
+                  <p className="mb-2 text-sm sm:text-base">
                     Per informazioni e reclami scrivere al nostro team di supporto tecnico:
                   </p>
                   <a 
                     href="mailto:server.status2317@gmail.com" 
-                    className="text-primary hover:text-primary/80 font-medium"
+                    className="text-primary hover:text-primary/80 font-medium break-all"
                   >
                     server.status2317@gmail.com
                   </a>
                 </div>
 
-                <div className="p-4 rounded-lg bg-muted/50">
+                <div className="p-3 sm:p-4 rounded-lg bg-muted/50">
                   <h3 className="text-lg font-medium mb-2">Informazioni sul progetto</h3>
-                  <p className="mb-4">
+                  <p className="mb-4 text-sm sm:text-base">
                     Se avete problemi con qualche app o sito, in questo sistema potrete controllare 
                     se effettivamente ci sono dei problemi.
                   </p>
@@ -93,10 +93,10 @@ const InfoPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-lg bg-muted/50">
+                <div className="p-3 sm:p-4 rounded-lg bg-muted/50">
                   <h3 className="text-lg font-medium mb-2">Team</h3>
-                  <p className="mb-2">Creato da:</p>
-                  <div className="flex flex-wrap gap-4 items-center">
+                  <p className="mb-2 text-sm sm:text-base">Creato da:</p>
+                  <div className="flex flex-wrap gap-2 sm:gap-4 items-center">
                     <a 
                       href="https://www.instagram.com/_insubrico_/" 
                       target="_blank" 

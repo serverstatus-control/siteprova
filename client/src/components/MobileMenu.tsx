@@ -147,7 +147,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   onClick={() => handleNavigate('/info')}
                 >
                   <i className="fas fa-info-circle w-5 mr-2"></i>
-                  <span>Info</span>
+                  <span>Info & Contatti</span>
                 </button>
               </li>
               <li className="mb-1">

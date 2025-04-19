@@ -214,7 +214,7 @@ const Header: React.FC<HeaderProps> = ({
                       navigate("/info");
                     }}>
                       <i className="fas fa-info-circle w-4 h-4 mr-2"></i>
-                      <span>Info</span>
+                      <span>Info & Contatti</span>
                     </DropdownMenuItem>
                   </>
                 )}
