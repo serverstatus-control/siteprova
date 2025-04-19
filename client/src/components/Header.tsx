@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuGroup
 } from '@/components/ui/dropdown-menu';
-import { User, LogOut, Shield, LogIn, Settings, Star, Menu, Search } from 'lucide-react';
+import { User, LogOut, Shield, LogIn, Settings, Star, Menu, Search, Home } from 'lucide-react';
 import SettingsDialog from './SettingsDialog';
 
 interface HeaderProps {
@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
   const { t, favorites, isFavorite } = useSettings();
   const [_, navigate] = useLocation();
 
-  const favoriteServices = (services || []).filter(service => favorites.includes(service.id));
+  const favoriteServices = (services || []).filter(service => isFavorite(service.id));
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -54,8 +54,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
             </button>
 
             <Link href="/" className="flex items-center gap-2">
+              <Home className="h-5 w-5 hidden md:block" />
               <span className="font-bold text-xl tracking-tight whitespace-nowrap">{t.serverStatus}</span>
-              <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">v: 0.3.00</span>
+              <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">v0.3.0</span>
             </Link>
           </div>
 
@@ -83,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-muted-foreground hover:text-foreground hidden md:flex"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted/50 hidden md:flex"
               onClick={() => setSettingsOpen(true)}
             >
               <Settings className="h-5 w-5" />
@@ -95,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    className="text-muted-foreground hover:text-foreground"
+                    className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   >
                     <Star className="h-5 w-5 text-amber-400" />
                   </Button>

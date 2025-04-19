@@ -37,10 +37,6 @@ export default function SettingsDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="space-y-3">
           <DialogTitle>{t.settings}</DialogTitle>
-          <DialogClose className="absolute right-4 top-4 opacity-70 hover:opacity-100">
-            <XIcon className="h-4 w-4" />
-            <span className="sr-only">{t.close}</span>
-          </DialogClose>
         </DialogHeader>
 
         <div className="space-y-6">
