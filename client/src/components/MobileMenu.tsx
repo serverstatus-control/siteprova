@@ -142,14 +142,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Links</div>
             <ul>
               <li className="mb-1">
-                <a 
-                  href="#" 
-                  className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter"
-                  onClick={onClose}
+                <button 
+                  className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                  onClick={() => handleNavigate('/info')}
                 >
-                  <i className="fas fa-user-plus w-5 mr-2"></i>
+                  <i className="fas fa-info-circle w-5 mr-2"></i>
                   <span>Info</span>
-                </a>
+                </button>
               </li>
               <li className="mb-1">
                 <a 

@@ -209,6 +209,13 @@ const Header: React.FC<HeaderProps> = ({
                       <i className="fas fa-user-plus w-4 h-4 mr-2"></i>
                       <span>{t.register || "Sign up"}</span>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => {
+                      navigate("/info");
+                    }}>
+                      <i className="fas fa-info-circle w-4 h-4 mr-2"></i>
+                      <span>Info</span>
+                    </DropdownMenuItem>
                   </>
                 )}
               </DropdownMenuContent>
