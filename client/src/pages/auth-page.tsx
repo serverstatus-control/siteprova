@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,6 +33,16 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "register">(
     tabParam === "register" ? "register" : "login"
   );
+  
+  // Assicura che il tab venga aggiornato quando cambia l'URL
+  useEffect(() => {
+    if (tabParam === "register") {
+      setActiveTab("register");
+    } else if (tabParam === "login") {
+      setActiveTab("login");
+    }
+  }, [tabParam]);
+  
   const { user, loginMutation, registerMutation } = useAuth();
   const [_, navigate] = useLocation();
 
