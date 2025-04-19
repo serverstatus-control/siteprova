@@ -5,7 +5,7 @@ import Home from "@/pages/home";
 import ServiceDetail from "@/pages/service-detail";
 import AdminPage from "@/pages/admin-page";
 import AuthPage from "@/pages/auth-page";
-import InfoPage from "@/pages/info-page"; // Added import for InfoPage
+import InfoPage from "@/pages/info-page"; 
 import { AuthProvider } from "@/hooks/use-auth";
 import { SettingsProvider } from "@/hooks/use-settings";
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -17,8 +17,7 @@ function Router() {
       <Route path="/services/:slug" component={ServiceDetail}/>
       <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true}/>
       <Route path="/auth" component={AuthPage}/>
-      <Route path="/info" component={InfoPage} /> {/* Added route for InfoPage */}
-      {/* Fallback to 404 */}
+      <Route path="/info" component={InfoPage} /> 
       <Route component={NotFound} />
     </Switch>
   );

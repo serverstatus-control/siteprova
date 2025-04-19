@@ -63,10 +63,10 @@ const InfoPage: React.FC = () => {
               </Link>
             </div>
 
-            <Card className="max-w-3xl mx-auto w-full px-4 sm:px-6">
+            <Card className="max-w-3xl mx-auto w-full px-2 sm:px-6">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl md:text-3xl">Info & Contatti</CardTitle>
-                <CardDescription>Informazioni sul nostro servizio e come contattarci</CardDescription>
+                <CardTitle className="text-xl md:text-3xl">Info & Contatti</CardTitle>
+                <CardDescription className="text-sm md:text-base">Informazioni sul nostro servizio e come contattarci</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="p-3 sm:p-4 rounded-lg bg-muted/50">
