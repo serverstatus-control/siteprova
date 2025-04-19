@@ -206,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({
                     <DropdownMenuItem onClick={() => {
                       navigate("/auth?tab=register");
                     }}>
-                      <User className="h-4 w-4 mr-2" />
+                      <i className="fas fa-user-plus w-4 h-4 mr-2"></i>
                       <span>{t.register || "Sign up"}</span>
                     </DropdownMenuItem>
                   </>
