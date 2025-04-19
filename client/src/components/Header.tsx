@@ -1,35 +1,57 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'wouter';
-import { useAuth } from '@/hooks/use-auth';
-import { useSettings } from '@/hooks/use-settings';
-import { UserRole } from '@shared/schema';
-import { Button } from '@/components/ui/button';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
+import React, { useState } from "react";
+import { Link, useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { useSettings } from "@/hooks/use-settings";
+import { UserRole } from "@shared/schema";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-  DropdownMenuGroup
-} from '@/components/ui/dropdown-menu';
-import { User, LogOut, Shield, LogIn, Settings, Star, Menu, Search, Home } from 'lucide-react';
-import SettingsDialog from './SettingsDialog';
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
+import {
+  User,
+  LogOut,
+  Shield,
+  LogIn,
+  Settings,
+  Star,
+  Menu,
+  Search,
+  Home,
+} from "lucide-react";
+import SettingsDialog from "./SettingsDialog";
 
 interface HeaderProps {
   onMenuToggle: () => void;
   onSearch: (term: string) => void;
-  services: Array<{id: number; name: string; logo: string; slug: string; status: string}>;
+  services: Array<{
+    id: number;
+    name: string;
+    logo: string;
+    slug: string;
+    status: string;
+  }>;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const Header: React.FC<HeaderProps> = ({
+  onMenuToggle,
+  onSearch,
+  services,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const { user, logoutMutation } = useAuth();
   const { t, favorites, isFavorite } = useSettings();
   const [_, navigate] = useLocation();
 
-  const favoriteServices = (services || []).filter(service => isFavorite(service.id));
+  const favoriteServices = (services || []).filter((service) =>
+    isFavorite(service.id),
+  );
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -46,7 +68,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button 
+            <button
               className="lg:hidden text-muted-foreground hover:text-foreground p-2"
               onClick={onMenuToggle}
             >
@@ -55,8 +77,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
 
             <Link href="/" className="flex items-center gap-2">
               <Home className="h-5 w-5 hidden md:block" />
-              <span className="font-bold text-xl tracking-tight whitespace-nowrap">{t.serverStatus}</span>
-              <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">v0.3.0</span>
+              <span className="font-bold text-xl tracking-tight whitespace-nowrap">
+                {t.serverStatus}
+              </span>
+              <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">
+                v: 0.3.00
+              </span>
             </Link>
           </div>
 
@@ -71,8 +97,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
             </Button>
 
             <div className="relative hidden md:block">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder={t.search}
                 className="w-full md:w-64 bg-background border border-input rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                 value={searchTerm}
@@ -81,8 +107,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             </div>
 
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               className="text-muted-foreground hover:text-foreground hover:bg-muted/50 hidden md:flex"
               onClick={() => setSettingsOpen(true)}
@@ -93,8 +119,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
             {favorites.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="icon"
                     className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   >
@@ -103,9 +129,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuGroup>
-                    {favoriteServices.map(service => (
+                    {favoriteServices.map((service) => (
                       <DropdownMenuItem key={service.id} asChild>
-                        <Link href={`/services/${service.slug}`} className="flex items-center gap-2 cursor-pointer">
+                        <Link
+                          href={`/services/${service.slug}`}
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
                           <i className={service.logo + " w-4 h-4"}></i>
                           <span>{service.name}</span>
                         </Link>
@@ -118,7 +147,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
 
             {user?.role === UserRole.ADMIN && (
               <Link href="/admin">
-                <Button variant="ghost" className="hidden md:flex gap-1 text-muted-foreground hover:text-foreground">
+                <Button
+                  variant="ghost"
+                  className="hidden md:flex gap-1 text-muted-foreground hover:text-foreground"
+                >
                   <Shield className="h-4 w-4" />
                   <span>{t.admin}</span>
                 </Button>
@@ -127,32 +159,46 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="gap-1 text-muted-foreground hover:text-foreground">
+                <Button
+                  variant="ghost"
+                  className="gap-1 text-muted-foreground hover:text-foreground"
+                >
                   <User className="h-4 w-4" />
-                  <span className="hidden md:inline">{user?.username || t.login}</span>
+                  <span className="hidden md:inline">
+                    {user?.username || t.login}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 {user ? (
                   <>
                     {user.role === UserRole.ADMIN && (
-                      <DropdownMenuItem className="md:hidden" onClick={() => navigate('/admin')}>
+                      <DropdownMenuItem
+                        className="md:hidden"
+                        onClick={() => navigate("/admin")}
+                      >
                         <Shield className="h-4 w-4 mr-2" />
                         <span>{t.admin}</span>
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem className="flex items-center gap-2" onClick={handleLogout}>
+                    <DropdownMenuItem
+                      className="flex items-center gap-2"
+                      onClick={handleLogout}
+                    >
                       <LogOut className="h-4 w-4" />
                       <span>{t.logout}</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="md:hidden flex items-center gap-2" onClick={() => setSettingsOpen(true)}>
+                    <DropdownMenuItem
+                      className="md:hidden flex items-center gap-2"
+                      onClick={() => setSettingsOpen(true)}
+                    >
                       <Settings className="h-4 w-4" />
                       <span>{t.settings}</span>
                     </DropdownMenuItem>
                   </>
                 ) : (
-                  <DropdownMenuItem onClick={() => navigate('/auth')}>
+                  <DropdownMenuItem onClick={() => navigate("/auth")}>
                     <LogIn className="h-4 w-4 mr-2" />
                     <span>{t.login}</span>
                   </DropdownMenuItem>
@@ -166,8 +212,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
         {searchVisible && (
           <div className="mt-3 md:hidden">
             <div className="relative">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder={t.search}
                 className="w-full bg-background border border-input rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                 value={searchTerm}
@@ -179,9 +225,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
         )}
       </div>
 
-      <SettingsDialog 
-        open={settingsOpen} 
-        onOpenChange={setSettingsOpen} 
+      <SettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
         services={services}
       />
     </header>
