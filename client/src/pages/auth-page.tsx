@@ -55,7 +55,7 @@ export default function AuthPage() {
           >
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="register">Sign up</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
               <LoginForm 
@@ -211,7 +211,7 @@ function RegisterForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Register</CardTitle>
+        <CardTitle>Sign up</CardTitle>
         <CardDescription>Create a new account to access the dashboard</CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -269,7 +269,7 @@ function RegisterForm({
                   Creating account...
                 </>
               ) : (
-                "Register"
+                "Sign up"
               )}
             </Button>
           </CardFooter>
