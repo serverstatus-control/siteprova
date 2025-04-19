@@ -7,6 +7,7 @@ export type Language = "en" | "it" | "es" | "fr" | "de" | "zh" | "ja" | "pt" | "
 export const translations = {
   en: {
     settings: "Settings",
+    settingsDescription: "Customize your experience by changing theme and language",
     theme: "Theme",
     language: "Language",
     system: "System",
@@ -31,9 +32,16 @@ export const translations = {
     admin: "Admin",
     search: "Search services...",
     serverStatus: "SERVER STATUS",
+    selectTheme: "Select theme",
+    selectLanguage: "Select language",
+    operational: "Operational",
+    degraded: "Degraded performance",
+    down: "Down",
+    lastUpdated: "Last updated",
   },
   it: {
     settings: "Impostazioni",
+    settingsDescription: "Personalizza la tua esperienza cambiando tema e lingua",
     theme: "Tema",
     language: "Lingua",
     system: "Sistema",
@@ -58,6 +66,12 @@ export const translations = {
     admin: "Amministratore",
     search: "Cerca servizi...",
     serverStatus: "STATO DEI SERVER",
+    selectTheme: "Seleziona tema",
+    selectLanguage: "Seleziona lingua",
+    operational: "Operativo",
+    degraded: "Prestazioni degradate",
+    down: "Non disponibile",
+    lastUpdated: "Ultimo aggiornamento",
   },
   es: {
     settings: "Configuración",
@@ -88,6 +102,7 @@ export const translations = {
   },
   fr: {
     settings: "Paramètres",
+    settingsDescription: "Personnalisez votre expérience en changeant de thème et de langue",
     theme: "Thème",
     language: "Langue",
     system: "Système",
@@ -112,6 +127,12 @@ export const translations = {
     admin: "Admin",
     search: "Rechercher des services...",
     serverStatus: "ÉTAT DU SERVEUR",
+    selectTheme: "Sélectionner un thème",
+    selectLanguage: "Sélectionner une langue",
+    operational: "Opérationnel",
+    degraded: "Performances dégradées",
+    down: "Indisponible",
+    lastUpdated: "Dernière mise à jour",
   },
   de: {
     settings: "Einstellungen",
@@ -297,6 +318,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         ? "dark"
         : "light";
       root.classList.add(systemTheme);
+      
+      // Aggiungi listener per cambiamenti di tema del sistema
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = (e: MediaQueryListEvent) => {
+        root.classList.remove("light", "dark");
+        root.classList.add(e.matches ? "dark" : "light");
+      };
+      
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
     } else {
       root.classList.add(theme);
     }

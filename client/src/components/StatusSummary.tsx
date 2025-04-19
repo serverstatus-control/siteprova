@@ -21,11 +21,11 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
   const operationalPercentage = total > 0 
     ? (summary.operational / total) * 100 
     : 0;
-  
+
   const degradedPercentage = total > 0 
     ? (summary.degraded / total) * 100 
     : 0;
-  
+
   const downPercentage = total > 0 
     ? (summary.down / total) * 100 
     : 0;
@@ -36,7 +36,7 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
 
   const handleCheckNow = async () => {
     if (isChecking) return;
-    
+
     try {
       onCheckNow();
       toast({
