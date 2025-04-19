@@ -33,8 +33,8 @@ export const getServiceIcon = (serviceName: string): string => {
   if (name.includes('dropbox')) return 'fab fa-dropbox';
   
   // Generic icons based on service type
-  if (name.includes('cloud')) return 'fas fa-cloud';
-  if (name.includes('mail') || name.includes('gmail') || name.includes('outlook')) return 'fas fa-envelope';
+  if (name.includes('cloud')) return 'fas fa-cloud text-blue-400';
+  if (name.includes('mail') || name.includes('gmail') || name.includes('outlook')) return 'fas fa-envelope text-yellow-400';
   if (name.includes('ai') || name.includes('openai')) return 'fas fa-robot';
   if (name.includes('game') || name.includes('play')) return 'fas fa-gamepad';
   if (name.includes('video') || name.includes('movie') || name.includes('film') || name.includes('netflix')) return 'fas fa-film';

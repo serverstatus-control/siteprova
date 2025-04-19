@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
@@ -30,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
   const { t, favorites, isFavorite } = useSettings();
   const [_, navigate] = useLocation();
 
-  const favoriteServices = services.filter(service => isFavorite(service.id));
+  const favoriteServices = (services || []).filter(service => favorites.includes(service.id));
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -53,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
             >
               <Menu className="h-5 w-5" />
             </button>
-            
+
             <Link href="/" className="flex items-center gap-2">
               <span className="font-bold text-xl tracking-tight whitespace-nowrap">{t.serverStatus}</span>
               <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">v0.3.0</span>
@@ -161,7 +160,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
             </DropdownMenu>
           </div>
         </div>
-        
+
         {/* Barra di ricerca mobile */}
         {searchVisible && (
           <div className="mt-3 md:hidden">

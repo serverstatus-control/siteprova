@@ -65,7 +65,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
             <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center mr-3">
-              <i className={logo || getServiceIcon(name)}></i>
+              <i className={`${logo || getServiceIcon(name)} text-lg`}></i>
             </div>
             <h3 className="font-medium">{name}</h3>
           </div>
