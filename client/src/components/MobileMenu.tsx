@@ -147,7 +147,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter"
                   onClick={onClose}
                 >
-                  <i className="fas fa-info-circle w-5 mr-2"></i>
+                  <i className="fas fa-user-plus w-5 mr-2"></i>
                   <span>Info</span>
                 </a>
               </li>
