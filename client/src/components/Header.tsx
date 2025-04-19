@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuGroup
 } from '@/components/ui/dropdown-menu';
-import { User, LogOut, Shield, LogIn, Settings, Star, Menu } from 'lucide-react';
+import { User, LogOut, Shield, LogIn, Settings, Star, Menu, Search } from 'lucide-react';
 import SettingsDialog from './SettingsDialog';
 
 interface HeaderProps {
@@ -25,6 +25,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(false);
   const { user, logoutMutation } = useAuth();
   const { t, favorites, isFavorite } = useSettings();
   const [_, navigate] = useLocation();
@@ -59,7 +60,16 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setSearchVisible(!searchVisible)}
+            >
+              <Search className="h-5 w-5" />
+            </Button>
+
             <div className="relative hidden md:block">
               <input 
                 type="text" 
@@ -68,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
                 value={searchTerm}
                 onChange={handleSearch}
               />
-              <i className="fas fa-search absolute left-3 top-2.5 text-muted-foreground"></i>
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             </div>
 
             <Button 
@@ -117,7 +127,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="gap-1 text-muted-foreground hover:text-foreground md:min-w-[100px]">
+                <Button variant="ghost" className="gap-1 text-muted-foreground hover:text-foreground">
                   <User className="h-4 w-4" />
                   <span className="hidden md:inline">{user?.username || t.login}</span>
                 </Button>
@@ -125,6 +135,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
               <DropdownMenuContent align="end" className="w-56">
                 {user ? (
                   <>
+                    {user.role === UserRole.ADMIN && (
+                      <DropdownMenuItem className="md:hidden" onClick={() => navigate('/admin')}>
+                        <Shield className="h-4 w-4 mr-2" />
+                        <span>{t.admin}</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem className="flex items-center gap-2" onClick={handleLogout}>
                       <LogOut className="h-4 w-4" />
                       <span>{t.logout}</span>
@@ -147,18 +163,20 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
         </div>
         
         {/* Barra di ricerca mobile */}
-        <div className="mt-3 md:hidden">
-          <div className="relative">
-            <input 
-              type="text" 
-              placeholder={t.search}
-              className="w-full bg-background border border-input rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-            <i className="fas fa-search absolute left-3 top-2.5 text-muted-foreground"></i>
+        {searchVisible && (
+          <div className="mt-3 md:hidden">
+            <div className="relative">
+              <input 
+                type="text" 
+                placeholder={t.search}
+                className="w-full bg-background border border-input rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <SettingsDialog 
