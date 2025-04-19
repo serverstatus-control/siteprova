@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, onSearch, services }) => 
 
             <Link href="/" className="flex items-center gap-2">
               <span className="font-bold text-xl tracking-tight whitespace-nowrap">{t.serverStatus}</span>
-              <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">v0.3.0</span>
+              <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono">v: 0.3.00</span>
             </Link>
           </div>
 
