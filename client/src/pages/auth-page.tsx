@@ -28,7 +28,7 @@ import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
   const [location] = useLocation();
-  const urlParams = new URLSearchParams(location.split('?')[1]);
+  const urlParams = new URLSearchParams(location.split('?')[1] || '');
   const tabParam = urlParams.get('tab');
   const [activeTab, setActiveTab] = useState<"login" | "register">(
     tabParam === "register" ? "register" : "login"
