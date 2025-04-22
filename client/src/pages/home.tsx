@@ -42,6 +42,9 @@ const Home: React.FC = () => {
     refetch: refetchSummary
   } = useQuery({
     queryKey: ['/api/status-summary'],
+    refetchInterval: 0,
+    staleTime: 0,
+    refetchOnMount: true
   });
 
   // Check now mutation
@@ -49,7 +52,15 @@ const Home: React.FC = () => {
     mutationFn: async () => {
       return await apiRequest('POST', '/api/check-now', {});
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Se la risposta contiene il nuovo lastChecked, aggiorna subito la cache
+      if (data && data.summary && data.summary.lastChecked) {
+        queryClient.setQueryData(['/api/status-summary'], (old: any) => ({
+          ...old,
+          ...data.summary
+        }));
+      }
+      // Poi forza comunque il refetch per sicurezza
       queryClient.invalidateQueries({ queryKey: ['/api/status-summary'] });
       queryClient.invalidateQueries({ queryKey: ['/api/services'] });
     }

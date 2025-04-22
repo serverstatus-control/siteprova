@@ -95,13 +95,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-full rounded-none aspect-square bg-muted hover:bg-background border-l border-border" 
+                className={`h-full rounded-none aspect-square border-l border-border z-10 transition-all duration-200
+                  ${isFav ? 'bg-amber-100/20 hover:bg-amber-200/40' : 'bg-muted hover:bg-background'}
+                  group`} 
                 onClick={handleFavoriteToggle}
+                tabIndex={0}
+                aria-label={isFav ? t.removeFromFavorites : t.addToFavorites}
+                onMouseDown={e => e.stopPropagation()}
+                onTouchStart={e => e.stopPropagation()}
               >
                 {isFav ? (
-                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                  <Star className="h-6 w-6 text-amber-400 fill-amber-400 drop-shadow group-hover:scale-110 transition-transform duration-200" />
                 ) : (
-                  <StarOff className="h-4 w-4" />
+                  <StarOff className="h-6 w-6 text-gray-400 group-hover:text-amber-400 transition-colors duration-200" />
                 )}
               </Button>
             </TooltipTrigger>

@@ -4,6 +4,7 @@ import { Category, StatusSummary } from '../types';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { UserRole } from '@shared/schema';
+import { t } from '../lib/utils';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -147,7 +148,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   onClick={() => handleNavigate('/info')}
                 >
                   <i className="fas fa-info-circle w-5 mr-2"></i>
-                  <span>Info & Contatti</span>
+                  <span>{t('infoAndContacts')}</span>
                 </button>
               </li>
               <li className="mb-1">

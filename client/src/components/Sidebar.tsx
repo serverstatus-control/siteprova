@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
           <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Links</div>
           <ul>
             <li className="mb-1">
-              <a href="#" className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter">
+              <a href="/info" className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter">
                 <i className="fas fa-info-circle w-5 mr-2"></i>
                 <span>Info</span>
               </a>

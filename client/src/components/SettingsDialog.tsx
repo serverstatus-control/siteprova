@@ -97,15 +97,15 @@ export default function SettingsDialog({
                   <SelectValue placeholder={t.selectLanguage} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="en">{t.english}</SelectItem>
-                  <SelectItem value="it">{t.italian}</SelectItem>
-                  <SelectItem value="es">{t.spanish}</SelectItem>
-                  <SelectItem value="fr">{t.french}</SelectItem>
-                  <SelectItem value="de">{t.german}</SelectItem>
-                  <SelectItem value="zh">{t.chinese}</SelectItem>
-                  <SelectItem value="ja">{t.japanese}</SelectItem>
-                  <SelectItem value="pt">{t.portuguese}</SelectItem>
-                  <SelectItem value="ru">{t.russian}</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="it">Italiano</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="zh">Chinese</SelectItem>
+                  <SelectItem value="ja">Japanese</SelectItem>
+                  <SelectItem value="pt">Português</SelectItem>
+                  <SelectItem value="ru">Русский</SelectItem>
                 </SelectContent>
               </Select>
             </div>
