@@ -97,16 +97,21 @@ export const updateServiceStatusSchema = z.object({
   responseTime: z.number().optional(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-  email: true,
-  role: true,
-});
+export const insertUserSchema = createInsertSchema(users)
+  .pick({
+    username: true,
+    password: true,
+    email: true,
+    role: true,
+  })
+  .extend({
+    password: z.string().min(6, "La password deve essere di almeno 6 caratteri"),
+    email: z.string().email("Inserisci un'email valida"),
+  });
 
 export const loginUserSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  username: z.string().email("Inserisci un'email valida"),
+  password: z.string().min(6, "La password deve essere di almeno 6 caratteri"),
 });
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;

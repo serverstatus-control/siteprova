@@ -154,63 +154,15 @@ const Header: React.FC<HeaderProps> = ({
               </Button>
             </Link>
           )}
-          {/* Account menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              >
-                <User className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {user ? (
-                <>
-                  <DropdownMenuItem
-                    className="flex items-center gap-2"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>{t.logout}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="flex items-center gap-2"
-                    onClick={() => setSettingsOpen(true)}
-                  >
-                    <Settings className="h-4 w-4" />
-                    <span>{t.settings}</span>
-                  </DropdownMenuItem>
-                  {user.role === UserRole.ADMIN && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => navigate("/admin")}
-                      >
-                        <Shield className="h-4 w-4 mr-2" />
-                        <span>{t.admin}</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  <DropdownMenuItem onClick={() => navigate("/auth")}> 
-                    <LogIn className="h-4 w-4 mr-2" />
-                    <span>{t.login}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => {
-                    navigate("/auth?tab=register");
-                  }}>
-                    <i className="fas fa-user-plus w-4 h-4 mr-2"></i>
-                    <span>{t.register || "Sign up"}</span>
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Account icon senza tendina */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            onClick={() => navigate("/account-dashboard")}
+          >
+            <User className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 

@@ -85,19 +85,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
           {statusHistory}
         </div>
       </div>
-      <div className="flex items-center">
-        <Link to={`/services/${slug}`} className="block flex-1 bg-muted py-2 px-4 text-center text-sm hover:bg-background transition-colors">
+      <div className="flex items-center gap-2 px-2 pb-2">
+        <Link to={`/services/${slug}`} className="flex-1 bg-muted py-2 px-4 text-center text-sm rounded-full hover:bg-background transition-colors focus:z-10">
           View Details
         </Link>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`h-full rounded-none aspect-square border-l border-border z-10 transition-all duration-200
-                  ${isFav ? 'bg-amber-100/20 hover:bg-amber-200/40' : 'bg-muted hover:bg-background'}
-                  group`} 
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`relative z-10 rounded-full border border-border bg-background/80 hover:bg-amber-50 focus:bg-amber-100 shadow transition-all duration-200
+                  ${isFav ? 'text-amber-400' : 'text-gray-400 hover:text-amber-400'}
+                  group flex items-center justify-center w-9 h-9`}
                 onClick={handleFavoriteToggle}
                 tabIndex={0}
                 aria-label={isFav ? t.removeFromFavorites : t.addToFavorites}
@@ -105,13 +105,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
                 onTouchStart={e => e.stopPropagation()}
               >
                 {isFav ? (
-                  <Star className="h-6 w-6 text-amber-400 fill-amber-400 drop-shadow group-hover:scale-110 transition-transform duration-200" />
+                  <Star className="h-5 w-5 fill-amber-400 drop-shadow group-hover:scale-110 transition-transform duration-200" />
                 ) : (
-                  <StarOff className="h-6 w-6 text-gray-400 group-hover:text-amber-400 transition-colors duration-200" />
+                  <StarOff className="h-5 w-5 group-hover:text-amber-400 transition-colors duration-200" />
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent side="top">
               {isFav ? t.removeFromFavorites : t.addToFavorites}
             </TooltipContent>
           </Tooltip>

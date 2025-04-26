@@ -8,14 +8,6 @@ import { storage } from "./storage";
 import { UserRole, insertUserSchema, type User } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
-// Declare custom Express.User type
-declare global {
-  namespace Express {
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface User extends User {}
-  }
-}
-
 const scryptAsync = promisify(scrypt);
 
 // Utility function for password hashing
@@ -53,30 +45,32 @@ export function setupAuth(app: Express) {
 
   // Set up authentication strategy
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
-      try {
-        const user = await storage.getUserByUsername(username);
-        
-        if (!user) {
-          return done(null, false, { message: "Invalid username" });
+    new LocalStrategy(
+      {
+        usernameField: "username", // In realtà riceviamo l'email dal frontend
+      },
+      async (email, password, done) => {
+        try {
+          // Cerchiamo l'utente tramite email
+          const user = await storage.getUserByEmail(email);
+          if (!user) {
+            return done(null, false, { message: "Email non registrata" });
+          }
+          // Verifica password
+          const isValid = await comparePasswords(password, user.password);
+          if (!isValid) {
+            return done(null, false, { message: "Password non valida" });
+          }
+          return done(null, user);
+        } catch (error) {
+          return done(error);
         }
-        
-        // Verify password
-        const isValid = await comparePasswords(password, user.password);
-        if (!isValid) {
-          return done(null, false, { message: "Invalid password" });
-        }
-        
-        // Authentication successful
-        return done(null, user);
-      } catch (error) {
-        return done(error);
       }
-    })
+    )
   );
 
   // Serialize user to store in session
-  passport.serializeUser((user: Express.User, done) => {
+  passport.serializeUser((user: any, done) => {
     done(null, user.id);
   });
 
@@ -103,10 +97,16 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: errorMessage });
       }
 
+      // Check if email already exists
+      const existingEmail = await storage.getUserByEmail(req.body.email);
+      if (existingEmail) {
+        return res.status(400).json({ message: "Email già registrata" });
+      }
+
       // Check if username already exists
       const existingUser = await storage.getUserByUsername(req.body.username);
       if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+        return res.status(400).json({ message: "Username già in uso" });
       }
 
       // Hash password
@@ -121,7 +121,7 @@ export function setupAuth(app: Express) {
       // Login the user
       req.login(user, (err) => {
         if (err) {
-          return res.status(500).json({ message: "Login failed after registration" });
+          return res.status(500).json({ message: "Login fallito dopo la registrazione" });
         }
         
         // Return user without password
@@ -130,7 +130,7 @@ export function setupAuth(app: Express) {
       });
     } catch (error) {
       console.error("Registration error:", error);
-      res.status(500).json({ message: "Registration failed" });
+      res.status(500).json({ message: "Registrazione fallita" });
     }
   });
 
@@ -141,7 +141,7 @@ export function setupAuth(app: Express) {
         return next(err);
       }
       if (!user) {
-        return res.status(401).json({ message: info?.message || "Authentication failed" });
+        return res.status(401).json({ message: info?.message || "Autenticazione fallita" });
       }
       
       req.login(user, (err) => {
@@ -160,24 +160,27 @@ export function setupAuth(app: Express) {
   app.post("/api/logout", (req, res) => {
     req.logout((err) => {
       if (err) {
-        return res.status(500).json({ message: "Logout failed" });
+        return res.status(500).json({ message: "Logout fallito" });
       }
-      res.status(200).json({ message: "Logged out successfully" });
+      res.status(200).json({ message: "Logout effettuato con successo" });
     });
   });
 
   // Current user info endpoint
   app.get("/api/user", (req, res) => {
     if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Not authenticated" });
+      return res.status(401).json({ message: "Non autenticato" });
     }
-    
-    // Return user without password
     if (req.user) {
-      const { password, ...userWithoutPassword } = req.user as User;
-      res.json(userWithoutPassword);
+      const user = req.user as any;
+      if (user.password) {
+        const { password, ...userWithoutPassword } = user;
+        res.json(userWithoutPassword);
+      } else {
+        res.json(user);
+      }
     } else {
-      res.status(401).json({ message: "Not authenticated" });
+      res.status(401).json({ message: "Non autenticato" });
     }
   });
 }

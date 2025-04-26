@@ -40,10 +40,47 @@
   
   * {
     @apply border-border;
+    cursor: none !important;
+  }
+  
+  /* Cursore predefinito solo quando il cursore custom è visibile */
+  html:has(#cursor) * {
+    cursor: none !important;
   }
   
   body {
     @apply font-sans antialiased bg-background text-foreground;
+  }
+  
+  html, body, #root {
+    cursor: none !important;
+  }
+  
+  #cursor {
+    width: 20px;  /* Ridotto da 24px */
+    height: 20px; /* Ridotto da 24px */
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    transition-property: width, height, border, transform;
+    will-change: transform;
+  }
+  
+  #cursor.hover {
+    width: 32px;  /* Ridotto da 40px */
+    height: 32px; /* Ridotto da 40px */
+    border: 1.5px solid rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  #cursor.clicking {
+    transform: translate(-50%, -50%) scale(0.8);
   }
   
   .text-success {

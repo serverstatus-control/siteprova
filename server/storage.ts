@@ -47,6 +47,7 @@ export interface IStorage {
   // Users
   getUserById(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
 
   // Stats
@@ -223,6 +224,22 @@ export class MemStorage implements IStorage {
       down,
       lastChecked: lastChecked
     };
+  }
+
+  // Users
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    // Per l'implementazione in memoria, simula un utente di test
+    if (email === "test@example.com") {
+      return {
+        id: 1,
+        username: "test",
+        password: "hashedpassword",
+        email: "test@example.com",
+        role: UserRole.USER,
+        createdAt: new Date()
+      };
+    }
+    return undefined;
   }
 
   // Helper method to seed initial data
@@ -469,6 +486,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
     return user;
   }
 
