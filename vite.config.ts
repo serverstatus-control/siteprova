@@ -26,6 +26,7 @@ export default defineConfig({
     },
   },
   root: path.resolve(import.meta.dirname, "client"),
+  base: "/siteprova/",
   build: {
     outDir: path.resolve(import.meta.dirname, "client", "dist"),
     emptyOutDir: true,
