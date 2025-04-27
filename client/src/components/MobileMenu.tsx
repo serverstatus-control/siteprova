@@ -10,7 +10,7 @@ interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   categories: Category[];
-  statusSummary: StatusSummary;
+  statusSummary: StatusSummary | null;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ 
@@ -39,9 +39,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden">
-      <div className="bg-dark-light w-64 h-full overflow-y-auto">
-        <div className="p-4 flex justify-between items-center border-b border-dark-lighter">
+    <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden">
+      <div className="w-64 h-full overflow-y-auto bg-dark-light">
+        <div className="flex items-center justify-between p-4 border-b border-dark-lighter">
           <h2 className="font-semibold">Menu</h2>
           <button className="text-gray-400 hover:text-white" onClick={onClose}>
             <i className="fas fa-times"></i>
@@ -49,34 +49,34 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         </div>
         <nav className="p-4">
           <div className="mb-4">
-            <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">System Status</div>
-            <div className="bg-dark-lighter rounded-lg p-3 mb-2">
+            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">System Status</div>
+            <div className="p-3 mb-2 rounded-lg bg-dark-lighter">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">Overall Status</span>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success bg-opacity-20 text-success">
-                  {statusSummary?.down > 0 
+                  {statusSummary?.down && statusSummary.down > 0 
                     ? 'Partial Outage' 
-                    : statusSummary?.degraded > 0 
+                    : statusSummary?.degraded && statusSummary.degraded > 0 
                       ? 'Degraded' 
                       : 'Operational'
                   }
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Last Updated</span>
-                <span className="text-xs text-gray-400 font-mono">{formattedLastUpdate}</span>
+                <span className="text-sm font-medium">{t.lastCheck}</span>
+                <span className="font-mono text-xs text-gray-400">{formattedLastUpdate}</span>
               </div>
             </div>
           </div>
 
           <div className="mb-6">
-            <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Categories</div>
+            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">Categories</div>
             <ul>
               {categories.map(category => (
                 <li key={category.id} className="mb-1">
                   <a 
                     href={`#${category.slug}`} 
-                    className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter"
+                    className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md hover:bg-dark-lighter"
                     onClick={onClose}
                   >
                     <i className={`${category.icon} w-5 mr-2`}></i>
@@ -88,24 +88,24 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           </div>
 
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Account</div>
+            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">Account</div>
             <ul>
               {user ? (
                 <li className="mb-1">
                   <button 
-                    className="flex items-center justify-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                    className="flex items-center justify-center w-full px-3 py-2 text-sm text-left text-gray-300 rounded-md hover:bg-dark-lighter"
                     onClick={() => handleNavigate('/auth')}
                   >
-                    <i className="fas fa-user w-5"></i>
+                    <i className="w-5 fas fa-user"></i>
                   </button>
                 </li>
               ) : (
                 <li className="mb-1">
                   <button 
-                    className="flex items-center justify-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                    className="flex items-center justify-center w-full px-3 py-2 text-sm text-left text-gray-300 rounded-md hover:bg-dark-lighter"
                     onClick={() => handleNavigate('/auth')}
                   >
-                    <i className="fas fa-user w-5"></i>
+                    <i className="w-5 fas fa-user"></i>
                   </button>
                 </li>
               )}
@@ -113,24 +113,24 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           </div>
           
           <div className="mt-6">
-            <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Links</div>
+            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">Links</div>
             <ul>
               <li className="mb-1">
                 <button 
-                  className="flex items-center w-full px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter text-left"
+                  className="flex items-center w-full px-3 py-2 text-sm text-left text-gray-300 rounded-md hover:bg-dark-lighter"
                   onClick={() => handleNavigate('/info')}
                 >
-                  <i className="fas fa-info-circle w-5 mr-2"></i>
+                  <i className="w-5 mr-2 fas fa-info-circle"></i>
                   <span>{t('infoAndContacts')}</span>
                 </button>
               </li>
               <li className="mb-1">
                 <a 
                   href="#" 
-                  className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter"
+                  className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md hover:bg-dark-lighter"
                   onClick={onClose}
                 >
-                  <i className="fas fa-history w-5 mr-2"></i>
+                  <i className="w-5 mr-2 fas fa-history"></i>
                   <span>Incident History</span>
                 </a>
               </li>

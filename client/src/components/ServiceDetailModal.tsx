@@ -2,8 +2,10 @@ import React from 'react';
 import StatusBadge from './StatusBadge';
 import UptimeHistoryDisplay from './UptimeHistory';
 import { Service, UptimeHistory, Incident } from '../types';
-import { formatDistanceToNow, format } from 'date-fns';
+import { format } from 'date-fns';
 import { getServiceIcon } from '../lib/icons';
+import { formatTimeAgo, localeMap } from '../lib/utils';
+import { useSettings } from '@/hooks/use-settings';
 
 interface ServiceDetailModalProps {
   service: Service | null;
@@ -31,14 +33,16 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
     uptimePercentage 
   } = service;
 
+  const { t, language } = useSettings();
+  
   const formattedLastChecked = lastChecked ? 
-    formatDistanceToNow(new Date(lastChecked), { addSuffix: false }) + ' ago' : 
-    'Unknown';
+    formatTimeAgo(lastChecked, language) : 
+    t.unknown || 'Unknown';
 
   const formatIncidentDate = (startTime: string, endTime: string | null) => {
-    const start = format(new Date(startTime), 'MMM d, yyyy - HH:mm');
-    if (!endTime) return start + ' to present';
-    return start + ' to ' + format(new Date(endTime), 'HH:mm');
+    const start = format(new Date(startTime), 'MMM d, yyyy - HH:mm', { locale: localeMap[language] });
+    if (!endTime) return `${start} ${t.toPresent || 'to present'}`;
+    return `${start} ${t.to || 'to'} ${format(new Date(endTime), 'HH:mm', { locale: localeMap[language] })}`;
   };
 
   return (
@@ -59,7 +63,7 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
               <h3 className="text-xl font-bold">{name}</h3>
               <div className="flex items-center mt-1">
                 <StatusBadge status={status} className="mr-2" />
-                <span className="text-xs text-gray-400">Updated {formattedLastChecked}</span>
+                <span className="text-xs text-gray-400">{t.lastCheck} {formattedLastChecked}</span>
               </div>
             </div>
           </div>
@@ -80,7 +84,7 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                   <p className="text-xs text-gray-400 mb-1">Last Outage</p>
                   <p className="font-mono text-lg">
                     {incidents.length > 0 
-                      ? formatDistanceToNow(new Date(incidents[0].startTime), { addSuffix: true }) 
+                      ? formatTimeAgo(incidents[0].startTime, language) 
                       : 'No recent outages'}
                   </p>
                 </div>

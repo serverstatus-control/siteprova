@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRoute } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
-import { Service, UptimeHistory, Incident } from '../types';
+import { Service, UptimeHistory, Incident, Category, StatusSummary } from '../types';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import MobileMenu from '../components/MobileMenu';
@@ -10,6 +10,8 @@ import StatusBadge from '../components/StatusBadge';
 import UptimeHistoryDisplay from '../components/UptimeHistory';
 import { formatDistanceToNow, format } from 'date-fns';
 import { getServiceIcon } from '../lib/icons';
+import { formatTimeAgo, localeMap } from '@/lib/utils';
+import { useSettings } from '@/hooks/use-settings';
 
 const ServiceDetail: React.FC = () => {
   const [match, params] = useRoute('/services/:slug');
@@ -19,14 +21,14 @@ const ServiceDetail: React.FC = () => {
   const { 
     data: categories = [],
     isLoading: isCategoriesLoading
-  } = useQuery({
+  } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
   });
 
   const { 
-    data: statusSummary,
+    data: statusSummary = null,
     isLoading: isSummaryLoading
-  } = useQuery({
+  } = useQuery<StatusSummary>({
     queryKey: ['/api/status-summary'],
   });
 
@@ -37,6 +39,13 @@ const ServiceDetail: React.FC = () => {
   } = useQuery<Service>({
     queryKey: [`/api/services/${params?.slug}`],
     enabled: !!params?.slug,
+  });
+
+  const { 
+    data: services = [],
+    isLoading: isServicesLoading
+  } = useQuery<Service[]>({
+    queryKey: ['/api/services'],
   });
 
   const { 
@@ -63,14 +72,17 @@ const ServiceDetail: React.FC = () => {
     setSearchTerm(term);
   };
 
+  const { t, language } = useSettings();
+
   const formatIncidentDate = (startTime: string, endTime: string | null) => {
-    const start = format(new Date(startTime), 'MMM d, yyyy - HH:mm');
-    if (!endTime) return start + ' to present';
-    return start + ' to ' + format(new Date(endTime), 'HH:mm');
+    const start = format(new Date(startTime), 'MMM d, yyyy - HH:mm', { locale: localeMap[language] });
+    if (!endTime) return `${start} ${t.toPresent || 'to present'}`;
+    return `${start} ${t.to || 'to'} ${format(new Date(endTime), 'HH:mm', { locale: localeMap[language] })}`;
   };
 
   const isLoading = isCategoriesLoading || isSummaryLoading || 
-                   isServiceLoading || isHistoryLoading || isIncidentsLoading;
+                   isServiceLoading || isHistoryLoading || 
+                   isIncidentsLoading || isServicesLoading;
 
   if (isLoading) {
     return (
@@ -89,12 +101,16 @@ const ServiceDetail: React.FC = () => {
   }
 
   const formattedLastChecked = service.lastChecked ? 
-    formatDistanceToNow(new Date(service.lastChecked), { addSuffix: true }) : 
-    'Unknown';
+    formatTimeAgo(service.lastChecked, language) : 
+    t.unknown || 'Unknown';
 
   return (
     <div className="bg-dark text-gray-100 font-sans min-h-screen">
-      <Header onMenuToggle={toggleMobileMenu} onSearch={handleSearch} />
+      <Header 
+        onMenuToggle={toggleMobileMenu} 
+        onSearch={handleSearch}
+        services={services}
+      />
       
       <div className="flex min-h-[calc(100vh-64px)]">
         <Sidebar categories={categories} statusSummary={statusSummary} />
@@ -122,36 +138,36 @@ const ServiceDetail: React.FC = () => {
                     <h1 className="text-2xl md:text-3xl font-bold">{service.name}</h1>
                     <div className="flex items-center mt-2">
                       <StatusBadge status={service.status} className="mr-3" />
-                      <span className="text-sm text-gray-400">Last updated {formattedLastChecked}</span>
+                      <span className="text-sm text-gray-400">{t.lastCheck}: {formattedLastChecked}</span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <h2 className="text-lg font-semibold mb-4">Current Status</h2>
+                    <h2 className="text-lg font-semibold mb-4">{t.currentStatus || 'Current Status'}</h2>
                     <div className="bg-dark-lighter rounded-lg p-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs text-gray-400 mb-1">Response Time</p>
+                          <p className="text-xs text-gray-400 mb-1">{t.responseTime || 'Response Time'}</p>
                           <p className="font-mono text-lg">
                             {service.status === 'down' ? 'Timeout' : `${service.responseTime}ms`}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400 mb-1">Uptime (30 days)</p>
+                          <p className="text-xs text-gray-400 mb-1">{t.uptime30d || 'Uptime (30 days)'}</p>
                           <p className="font-mono text-lg">{service.uptimePercentage}%</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400 mb-1">Last Outage</p>
+                          <p className="text-xs text-gray-400 mb-1">{t.lastOutage || 'Last Outage'}</p>
                           <p className="font-mono text-lg">
                             {incidents.length > 0 
-                              ? formatDistanceToNow(new Date(incidents[0].startTime), { addSuffix: true }) 
-                              : 'No recent outages'}
+                              ? formatTimeAgo(incidents[0].startTime, language)
+                              : t.noRecentOutages || 'No recent outages'}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400 mb-1">Avg. Response</p>
+                          <p className="text-xs text-gray-400 mb-1">{t.avgResponse || 'Avg. Response'}</p>
                           <p className="font-mono text-lg">
                             {service.status === 'down' 
                               ? 'N/A' 
@@ -163,19 +179,19 @@ const ServiceDetail: React.FC = () => {
                   </div>
                   
                   <div>
-                    <h2 className="text-lg font-semibold mb-4">Uptime History</h2>
+                    <h2 className="text-lg font-semibold mb-4">{t.uptimeHistory || 'Uptime History'}</h2>
                     <div className="bg-dark-lighter rounded-lg p-4">
                       {history.length > 0 ? (
                         <UptimeHistoryDisplay history={history} />
                       ) : (
-                        <p className="text-sm text-gray-400">No history available</p>
+                        <p className="text-sm text-gray-400">{t.noHistoryAvailable || 'No history available'}</p>
                       )}
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <h2 className="text-lg font-semibold mb-4">Recent Incidents</h2>
+                  <h2 className="text-lg font-semibold mb-4">{t.recentIncidents || 'Recent Incidents'}</h2>
                   <div className="bg-dark-lighter rounded-lg p-4">
                     {incidents.length > 0 ? (
                       <div className="space-y-4">
@@ -197,7 +213,7 @@ const ServiceDetail: React.FC = () => {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-400">No incidents reported</p>
+                      <p className="text-sm text-gray-400">{t.noIncidentsReported || 'No incidents reported'}</p>
                     )}
                   </div>
                 </div>

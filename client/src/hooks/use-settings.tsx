@@ -60,6 +60,23 @@ export const translations = {
     passwordMismatch: "Passwords do not match",
     loggingIn: "Logging in...",
     creatingAccount: "Creating account...",
+    to: "to",
+    toPresent: "to present",
+    unknown: "Unknown",
+    currentStatus: "Current Status",
+    responseTime: "Response Time",
+    uptime30d: "Uptime (30 days)",
+    lastOutage: "Last Outage",
+    avgResponse: "Avg. Response",
+    uptimeHistory: "Uptime History",
+    recentIncidents: "Recent Incidents",
+    noHistoryAvailable: "No history available",
+    noIncidentsReported: "No incidents reported",
+    noRecentOutages: "No recent outages",
+    overall: "Overall Status",
+    partialOutage: "Partial Outage",
+    categories: "Categories",
+    lastCheck: "Last check"
   },
   it: {
     settings: "Impostazioni",
@@ -116,6 +133,23 @@ export const translations = {
     passwordMismatch: "Le password non corrispondono",
     loggingIn: "Accesso in corso...",
     creatingAccount: "Creazione account in corso...",
+    to: "alle",
+    toPresent: "ad ora",
+    unknown: "Sconosciuto",
+    currentStatus: "Stato Attuale",
+    responseTime: "Tempo di Risposta",
+    uptime30d: "Uptime (30 giorni)",
+    lastOutage: "Ultima Interruzione",
+    avgResponse: "Risposta Media",
+    uptimeHistory: "Storico Uptime",
+    recentIncidents: "Incidenti Recenti",
+    noHistoryAvailable: "Nessuno storico disponibile",
+    noIncidentsReported: "Nessun incidente segnalato",
+    noRecentOutages: "Nessuna interruzione recente",
+    overall: "Stato Generale",
+    partialOutage: "Interruzione Parziale",
+    categories: "Categorie",
+    lastCheck: "Ultimo controllo"
   },
   es: {
     settings: "Configuración",
@@ -161,6 +195,23 @@ export const translations = {
     passwordMismatch: "Las contraseñas no coinciden",
     loggingIn: "Iniciando sesión...",
     creatingAccount: "Creando cuenta...",
+    to: "hasta",
+    toPresent: "hasta ahora",
+    unknown: "Desconocido",
+    currentStatus: "Estado Actual",
+    responseTime: "Tiempo de Respuesta",
+    uptime30d: "Tiempo Activo (30 días)",
+    lastOutage: "Última Interrupción",
+    avgResponse: "Respuesta Media",
+    uptimeHistory: "Historial de Actividad",
+    recentIncidents: "Incidentes Recientes",
+    noHistoryAvailable: "No hay historial disponible",
+    noIncidentsReported: "No hay incidentes reportados",
+    noRecentOutages: "Sin interrupciones recientes",
+    overall: "Estado General",
+    partialOutage: "Interrupción Parcial",
+    categories: "Categorías",
+    lastCheck: "Última comprobación"
   },
   fr: {
     settings: "Paramètres",
@@ -213,6 +264,23 @@ export const translations = {
     passwordMismatch: "Les mots de passe ne correspondent pas",
     loggingIn: "Connexion...",
     creatingAccount: "Création du compte...",
+    to: "à",
+    toPresent: "à présent",
+    unknown: "Inconnu",
+    currentStatus: "État Actuel",
+    responseTime: "Temps de Réponse",
+    uptime30d: "Disponibilité (30 jours)",
+    lastOutage: "Dernière Panne",
+    avgResponse: "Réponse Moyenne",
+    uptimeHistory: "Historique de Disponibilité",
+    recentIncidents: "Incidents Récents",
+    noHistoryAvailable: "Aucun historique disponible",
+    noIncidentsReported: "Aucun incident signalé",
+    noRecentOutages: "Aucune panne récente",
+    overall: "État Général",
+    partialOutage: "Panne Partielle",
+    categories: "Catégories",
+    lastCheck: "Dernier contrôle"
   },
   de: {
     settings: "Einstellungen",
@@ -258,6 +326,11 @@ export const translations = {
     passwordMismatch: "Passwörter stimmen nicht überein",
     loggingIn: "Anmeldung...",
     creatingAccount: "Konto wird erstellt...",
+    to: "bis",
+    toPresent: "bis jetzt",
+    unknown: "Unbekannt",
+    categories: "Kategorien",
+    lastCheck: "Letzte Prüfung"
   },
   zh: {
     settings: "设置",
@@ -303,6 +376,11 @@ export const translations = {
     passwordMismatch: "密码不匹配",
     loggingIn: "正在登录...",
     creatingAccount: "正在创建账户...",
+    to: "至",
+    toPresent: "至今",
+    unknown: "未知",
+    categories: "类别",
+    lastCheck: "上次检查"
   },
   ja: {
     settings: "設定",
@@ -348,6 +426,11 @@ export const translations = {
     passwordMismatch: "パスワードが一致しません",
     loggingIn: "ログイン中...",
     creatingAccount: "アカウント作成中...",
+    to: "まで",
+    toPresent: "現在まで",
+    unknown: "不明",
+    categories: "カテゴリー",
+    lastCheck: "最終チェック"
   },
   pt: {
     settings: "Configurações",
@@ -393,6 +476,11 @@ export const translations = {
     passwordMismatch: "As senhas não coincidem",
     loggingIn: "Entrando...",
     creatingAccount: "Criando conta...",
+    to: "até",
+    toPresent: "até agora",
+    unknown: "Desconhecido",
+    categories: "Categorias",
+    lastCheck: "Última verificação"
   },
   ru: {
     settings: "Настройки",
@@ -438,11 +526,18 @@ export const translations = {
     passwordMismatch: "Пароли не совпадают",
     loggingIn: "Вход...",
     creatingAccount: "Создание аккаунта...",
+    to: "до",
+    toPresent: "по настоящее время",
+    unknown: "Неизвестно",
+    categories: "Категории",
+    lastCheck: "Последняя проверка"
   }
 };
 
-// Tipo per la traduzione
-export type Translation = typeof translations.en;
+// Tipo per la traduzione che include la nuova chiave 'categories'
+export type Translation = typeof translations.en & {
+  categories: string;
+};
 
 interface SettingsContextType {
   theme: Theme;

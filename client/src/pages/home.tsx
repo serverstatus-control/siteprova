@@ -42,8 +42,8 @@ const Home: React.FC = () => {
     refetch: refetchSummary
   } = useQuery({
     queryKey: ['/api/status-summary'],
-    refetchInterval: 0,
-    staleTime: 0,
+    refetchInterval: 30000, // Aggiorna ogni 30 secondi
+    staleTime: 29000, // Considera i dati "stale" dopo 29 secondi
     refetchOnMount: true
   });
 

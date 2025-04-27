@@ -2,12 +2,12 @@ import React from 'react';
 import { Link } from 'wouter';
 import { Service } from '../types';
 import StatusBadge from './StatusBadge';
-import { formatDistanceToNow } from 'date-fns';
 import { getServiceIcon } from '../lib/icons';
 import { useSettings } from '@/hooks/use-settings';
 import { Button } from '@/components/ui/button';
 import { Star, StarOff } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { formatTimeAgo } from '@/lib/utils';
 
 interface ServiceCardProps {
   service: Service;
@@ -25,7 +25,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
     slug
   } = service;
 
-  const { isFavorite, addFavorite, removeFavorite, t } = useSettings();
+  const { isFavorite, addFavorite, removeFavorite, t, language } = useSettings();
   const isFav = isFavorite(id);
 
   // Create a status history visualization with 7 days
@@ -33,7 +33,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
   for (let i = 0; i < 7; i++) {
     let statusClass = 'bg-success';
     
-    // Simulate history based on current status
     if (status === 'degraded' && i < 2) {
       statusClass = 'bg-warning';
     } else if (status === 'down' && i < 4) {
@@ -46,8 +45,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
   }
 
   const formattedLastChecked = lastChecked ? 
-    formatDistanceToNow(new Date(lastChecked), { addSuffix: false }) + ' ago' : 
-    'Unknown';
+    formatTimeAgo(lastChecked, language) : 
+    t.unknown || 'Unknown';
 
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -60,20 +59,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
   };
 
   return (
-    <div className="relative bg-card rounded-lg overflow-hidden border border-border hover:border-border/80 transition-all">
+    <div className="relative overflow-hidden transition-all border rounded-lg bg-card border-border hover:border-border/80">
       <div className="p-4" onClick={onClick}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center mr-3">
+            <div className="flex items-center justify-center w-8 h-8 mr-3 rounded-full bg-background">
               <i className={`${logo || getServiceIcon(name)} text-lg`}></i>
             </div>
             <h3 className="font-medium">{name}</h3>
           </div>
           <StatusBadge status={status} />
         </div>
-        <div className="text-xs text-muted-foreground mb-3">
+        <div className="mb-3 text-xs text-muted-foreground">
           <div className="flex items-center justify-between mb-1">
-            <span>Last check:</span>
+            <span>{t.lastCheck}:</span>
             <span className="font-mono">{formattedLastChecked}</span>
           </div>
           <div className="flex items-center justify-between">
@@ -85,8 +84,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
           {statusHistory}
         </div>
       </div>
+
       <div className="flex items-center gap-2 px-2 pb-2">
-        <Link to={`/services/${slug}`} className="flex-1 bg-muted py-2 px-4 text-center text-sm rounded-full hover:bg-background transition-colors focus:z-10">
+        <Link 
+          to={`/services/${slug}`} 
+          className="flex-1 px-4 py-2 text-sm text-center transition-colors rounded-full bg-muted hover:bg-background focus:z-10"
+        >
           View Details
         </Link>
         <TooltipProvider>
@@ -105,9 +108,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
                 onTouchStart={e => e.stopPropagation()}
               >
                 {isFav ? (
-                  <Star className="h-5 w-5 fill-amber-400 drop-shadow group-hover:scale-110 transition-transform duration-200" />
+                  <Star className="w-5 h-5 transition-transform duration-200 fill-amber-400 drop-shadow group-hover:scale-110" />
                 ) : (
-                  <StarOff className="h-5 w-5 group-hover:text-amber-400 transition-colors duration-200" />
+                  <StarOff className="w-5 h-5 transition-colors duration-200 group-hover:text-amber-400" />
                 )}
               </Button>
             </TooltipTrigger>

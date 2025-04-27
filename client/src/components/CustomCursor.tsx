@@ -10,6 +10,8 @@ const CustomCursor = () => {
     const updateCursor = (e: MouseEvent) => {
       requestAnimationFrame(() => {
         setPosition({ x: e.clientX, y: e.clientY });
+        // Se il cursore era nascosto (es. dopo menu contestuale), lo rimostro
+        if (!isVisible) setIsVisible(true);
       });
     };
 
@@ -22,32 +24,47 @@ const CustomCursor = () => {
         !!target.closest('a') ||
         target.getAttribute('role') === 'button' ||
         window.getComputedStyle(target).cursor === 'pointer';
-      
       setIsHovering(!!isClickable);
     };
 
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.button === 0) setIsClicking(true);
+    };
 
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
+    const handleMouseUp = (e: MouseEvent) => {
+      if (e.button === 0) setIsClicking(false);
+    };
+
+    const handleContextMenu = () => {
+      setIsVisible(false);
+    };
+
+    const handlePointerLeave = () => {
+      setIsVisible(false);
+    };
+
+    const handlePointerEnter = () => {
+      setIsVisible(true);
+    };
 
     window.addEventListener('mousemove', updateCursor);
     window.addEventListener('mouseover', handleMouseOver);
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
-    document.body.addEventListener('mouseleave', handleMouseLeave);
-    document.body.addEventListener('mouseenter', handleMouseEnter);
+    window.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('pointerleave', handlePointerLeave);
+    document.addEventListener('pointerenter', handlePointerEnter);
 
     return () => {
       window.removeEventListener('mousemove', updateCursor);
       window.removeEventListener('mouseover', handleMouseOver);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
-      document.body.removeEventListener('mouseleave', handleMouseLeave);
-      document.body.removeEventListener('mouseenter', handleMouseEnter);
+      window.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('pointerleave', handlePointerLeave);
+      document.removeEventListener('pointerenter', handlePointerEnter);
     };
-  }, []);
+  }, [isVisible]);
 
   if (!isVisible) return null;
 

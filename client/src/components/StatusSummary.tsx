@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusSummary } from '../types';
-import { formatDistanceToNow } from 'date-fns';
+import { formatTimeAgo } from '../lib/utils';
 import { apiRequest } from '../lib/queryClient';
 import { useToast } from '../hooks/use-toast';
 import { useSettings } from "@/hooks/use-settings";
@@ -17,7 +17,7 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
   isChecking 
 }) => {
   const { toast } = useToast();
-  const { t } = useSettings();
+  const { t, language } = useSettings();
   const total = summary?.operational + summary?.degraded + summary?.down || 0;
 
   const operationalPercentage = total > 0 
@@ -33,8 +33,8 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
     : 0;
 
   const formattedLastChecked = summary?.lastChecked
-    ? formatDistanceToNow(new Date(summary.lastChecked), { addSuffix: true })
-    : 'Unknown';
+    ? formatTimeAgo(summary.lastChecked, language)
+    : t.unknown || 'Unknown';
 
   const handleCheckNow = async () => {
     if (isChecking) return;
@@ -99,7 +99,7 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
           </div>
           <div className="bg-dark-lighter rounded-lg p-4 shadow hover:shadow-lg transition-all flex flex-col items-center text-center">
             <div className="flex items-center justify-between w-full mb-2">
-              <h3 className="text-xs font-medium text-gray-400">{t.lastUpdated}</h3>
+              <h3 className="text-xs font-medium text-gray-400">{t.lastCheck}</h3>
               <span className="text-xs font-mono text-gray-300">{formattedLastChecked}</span>
             </div>
             <button 
