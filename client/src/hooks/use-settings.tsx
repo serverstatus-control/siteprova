@@ -76,7 +76,20 @@ export const translations = {
     overall: "Overall Status",
     partialOutage: "Partial Outage",
     categories: "Categories",
-    lastCheck: "Last check"
+    lastCheck: "Last check",
+    games: "Games",
+    streaming: "Streaming",
+    bank: "Bank",
+    social: "Social",
+    mail: "Mail",
+    shopping: "Shopping",
+    various: "Various",
+    connection: "Connection",
+    browserai: "Browser & AI",
+    infoAndContacts: "Info & Contacts",
+    expand: "Expand",
+    collapse: "Collapse",
+    searchServices: "Search services"
   },
   it: {
     settings: "Impostazioni",
@@ -149,10 +162,24 @@ export const translations = {
     overall: "Stato Generale",
     partialOutage: "Interruzione Parziale",
     categories: "Categorie",
-    lastCheck: "Ultimo controllo"
+    lastCheck: "Ultimo controllo",
+    games: "Giochi",
+    streaming: "Streaming",
+    bank: "Banche",
+    social: "Social",
+    mail: "Mail",
+    shopping: "Shopping",
+    various: "Varie",
+    connection: "Connessione",
+    browserai: "Browser & IA",
+    infoAndContacts: "Info & Contatti",
+    expand: "Espandi",
+    collapse: "Comprimi",
+    searchServices: "Cerca servizi"
   },
   es: {
     settings: "Configuración",
+    settingsDescription: "Personaliza tu experiencia cambiando el tema y el idioma",
     theme: "Tema",
     language: "Idioma",
     system: "Sistema",
@@ -177,6 +204,12 @@ export const translations = {
     admin: "Administrador",
     search: "Buscar servicios...",
     serverStatus: "ESTADO DEL SERVIDOR",
+    selectTheme: "Seleccionar tema",
+    selectLanguage: "Seleccionar idioma",
+    operational: "Operativo",
+    degraded: "Rendimiento degradado",
+    down: "Inactivo",
+    lastUpdated: "Última actualización",
     accountTitle: "Tu Cuenta",
     username: "Usuario",
     email: "Correo electrónico",
@@ -211,7 +244,20 @@ export const translations = {
     overall: "Estado General",
     partialOutage: "Interrupción Parcial",
     categories: "Categorías",
-    lastCheck: "Última comprobación"
+    lastCheck: "Última comprobación",
+    games: "Juegos",
+    streaming: "Streaming",
+    bank: "Banco",
+    social: "Social",
+    mail: "Correo",
+    shopping: "Compras",
+    various: "Varios",
+    connection: "Conexión",
+    browserai: "Navegador & IA",
+    infoAndContacts: "Info & Contactos",
+    expand: "Expandir",
+    collapse: "Contraer",
+    searchServices: "Buscar servicios"
   },
   fr: {
     settings: "Paramètres",
@@ -280,7 +326,20 @@ export const translations = {
     overall: "État Général",
     partialOutage: "Panne Partielle",
     categories: "Catégories",
-    lastCheck: "Dernier contrôle"
+    lastCheck: "Dernier contrôle",
+    games: "Jeux",
+    streaming: "Streaming",
+    bank: "Banque",
+    social: "Social",
+    mail: "Mail",
+    shopping: "Shopping",
+    various: "Divers",
+    connection: "Connexion",
+    browserai: "Navigateur & IA",
+    infoAndContacts: "Infos & Contacts",
+    expand: "Développer",
+    collapse: "Réduire",
+    searchServices: "Rechercher des services"
   },
   de: {
     settings: "Einstellungen",
@@ -330,7 +389,20 @@ export const translations = {
     toPresent: "bis jetzt",
     unknown: "Unbekannt",
     categories: "Kategorien",
-    lastCheck: "Letzte Prüfung"
+    lastCheck: "Letzte Prüfung",
+    games: "Spiele",
+    streaming: "Streaming",
+    bank: "Bank",
+    social: "Soziales",
+    mail: "Mail",
+    shopping: "Einkaufen",
+    various: "Verschiedenes",
+    connection: "Verbindung",
+    browserai: "Browser & KI",
+    infoAndContacts: "Info & Kontakte",
+    expand: "Erweitern",
+    collapse: "Einklappen",
+    searchServices: "Dienste suchen"
   },
   zh: {
     settings: "设置",
@@ -380,7 +452,20 @@ export const translations = {
     toPresent: "至今",
     unknown: "未知",
     categories: "类别",
-    lastCheck: "上次检查"
+    lastCheck: "上次检查",
+    games: "游戏",
+    streaming: "流媒体",
+    bank: "银行",
+    social: "社交",
+    mail: "邮件",
+    shopping: "购物",
+    various: "其他",
+    connection: "连接",
+    browserai: "浏览器与AI",
+    infoAndContacts: "信息和联系方式",
+    expand: "展开",
+    collapse: "收起",
+    searchServices: "搜索服务"
   },
   ja: {
     settings: "設定",
@@ -430,7 +515,20 @@ export const translations = {
     toPresent: "現在まで",
     unknown: "不明",
     categories: "カテゴリー",
-    lastCheck: "最終チェック"
+    lastCheck: "最終チェック",
+    games: "ゲーム",
+    streaming: "ストリーミング",
+    bank: "銀行",
+    social: "ソーシャル",
+    mail: "メール",
+    shopping: "ショッピング",
+    various: "その他",
+    connection: "接続",
+    browserai: "ブラウザ＆AI",
+    infoAndContacts: "情報 & 連絡先",
+    expand: "展開",
+    collapse: "折りたたむ",
+    searchServices: "サービスを検索"
   },
   pt: {
     settings: "Configurações",
@@ -480,7 +578,20 @@ export const translations = {
     toPresent: "até agora",
     unknown: "Desconhecido",
     categories: "Categorias",
-    lastCheck: "Última verificação"
+    lastCheck: "Última verificação",
+    games: "Jogos",
+    streaming: "Streaming",
+    bank: "Banco",
+    social: "Social",
+    mail: "Mail",
+    shopping: "Compras",
+    various: "Diversos",
+    connection: "Conexão",
+    browserai: "Navegador & IA",
+    infoAndContacts: "Info & Contactos",
+    expand: "Expandir",
+    collapse: "Recolher",
+    searchServices: "Buscar serviços"
   },
   ru: {
     settings: "Настройки",
@@ -530,7 +641,20 @@ export const translations = {
     toPresent: "по настоящее время",
     unknown: "Неизвестно",
     categories: "Категории",
-    lastCheck: "Последняя проверка"
+    lastCheck: "Последняя проверка",
+    games: "Игры",
+    streaming: "Стриминг",
+    bank: "Банк",
+    social: "Социальные",
+    mail: "Почта",
+    shopping: "Покупки",
+    various: "Разное",
+    connection: "Связь",
+    browserai: "Браузер и ИИ",
+    infoAndContacts: "Информация и контакты",
+    expand: "Развернуть",
+    collapse: "Свернуть",
+    searchServices: "Поиск сервисов"
   }
 };
 
@@ -554,12 +678,12 @@ interface SettingsContextType {
 export const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  // Carica i valori salvati da localStorage o usa i default
+  // Carica i valori salvati da localStorage o usa il tema chiaro di default
   const [theme, setThemeState] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem("theme");
-    return (savedTheme as Theme) || "system";
+    return (savedTheme as Theme) || "light";
   });
-  
+
   const [language, setLanguageState] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem("language");
     return (savedLanguage as Language) || "en";
@@ -573,24 +697,18 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   // Gestisce il cambiamento del tema
   useEffect(() => {
     localStorage.setItem("theme", theme);
-    
-    // Applica il tema al documento
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
-    
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
       root.classList.add(systemTheme);
-      
-      // Aggiungi listener per cambiamenti di tema del sistema
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = (e: MediaQueryListEvent) => {
         root.classList.remove("light", "dark");
         root.classList.add(e.matches ? "dark" : "light");
       };
-      
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     } else {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'wouter';
 import { Category, StatusSummary } from '../types';
-import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
+import { useSettings } from '@/hooks/use-settings';
 import { UserRole } from '@shared/schema';
-import { t } from '../lib/utils';
+import { formatTimeAgo } from '@/lib/utils';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -21,11 +21,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 }) => {
   const { user, logoutMutation } = useAuth();
   const [_, navigate] = useLocation();
-  
+  const { t, language } = useSettings();
+
   const formattedLastUpdate = statusSummary?.lastChecked 
-    ? formatDistanceToNow(new Date(statusSummary.lastChecked), { addSuffix: true }) 
-    : 'Unknown';
-    
+    ? formatTimeAgo(statusSummary.lastChecked, language)
+    : t.unknown || 'Unknown';
+
   const handleLogout = () => {
     logoutMutation.mutate();
     onClose();
@@ -36,29 +37,36 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
     onClose();
   };
 
+  const getCategoryTranslation = (categoryName: string): string => {
+    const key = categoryName.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof t;
+    return t[key] || categoryName;
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden">
-      <div className="w-64 h-full overflow-y-auto bg-dark-light">
-        <div className="flex items-center justify-between p-4 border-b border-dark-lighter">
-          <h2 className="font-semibold">Menu</h2>
-          <button className="text-gray-400 hover:text-white" onClick={onClose}>
-            <i className="fas fa-times"></i>
-          </button>
-        </div>
-        <nav className="p-4">
-          <div className="mb-4">
-            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">System Status</div>
-            <div className="p-3 mb-2 rounded-lg bg-dark-lighter">
+    <div className={`fixed inset-0 z-50 lg:hidden ${isOpen ? '' : 'pointer-events-none'}`}>
+      <div 
+        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ease-in-out
+          ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+        onClick={onClose}
+      ></div>
+      
+      <div className={`absolute top-0 right-0 w-64 h-full bg-dark-light transform transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        
+        <div className="p-4">
+          <div className="mb-6">
+            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.serverStatus}</div>
+            <div className="p-3 rounded-lg bg-dark-lighter">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Overall Status</span>
+                <span className="text-sm font-medium">{t.overall}</span>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success bg-opacity-20 text-success">
                   {statusSummary?.down && statusSummary.down > 0 
-                    ? 'Partial Outage' 
+                    ? t.partialOutage
                     : statusSummary?.degraded && statusSummary.degraded > 0 
-                      ? 'Degraded' 
-                      : 'Operational'
+                      ? t.degraded
+                      : t.operational
                   }
                 </span>
               </div>
@@ -70,7 +78,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           </div>
 
           <div className="mb-6">
-            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">Categories</div>
+            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.categories}</div>
             <ul>
               {categories.map(category => (
                 <li key={category.id} className="mb-1">
@@ -80,7 +88,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                     onClick={onClose}
                   >
                     <i className={`${category.icon} w-5 mr-2`}></i>
-                    <span>{category.name}</span>
+                    <span>{getCategoryTranslation(category.name)}</span>
                   </a>
                 </li>
               ))}
@@ -121,7 +129,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   onClick={() => handleNavigate('/info')}
                 >
                   <i className="w-5 mr-2 fas fa-info-circle"></i>
-                  <span>{t('infoAndContacts')}</span>
+                  <span>{t.infoAndContacts}</span>
                 </button>
               </li>
               <li className="mb-1">
@@ -136,7 +144,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               </li>
             </ul>
           </div>
-        </nav>
+        </div>
       </div>
     </div>
   );

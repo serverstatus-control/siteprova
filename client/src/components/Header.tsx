@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
@@ -48,6 +48,40 @@ const Header: React.FC<HeaderProps> = ({
   const { user, logoutMutation } = useAuth();
   const { t, favorites, isFavorite } = useSettings();
   const [_, navigate] = useLocation();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Gestione focus/caret: resta visibile anche dopo click altrove o ispeziona, scompare solo se trascini/clicchi fuori dal sito
+  /*
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      // Se la finestra torna attiva, rifocalizza l'input se era già stato usato
+      if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }
+    };
+    const handleBodyClick = (e: MouseEvent) => {
+      // Solo se non stai già scrivendo nell'input
+      if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    };
+    window.addEventListener('focus', handleWindowFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.body.addEventListener('mousedown', handleBodyClick);
+    return () => {
+      window.removeEventListener('focus', handleWindowFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.body.removeEventListener('mousedown', handleBodyClick);
+    };
+  }, []);
+  */
 
   const favoriteServices = (services || []).filter((service) =>
     isFavorite(service.id),
@@ -64,93 +98,98 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="bg-background border-b border-border sticky top-0 z-50">
-      <div className="flex items-center w-full px-4 py-3">
-        {/* Scritta Server Status allineata a sinistra con padding */}
-        <div className="flex items-center select-none">
-          <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <span className="font-extrabold text-2xl md:text-3xl tracking-tight text-primary drop-shadow-sm uppercase cursor-pointer">
-              {t.serverStatus}
-            </span>
-          </Link>
-          <span className="hidden md:inline-flex items-center bg-muted px-2 py-1 rounded text-xs font-mono ml-6">
+    <header className="sticky top-0 z-50 border-b bg-background border-border">
+      <div className="flex items-center w-full gap-2 px-0 py-3 sm:px-2 md:px-6 md:gap-4">
+        {/* Colonna sinistra: logo sempre allineato a sinistra, ottimizzato per mobile */}
+        <div className="flex items-center select-none flex-shrink-0 flex-grow-0 min-w-[90px] md:min-w-[160px] pl-2 md:pl-0 justify-start ml-0 md:ml-0" style={{paddingLeft: undefined}}>
+          <span className="text-lg font-extrabold leading-none tracking-tight uppercase cursor-default sm:text-2xl md:text-3xl text-primary drop-shadow-sm md:leading-tight">
+            {t.serverStatus}
+          </span>
+          <span className="items-center hidden px-2 py-1 ml-2 font-mono text-xs rounded sm:ml-4 md:inline-flex bg-muted">
             v: 0.3.00
           </span>
         </div>
-        {/* Barra di ricerca centrata nella navbar */}
-        <div className="flex-1 flex justify-center">
-          <div className="relative hidden md:block w-full max-w-md">
+        {/* Colonna centrale: search sempre visibile e centrata, responsive */}
+        <div className="flex justify-center flex-1">
+          {/* Desktop/tablet: search visibile */}
+          <div className="relative items-center hidden w-full max-w-xs mx-auto sm:max-w-sm md:max-w-md lg:max-w-lg md:flex">
+            <span className="absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 pointer-events-none select-none left-3 top-1/2">
+              <Search className="w-4 h-4 text-muted-foreground" />
+            </span>
             <input
+              ref={searchInputRef}
               type="text"
-              placeholder="Search services"
-              className="w-full bg-background border border-input rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
+              placeholder={t.searchServices}
+              className="w-full py-1.5 pl-10 pr-10 text-sm border rounded-lg bg-background border-input"
               value={searchTerm}
               onChange={handleSearch}
             />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            {favorites.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    tabIndex={0}
+                    aria-label={t.favorites}
+                    className="absolute -translate-y-1/2 outline-none right-2 top-1/2 text-muted-foreground hover:text-foreground hover:bg-muted/50 ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+                  >
+                    <Star className="w-5 h-5 text-amber-400" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuGroup>
+                    {favoriteServices.map((service) => (
+                      <DropdownMenuItem key={service.id} asChild>
+                        <Link
+                          href={`/services/${service.slug}`}
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
+                          <i className={service.logo + " w-4 h-4"}></i>
+                          <span>{service.name}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
-        </div>
-        {/* Azioni lato destro */}
-        <div className="flex items-center gap-1 justify-end">
+          {/* Mobile: solo icona search, cliccabile */}
           <button
-            className="lg:hidden text-muted-foreground hover:text-foreground p-2"
+            className="flex items-center justify-center w-10 h-10 transition-colors rounded-full md:hidden hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+            aria-label={t.searchServices}
+            onClick={() => setSearchVisible(true)}
+            type="button"
+          >
+            <Search className="w-5 h-5" />
+          </button>
+        </div>
+        {/* Colonna destra: azioni sempre a destra */}
+        <div className="flex items-center justify-end gap-1 flex-shrink-0 ml-auto min-w-[100px] md:min-w-[160px]">
+          <button
+            className="p-2 lg:hidden text-muted-foreground hover:text-foreground"
             onClick={onMenuToggle}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="w-5 h-5" />
           </button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setSearchVisible(!searchVisible)}
-          >
-            <Search className="h-5 w-5" />
-          </Button>
           {/* Impostazioni prima dell'account */}
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted/50 hidden md:flex"
+            className="hidden text-muted-foreground hover:text-foreground hover:bg-muted/50 md:flex"
             onClick={() => setSettingsOpen(true)}
           >
-            <Settings className="h-5 w-5" />
+            <Settings className="w-5 h-5" />
           </Button>
-          {favorites.length > 0 && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                >
-                  <Star className="h-5 w-5 text-amber-400" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuGroup>
-                  {favoriteServices.map((service) => (
-                    <DropdownMenuItem key={service.id} asChild>
-                      <Link
-                        href={`/services/${service.slug}`}
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <i className={service.logo + " w-4 h-4"}></i>
-                        <span>{service.name}</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
           {user?.role === UserRole.ADMIN && (
             <Link href="/admin">
               <Button
-                variant="ghost"
-                className="hidden md:flex gap-1 text-muted-foreground hover:text-foreground"
+                variant="outline"
+                className="items-center hidden gap-2 transition-colors md:flex text-foreground hover:bg-accent hover:text-accent-foreground"
               >
-                <Shield className="h-4 w-4" />
-                <span>{t.admin}</span>
+                <Shield className="w-4 h-4" />
+                <span className="font-medium">{t.admin}</span>
               </Button>
             </Link>
           )}
@@ -161,23 +200,66 @@ const Header: React.FC<HeaderProps> = ({
             className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
             onClick={() => navigate("/account-dashboard")}
           >
-            <User className="h-5 w-5" />
+            <User className="w-5 h-5" />
           </Button>
         </div>
       </div>
-
-      {/* Barra di ricerca mobile */}
+      {/* Popup ricerca mobile */}
       {searchVisible && (
-        <div className="mt-3 md:hidden">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search services"
-              className="w-full bg-background border border-input rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 md:hidden">
+          <div className="relative w-[90vw] max-w-sm bg-background rounded-lg p-4 shadow-lg">
+            <button
+              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+              aria-label="Chiudi"
+              onClick={() => setSearchVisible(false)}
+              type="button"
+            >
+              ×
+            </button>
+            <div className="relative flex items-center w-full">
+              <span className="absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 pointer-events-none select-none left-3 top-1/2">
+                <Search className="w-4 h-4 text-muted-foreground" />
+              </span>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder={t.searchServices}
+                className="w-full py-2 pl-10 pr-10 text-sm border rounded-lg bg-background border-input"
+                value={searchTerm}
+                onChange={handleSearch}
+                autoFocus
+              />
+              {favorites.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      tabIndex={0}
+                      aria-label={t.favorites}
+                      className="absolute -translate-y-1/2 outline-none right-2 top-1/2 text-muted-foreground hover:text-foreground hover:bg-muted/50 ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+                    >
+                      <Star className="w-5 h-5 text-amber-400" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuGroup>
+                      {favoriteServices.map((service) => (
+                        <DropdownMenuItem key={service.id} asChild>
+                          <Link
+                            href={`/services/${service.slug}`}
+                            className="flex items-center gap-2 cursor-pointer"
+                          >
+                            <i className={service.logo + " w-4 h-4"}></i>
+                            <span>{service.name}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -185,7 +267,13 @@ const Header: React.FC<HeaderProps> = ({
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
-        services={services}
+        services={services.map(service => ({
+          ...service,
+          categoryId: 0, // Default value
+          responseTime: null, // Default value
+          lastChecked: null, // Default value
+          uptimePercentage: null, // Default value
+        }))}
       />
     </header>
   );

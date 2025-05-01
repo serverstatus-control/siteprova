@@ -30,6 +30,12 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
     return acc;
   }, {});
 
+  // Traduci il nome della categoria
+  const getCategoryTranslation = (categoryName: string): string => {
+    const key = categoryName.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof t;
+    return t[key] || categoryName;
+  };
+
   const isOperational = statusSummary?.operational ?? 0;
   const isDegraded = statusSummary?.degraded ?? 0;
   const isDown = statusSummary?.down ?? 0;
@@ -59,13 +65,13 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
         </div>
 
         <div className="mb-6">
-          <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{t.categories || 'Categorie'}</div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{t.categories || 'Categories'}</div>
           <ul>
             {categories.map(category => (
               <li key={category.id} className="mb-1">
                 <a href={`#${category.slug}`} className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter cursor-pointer">
                   <i className={`${category.icon} w-5 mr-2`}></i>
-                  <span>{category.name}</span>
+                  <span>{getCategoryTranslation(category.name)}</span>
                   <span className="ml-auto text-xs text-gray-500">{servicesByCategory[category.id]?.length || 0}</span>
                 </a>
               </li>

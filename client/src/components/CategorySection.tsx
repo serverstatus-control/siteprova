@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Service } from '../types';
 import ServiceCard from './ServiceCard';
-import { t } from '../lib/utils';
 import { Server, Cloud, Globe, Users, Database, Shield, Monitor, Activity, Wifi, ShoppingCart, Music, Film, Gamepad, Mail, Bot, Star, Wrench, AlertTriangle } from "lucide-react";
+import { useSettings } from '@/hooks/use-settings';
 
 // Mappa nome categoria -> icona Lucide
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -42,13 +42,19 @@ const CategorySection: React.FC<CategorySectionProps> = ({
   onServiceClick 
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t } = useSettings();
 
-  // Mostra sempre tutti i servizi
   const visibleServices = services;
   const hasMoreServices = false;
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  // Traduci il nome della categoria
+  const getCategoryTranslation = (categoryName: string): string => {
+    const key = categoryName.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof t;
+    return t[key] || categoryName;
   };
 
   return (
@@ -58,14 +64,14 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <span className="mr-2 flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-blue-400 shadow-lg transition-transform duration-300 hover:scale-110">
             {categoryIcons[name.toLowerCase()] || <Server className="w-5 h-5 text-white" />}
           </span>
-          {name}
+          {getCategoryTranslation(name)}
         </h2>
         <button 
           className="text-xs sm:text-sm text-gray-400 hover:text-white"
           onClick={toggleCollapse}
         >
           <i className={`fas ${isCollapsed ? 'fa-chevron-up' : 'fa-chevron-down'} mr-1`}></i>
-          {isCollapsed ? t('expand') : t('collapse')}
+          {isCollapsed ? t.expand : t.collapse}
         </button>
       </div>
 
