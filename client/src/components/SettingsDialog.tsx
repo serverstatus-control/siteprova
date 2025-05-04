@@ -51,6 +51,13 @@ export default function SettingsDialog({
     document.documentElement.lang = language;
   }, [language]);
 
+  // Listener per aprire il dialog impostazioni da mobile/tablet
+  useEffect(() => {
+    const openDialog = () => onOpenChange(true);
+    window.addEventListener('open-settings-dialog', openDialog);
+    return () => window.removeEventListener('open-settings-dialog', openDialog);
+  }, [onOpenChange]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">

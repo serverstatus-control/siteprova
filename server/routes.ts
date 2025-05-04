@@ -1,7 +1,7 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { updateServiceStatusSchema, insertIncidentSchema } from "@shared/schema";
+import { updateServiceStatusSchema, insertIncidentSchema } from "../shared/schema.ts";
 import { fromZodError } from "zod-validation-error";
 import { checkAllServices } from "./service-checker";
 import { setupAuth } from "./auth";

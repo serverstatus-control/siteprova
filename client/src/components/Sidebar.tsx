@@ -44,8 +44,8 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
     <aside id="sidebar" className="hidden lg:block w-64 bg-dark-light border-r border-dark-lighter overflow-y-auto fixed top-[64px] h-[calc(100vh-64px)]">
       <nav className="p-4">
         <div className="mb-4">
-          <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{t.serverStatus}</div>
-          <div className="bg-dark-lighter rounded-lg p-3 mb-2">
+          <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.serverStatus}</div>
+          <div className="p-3 mb-2 rounded-lg bg-dark-lighter">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">{t.overall || 'Overall Status'}</span>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success bg-opacity-20 text-success">
@@ -59,23 +59,48 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">{t.lastCheck}</span>
-              <span className="text-xs text-gray-400 font-mono">{formattedLastUpdate}</span>
+              <span className="font-mono text-xs text-gray-400">{formattedLastUpdate}</span>
             </div>
           </div>
         </div>
 
         <div className="mb-6">
-          <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{t.categories || 'Categories'}</div>
+          <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.categories || 'Categories'}</div>
           <ul>
             {categories.map(category => (
               <li key={category.id} className="mb-1">
-                <a href={`#${category.slug}`} className="flex items-center px-3 py-2 text-sm rounded-md text-gray-300 hover:bg-dark-lighter cursor-pointer">
+                <a href={`#${category.slug}`} className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md cursor-pointer hover:bg-dark-lighter">
                   <i className={`${category.icon} w-5 mr-2`}></i>
                   <span>{getCategoryTranslation(category.name)}</span>
                   <span className="ml-auto text-xs text-gray-500">{servicesByCategory[category.id]?.length || 0}</span>
                 </a>
               </li>
             ))}
+          </ul>
+        </div>
+
+        {/* Sezione Links sempre visibile anche su desktop/tablet */}
+        <div className="mt-4">
+          <div className="mb-1 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.links || 'Links'}</div>
+          <ul>
+            <li className="mb-0.5">
+              <button 
+                className="flex items-center w-full px-3 py-2 text-sm font-normal text-left text-gray-300 rounded-md hover:bg-dark-lighter"
+                onClick={() => handleNavigate('/info')}
+              >
+                <i className="w-5 mr-2 fas fa-info-circle"></i>
+                <span>{t.infoAndContacts}</span>
+              </button>
+            </li>
+            <li className="mb-0.5">
+              <button 
+                className="flex items-center w-full px-3 py-2 text-sm font-normal text-left text-gray-300 rounded-md hover:bg-dark-lighter"
+                onClick={() => handleNavigate('/incidents')}
+              >
+                <i className="w-5 mr-2 fas fa-history"></i>
+                <span>{t.incidentHistory || 'Incident History'}</span>
+              </button>
+            </li>
           </ul>
         </div>
       </nav>

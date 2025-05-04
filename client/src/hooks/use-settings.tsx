@@ -89,7 +89,15 @@ export const translations = {
     infoAndContacts: "Info & Contacts",
     expand: "Expand",
     collapse: "Collapse",
-    searchServices: "Search services"
+    searchServices: "Search services",
+    links: "Links",
+    incidentHistory: "Incident History",
+    viewDetails: "View Details",
+    viewFullHistory: "View Full History",
+    subscribeToUpdates: "Subscribe to Updates",
+    serviceDetails: "Service Details",
+    terms: "Terms",
+    privacy: "Privacy"
   },
   it: {
     settings: "Impostazioni",
@@ -175,7 +183,15 @@ export const translations = {
     infoAndContacts: "Info & Contatti",
     expand: "Espandi",
     collapse: "Comprimi",
-    searchServices: "Cerca servizi"
+    searchServices: "Cerca servizi",
+    links: "Link",
+    incidentHistory: "Storico Incidenti",
+    viewDetails: "Dettagli",
+    viewFullHistory: "Vedi storico completo",
+    subscribeToUpdates: "Iscriviti agli aggiornamenti",
+    serviceDetails: "Dettagli Servizio",
+    terms: "Termini",
+    privacy: "Privacy"
   },
   es: {
     settings: "Configuración",
@@ -257,7 +273,15 @@ export const translations = {
     infoAndContacts: "Info & Contactos",
     expand: "Expandir",
     collapse: "Contraer",
-    searchServices: "Buscar servicios"
+    searchServices: "Buscar servicios",
+    links: "Enlaces",
+    incidentHistory: "Historial de Incidentes",
+    viewDetails: "Ver Detalles",
+    viewFullHistory: "Ver Historial Completo",
+    subscribeToUpdates: "Suscribirse a Actualizaciones",
+    serviceDetails: "Detalles del Servicio",
+    terms: "Términos",
+    privacy: "Privacidad"
   },
   fr: {
     settings: "Paramètres",
@@ -339,7 +363,15 @@ export const translations = {
     infoAndContacts: "Infos & Contacts",
     expand: "Développer",
     collapse: "Réduire",
-    searchServices: "Rechercher des services"
+    searchServices: "Rechercher des services",
+    links: "Liens",
+    incidentHistory: "Historique des Incidents",
+    viewDetails: "Voir les Détails",
+    viewFullHistory: "Voir l'historique complet",
+    subscribeToUpdates: "S'abonner aux mises à jour",
+    serviceDetails: "Détails du Service",
+    terms: "Conditions",
+    privacy: "Confidentialité"
   },
   de: {
     settings: "Einstellungen",
@@ -402,7 +434,15 @@ export const translations = {
     infoAndContacts: "Info & Kontakte",
     expand: "Erweitern",
     collapse: "Einklappen",
-    searchServices: "Dienste suchen"
+    searchServices: "Dienste suchen",
+    links: "Links",
+    incidentHistory: "Vorfallhistorie",
+    viewDetails: "Details anzeigen",
+    viewFullHistory: "Gesamte Historie anzeigen",
+    subscribeToUpdates: "Für Updates abonnieren",
+    serviceDetails: "Servicedetails",
+    terms: "Bedingungen",
+    privacy: "Datenschutz"
   },
   zh: {
     settings: "设置",
@@ -465,7 +505,15 @@ export const translations = {
     infoAndContacts: "信息和联系方式",
     expand: "展开",
     collapse: "收起",
-    searchServices: "搜索服务"
+    searchServices: "搜索服务",
+    links: "链接",
+    incidentHistory: "事件历史",
+    viewDetails: "查看详情",
+    viewFullHistory: "查看完整历史",
+    subscribeToUpdates: "订阅更新",
+    serviceDetails: "服务详情",
+    terms: "条款",
+    privacy: "隐私"
   },
   ja: {
     settings: "設定",
@@ -528,7 +576,15 @@ export const translations = {
     infoAndContacts: "情報 & 連絡先",
     expand: "展開",
     collapse: "折りたたむ",
-    searchServices: "サービスを検索"
+    searchServices: "サービスを検索",
+    links: "リンク",
+    incidentHistory: "インシデント履歴",
+    viewDetails: "詳細を見る",
+    viewFullHistory: "全履歴を見る",
+    subscribeToUpdates: "更新を購読する",
+    serviceDetails: "サービス詳細",
+    terms: "利用規約",
+    privacy: "プライバシー"
   },
   pt: {
     settings: "Configurações",
@@ -591,7 +647,15 @@ export const translations = {
     infoAndContacts: "Info & Contactos",
     expand: "Expandir",
     collapse: "Recolher",
-    searchServices: "Buscar serviços"
+    searchServices: "Buscar serviços",
+    links: "Links",
+    incidentHistory: "Histórico de Incidentes",
+    viewDetails: "Ver Detalhes",
+    viewFullHistory: "Ver Histórico Completo",
+    subscribeToUpdates: "Inscrever-se para Atualizações",
+    serviceDetails: "Detalhes do Serviço",
+    terms: "Termos",
+    privacy: "Privacidade"
   },
   ru: {
     settings: "Настройки",
@@ -654,7 +718,15 @@ export const translations = {
     infoAndContacts: "Информация и контакты",
     expand: "Развернуть",
     collapse: "Свернуть",
-    searchServices: "Поиск сервисов"
+    searchServices: "Поиск сервисов",
+    links: "Ссылки",
+    incidentHistory: "История инцидентов",
+    viewDetails: "Подробнее",
+    viewFullHistory: "Посмотреть всю историю",
+    subscribeToUpdates: "Подписаться на обновления",
+    serviceDetails: "Детали сервиса",
+    terms: "Условия",
+    privacy: "Конфиденциальность"
   }
 };
 

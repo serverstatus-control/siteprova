@@ -1,5 +1,5 @@
-import { StatusType, categories, services, type InsertCategory, type InsertService } from "@shared/schema";
-import { db } from "./db";
+import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema.ts";
+import { db } from "./db.ts";
 
 async function seed() {
   console.log("🌱 Seeding database...");
@@ -37,6 +37,13 @@ async function seed() {
       { name: 'Mojang', logo: 'fas fa-cube', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 125, slug: 'mojang' },
       { name: 'Xbox', logo: 'fab fa-xbox', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 104, slug: 'xbox' },
       { name: 'PlayStation', logo: 'fab fa-playstation', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 112, slug: 'playstation' },
+      { name: 'Aternos', logo: 'fas fa-server', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 200, slug: 'aternos' },
+      { name: 'EA Sports', logo: 'fas fa-futbol', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 180, slug: 'easports' },
+      { name: 'Nintendo', logo: 'fas fa-gamepad', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 160, slug: 'nintendo' },
+      { name: 'Supercell', logo: 'fas fa-mobile-alt', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 170, slug: 'supercell' },
+      { name: 'Valorant', logo: 'fas fa-crosshairs', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 150, slug: 'valorant' },
+      { name: 'Among Us', logo: 'fas fa-user-astronaut', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 140, slug: 'among-us' },
+      { name: 'Gran Turismo', logo: 'fas fa-flag-checkered', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 130, slug: 'gran-turismo' },
       
       // Browser & AI
       { name: 'Google', logo: 'fab fa-google', categoryId: categoryMap.get('browser-ai') || 2, status: StatusType.UP, responseTime: 56, slug: 'google' },

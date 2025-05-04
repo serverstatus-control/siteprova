@@ -50,38 +50,24 @@ const Header: React.FC<HeaderProps> = ({
   const [_, navigate] = useLocation();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Gestione focus/caret: resta visibile anche dopo click altrove o ispeziona, scompare solo se trascini/clicchi fuori dal sito
-  /*
+  // Apre il dialog impostazioni su mobile/tablet quando riceve l'evento custom
   useEffect(() => {
-    const handleWindowFocus = () => {
-      // Se la finestra torna attiva, rifocalizza l'input se era già stato usato
-      if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
-        searchInputRef.current.focus();
+    const handler = () => {
+      if (typeof window !== 'undefined') {
+        const evt = new CustomEvent('open-settings-dialog');
+        window.dispatchEvent(evt);
       }
     };
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
-          searchInputRef.current.focus();
-        }
+    window.addEventListener('open-settings-dialog', () => {
+      const dialog = document.getElementById('settings-dialog');
+      if (dialog && typeof dialog.showModal === 'function') {
+        dialog.showModal();
       }
-    };
-    const handleBodyClick = (e: MouseEvent) => {
-      // Solo se non stai già scrivendo nell'input
-      if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
-        searchInputRef.current.focus();
-      }
-    };
-    window.addEventListener('focus', handleWindowFocus);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    document.body.addEventListener('mousedown', handleBodyClick);
+    });
     return () => {
-      window.removeEventListener('focus', handleWindowFocus);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      document.body.removeEventListener('mousedown', handleBodyClick);
+      window.removeEventListener('open-settings-dialog', handler);
     };
   }, []);
-  */
 
   const favoriteServices = (services || []).filter((service) =>
     isFavorite(service.id),
@@ -173,11 +159,11 @@ const Header: React.FC<HeaderProps> = ({
           >
             <Menu className="w-5 h-5" />
           </button>
-          {/* Impostazioni prima dell'account */}
+          {/* Impostazioni desktop/tablet */}
           <Button
             variant="ghost"
             size="icon"
-            className="hidden text-muted-foreground hover:text-foreground hover:bg-muted/50 md:flex"
+            className="hidden lg:flex text-muted-foreground hover:text-foreground hover:bg-muted/50"
             onClick={() => setSettingsOpen(true)}
           >
             <Settings className="w-5 h-5" />
@@ -193,11 +179,11 @@ const Header: React.FC<HeaderProps> = ({
               </Button>
             </Link>
           )}
-          {/* Account icon senza tendina */}
+          {/* Account solo desktop */}
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            className="hidden lg:flex text-muted-foreground hover:text-foreground hover:bg-muted/50"
             onClick={() => navigate("/account-dashboard")}
           >
             <User className="w-5 h-5" />
@@ -209,7 +195,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 md:hidden">
           <div className="relative w-[90vw] max-w-sm bg-background rounded-lg p-4 shadow-lg">
             <button
-              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+              className="absolute text-2xl font-bold top-2 right-2 text-muted-foreground hover:text-foreground focus:outline-none focus-visible:outline-none"
               aria-label="Chiudi"
               onClick={() => setSearchVisible(false)}
               type="button"

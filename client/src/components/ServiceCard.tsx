@@ -76,7 +76,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
             <span className="font-mono">{formattedLastChecked}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Response time:</span>
+            <span>{t.responseTime || 'Response time'}:</span>
             <span className="font-mono">{status === 'down' ? 'Timeout' : `${responseTime}ms`}</span>
           </div>
         </div>
@@ -90,7 +90,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
           to={`/services/${slug}`} 
           className="flex-1 px-4 py-2 text-sm text-center transition-colors rounded-full bg-muted hover:bg-background focus:z-10"
         >
-          View Details
+          {t.viewDetails || 'View Details'}
         </Link>
         <TooltipProvider>
           <Tooltip>

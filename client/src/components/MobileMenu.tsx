@@ -52,16 +52,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         onClick={onClose}
       ></div>
       
-      <div className={`absolute top-0 right-0 w-64 h-full bg-dark-light transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        
-        <div className="p-4">
-          <div className="mb-6">
-            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.serverStatus}</div>
-            <div className="p-3 rounded-lg bg-dark-lighter">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">{t.overall}</span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success bg-opacity-20 text-success">
+      <div className={`absolute top-0 right-0 w-[80vw] max-w-[270px] min-w-[150px] h-full bg-dark-light transform transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        style={{fontSize: 'clamp(0.93rem, 1.7vw, 1.01rem)', wordBreak: 'break-word'}}
+      >
+        <div className="p-2">
+          <div className="mb-4">
+            <div className="mb-1 overflow-x-auto text-xs font-semibold tracking-wider text-gray-400 uppercase whitespace-nowrap">{t.serverStatus}</div>
+            <div className="p-2 rounded bg-dark-lighter">
+              <div className="flex items-center justify-between gap-1 mb-1">
+                <span className="text-xs font-medium whitespace-nowrap">{t.overall}</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success bg-opacity-20 text-success whitespace-nowrap">
                   {statusSummary?.down && statusSummary.down > 0 
                     ? t.partialOutage
                     : statusSummary?.degraded && statusSummary.degraded > 0 
@@ -70,77 +71,79 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   }
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">{t.lastCheck}</span>
-                <span className="font-mono text-xs text-gray-400">{formattedLastUpdate}</span>
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-xs font-medium whitespace-nowrap">{t.lastCheck}</span>
+                <span className="font-mono text-xs text-gray-400 whitespace-nowrap">{formattedLastUpdate}</span>
               </div>
             </div>
           </div>
 
-          <div className="mb-6">
-            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.categories}</div>
+          <div className="mb-4">
+            <div className="mb-1 overflow-x-auto text-xs font-semibold tracking-wider text-gray-400 uppercase whitespace-nowrap">{t.categories}</div>
             <ul>
               {categories.map(category => (
-                <li key={category.id} className="mb-1">
+                <li key={category.id} className="mb-0.5">
                   <a 
                     href={`#${category.slug}`} 
-                    className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md hover:bg-dark-lighter"
+                    className="flex items-center px-2 py-1.5 text-xs text-gray-300 rounded hover:bg-dark-lighter gap-2 overflow-x-auto min-w-0"
                     onClick={onClose}
                   >
-                    <i className={`${category.icon} w-5 mr-2`}></i>
-                    <span>{getCategoryTranslation(category.name)}</span>
+                    <i className={`${category.icon} w-5 mr-1 flex-shrink-0`}></i>
+                    <span className="truncate max-w-[110px]">{getCategoryTranslation(category.name)}</span>
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">Account</div>
+          <div className="mt-4">
+            <div className="mb-1 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.links || 'Links'}</div>
             <ul>
-              {user ? (
-                <li className="mb-1">
-                  <button 
-                    className="flex items-center justify-center w-full px-3 py-2 text-sm text-left text-gray-300 rounded-md hover:bg-dark-lighter"
-                    onClick={() => handleNavigate('/auth')}
-                  >
-                    <i className="w-5 fas fa-user"></i>
-                  </button>
-                </li>
-              ) : (
-                <li className="mb-1">
-                  <button 
-                    className="flex items-center justify-center w-full px-3 py-2 text-sm text-left text-gray-300 rounded-md hover:bg-dark-lighter"
-                    onClick={() => handleNavigate('/auth')}
-                  >
-                    <i className="w-5 fas fa-user"></i>
-                  </button>
-                </li>
-              )}
-            </ul>
-          </div>
-          
-          <div className="mt-6">
-            <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">Links</div>
-            <ul>
-              <li className="mb-1">
+              <li className="mb-0.5">
                 <button 
-                  className="flex items-center w-full px-3 py-2 text-sm text-left text-gray-300 rounded-md hover:bg-dark-lighter"
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
                   onClick={() => handleNavigate('/info')}
                 >
-                  <i className="w-5 mr-2 fas fa-info-circle"></i>
+                  <i className="w-5 mr-1 fas fa-info-circle"></i>
                   <span>{t.infoAndContacts}</span>
                 </button>
               </li>
-              <li className="mb-1">
-                <a 
-                  href="#" 
-                  className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md hover:bg-dark-lighter"
-                  onClick={onClose}
+              <li className="mb-0.5">
+                <button 
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
+                  onClick={() => handleNavigate('/incidents')}
                 >
-                  <i className="w-5 mr-2 fas fa-history"></i>
-                  <span>Incident History</span>
-                </a>
+                  <i className="w-5 mr-1 fas fa-history"></i>
+                  <span>{t.incidentHistory || 'Incident History'}</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Other: Settings e Account in fondo */}
+          <div className="mt-4">
+            <div className="mb-1 text-xs font-semibold tracking-wider text-gray-400 uppercase">Other</div>
+            <ul>
+              <li className="mb-0.5">
+                <button 
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent('open-settings-dialog'));
+                    onClose();
+                  }}
+                >
+                  <i className="w-5 mr-2 fas fa-cog"></i>
+                  <span>{t.settings || 'Impostazioni'}</span>
+                </button>
+              </li>
+              <li className="mb-0.5">
+                <button 
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
+                  onClick={() => handleNavigate('/account-dashboard')}
+                >
+                  <i className="w-5 mr-2 fas fa-user"></i>
+                  <span>Account</span>
+                </button>
               </li>
             </ul>
           </div>

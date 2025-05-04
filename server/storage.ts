@@ -16,7 +16,7 @@ import {
   type InsertUser,
   StatusType,
   type UpdateServiceStatus
-} from "@shared/schema";
+} from "../shared/schema.ts";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 

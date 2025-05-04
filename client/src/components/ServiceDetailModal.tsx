@@ -49,7 +49,7 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-dark-light rounded-lg max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
         <div className="p-4 border-b border-dark-lighter flex items-center justify-between">
-          <h2 className="font-bold text-lg">Service Details</h2>
+          <h2 className="font-bold text-lg">{t.serviceDetails || 'Service Details'}</h2>
           <button className="text-gray-400 hover:text-white" onClick={onClose}>
             <i className="fas fa-times"></i>
           </button>
@@ -73,7 +73,7 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             <div className="bg-dark-lighter rounded-lg p-4">
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Response Time</p>
+                  <p className="text-xs text-gray-400 mb-1">{t.responseTime || 'Response Time'}</p>
                   <p className="font-mono text-lg">{status === 'down' ? 'Timeout' : `${responseTime}ms`}</p>
                 </div>
                 <div>
@@ -141,10 +141,10 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
         </div>
         <div className="p-4 border-t border-dark-lighter text-right">
           <button className="bg-dark-lighter hover:bg-gray-700 text-white py-2 px-4 rounded text-sm mr-2">
-            View Full History
+            {t.viewFullHistory || 'View Full History'}
           </button>
           <button className="bg-primary hover:bg-blue-600 text-white py-2 px-4 rounded text-sm">
-            Subscribe to Updates
+            {t.subscribeToUpdates || 'Subscribe to Updates'}
           </button>
         </div>
       </div>

@@ -62,37 +62,37 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
+    <div className="flex flex-col min-h-screen md:flex-row bg-background">
       {/* Pulsante per tornare indietro */}
       <Button
         variant="ghost"
-        className="absolute top-4 left-4"
+        className="fixed z-20 flex items-center px-3 py-2 text-sm top-2 left-2 md:absolute md:top-4 md:left-4 md:z-0 md:text-base"
         onClick={() => navigate("/")}
       >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        {t.backToDashboard || "Torna alla Dashboard"}
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        <span className="hidden xs:inline">{t.backToDashboard || "Torna alla Dashboard"}</span>
       </Button>
 
       {/* Hero Section */}
-      <div className="flex flex-1 flex-col items-center justify-center bg-primary/10 p-10 text-center">
-        <div className="max-w-md">
-          <h1 className="mb-6 text-4xl font-bold">
+      <div className="flex flex-1 flex-col items-center justify-center bg-primary/10 p-6 sm:p-10 text-center min-h-[260px] md:min-h-0">
+        <div className="w-full max-w-md mx-auto">
+          <h1 className="mb-4 text-3xl font-bold leading-tight break-words sm:text-4xl">
             {t.serverStatus || "Service Status Dashboard"}
           </h1>
-          <p className="mb-8 text-lg text-muted-foreground">
+          <p className="mb-6 text-base sm:text-lg text-muted-foreground">
             {t.heroDescription || "Monitora lo stato operativo dei vari servizi e piattaforme in tempo reale. Rimani informato su interruzioni e problemi di prestazione."}
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap justify-center gap-3 text-sm sm:text-base">
             <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-green-500" />
+              <div className="w-3 h-3 bg-green-500 rounded-full" />
               <span>{t.operational || "Operativo"}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-amber-500" />
+              <div className="w-3 h-3 rounded-full bg-amber-500" />
               <span>{t.degraded || "Degradato"}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 bg-red-500 rounded-full" />
               <span>{t.down || "Non Operativo"}</span>
             </div>
           </div>
@@ -100,8 +100,8 @@ export default function AuthPage() {
       </div>
 
       {/* Form Section */}
-      <div className="flex flex-1 flex-col items-center justify-center p-4 md:p-10">
-        <div className="w-full max-w-md">
+      <div className="flex flex-col items-center justify-center flex-1 p-4 sm:p-6 md:p-10 bg-background">
+        <div className="w-full max-w-sm mx-auto sm:max-w-md">
           <Tabs
             defaultValue="login"
             value={activeTab}
@@ -195,7 +195,7 @@ function LoginForm({
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   {t.loggingIn || "Accesso in corso..."}
                 </>
               ) : (
@@ -314,7 +314,7 @@ function RegisterForm({
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   {t.creatingAccount || "Creazione account in corso..."}
                 </>
               ) : (

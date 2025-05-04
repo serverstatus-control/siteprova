@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { storage } from './storage';
-import { StatusType, type Service, type InsertUptimeHistory, type InsertIncident } from '@shared/schema';
+import { StatusType, type Service, type InsertUptimeHistory, type InsertIncident } from '../shared/schema.ts';
 
 interface CheckResult {
   status: typeof StatusType[keyof typeof StatusType];
