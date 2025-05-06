@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { checkAllServices } from './service-checker';
 
 const app = express();
 app.use(express.json());
@@ -37,8 +38,27 @@ app.use((req, res, next) => {
   next();
 });
 
+// Intervallo di controllo in millisecondi (20 minuti)
+const CHECK_INTERVAL = 20 * 60 * 1000;
+
 (async () => {
   const server = await registerRoutes(app);
+
+  // Avvia il controllo automatico
+  console.log("Avvio del controllo automatico dei servizi ogni 20 minuti...");
+  setInterval(async () => {
+    try {
+      console.log("Esecuzione controllo automatico dei servizi...");
+      await checkAllServices();
+      console.log("Controllo automatico completato");
+    } catch (error) {
+      console.error("Errore durante il controllo automatico:", error);
+    }
+  }, CHECK_INTERVAL);
+
+  // Esegui il primo controllo all'avvio
+  console.log("Esecuzione controllo iniziale dei servizi...");
+  await checkAllServices();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

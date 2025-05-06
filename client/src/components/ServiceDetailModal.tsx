@@ -22,6 +22,17 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
   isOpen, 
   onClose 
 }) => {
+  // Aggiungi gestore tasto ESC
+  React.useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
   if (!service || !isOpen) return null;
 
   const { 
@@ -46,15 +57,31 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-dark-light rounded-lg max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
-        <div className="p-4 border-b border-dark-lighter flex items-center justify-between">
-          <h2 className="font-bold text-lg">{t.serviceDetails || 'Service Details'}</h2>
-          <button className="text-gray-400 hover:text-white" onClick={onClose}>
-            <i className="fas fa-times"></i>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60">
+      <div className="relative w-[95vw] max-w-3xl bg-dark-light rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="sticky top-0 z-10 flex items-center justify-end p-4 bg-dark-light/80 backdrop-blur-sm border-b border-dark-lighter">
+          <button 
+            onClick={onClose} 
+            className="group p-2 transition-all duration-200 rounded-lg hover:bg-dark-lighter focus:outline-none focus:ring-2 focus:ring-primary/40"
+            aria-label="Chiudi"
+          >
+            <svg 
+              className="w-6 h-6 transition-colors duration-200 text-muted-foreground group-hover:text-foreground" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M6 18L18 6M6 6l12 12" 
+              />
+            </svg>
           </button>
         </div>
-        <div className="p-6">
+        
+        <div className="flex-1 p-6 overflow-y-auto scrollbar-hide">
           <div className="flex items-center mb-6">
             <div className="w-12 h-12 bg-dark-lighter rounded-full flex items-center justify-center mr-4">
               <i className={logo || getServiceIcon(name) + " text-2xl"}></i>
@@ -139,11 +166,11 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             </div>
           </div>
         </div>
-        <div className="p-4 border-t border-dark-lighter text-right">
-          <button className="bg-dark-lighter hover:bg-gray-700 text-white py-2 px-4 rounded text-sm mr-2">
-            {t.viewFullHistory || 'View Full History'}
-          </button>
-          <button className="bg-primary hover:bg-blue-600 text-white py-2 px-4 rounded text-sm">
+
+        <div className="p-4 border-t border-dark-lighter flex justify-end gap-3 bg-dark-lighter/50 backdrop-blur-sm">
+          <button 
+            className="px-4 py-2 text-sm font-medium text-white transition-all duration-200 rounded-md bg-primary hover:bg-primary/90 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary/40"
+          >
             {t.subscribeToUpdates || 'Subscribe to Updates'}
           </button>
         </div>

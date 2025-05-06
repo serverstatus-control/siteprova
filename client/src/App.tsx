@@ -7,6 +7,7 @@ import ServiceDetail from "@/pages/service-detail";
 import AdminPage from "@/pages/admin-page";
 import AuthPage from "@/pages/auth-page";
 import InfoPage from "@/pages/info-page";
+import UpdatesPage from "@/pages/updates-page";
 import AccountDashboard from "@/pages/account-dashboard";
 import { AuthProvider } from "@/hooks/use-auth";
 import { SettingsProvider } from "@/hooks/use-settings";
@@ -50,6 +51,7 @@ function Router() {
       <ProtectedRoute path="/account-dashboard" component={AccountDashboard} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/info" component={InfoPage} />
+      <Route path="/updates" component={UpdatesPage} />
       <Route component={NotFound} />
     </Switch>
   );

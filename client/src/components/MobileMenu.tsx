@@ -59,10 +59,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         <div className="p-2">
           <div className="mb-4">
             <div className="mb-1 overflow-x-auto text-xs font-semibold tracking-wider text-gray-400 uppercase whitespace-nowrap">{t.serverStatus}</div>
-            <div className="p-2 rounded bg-dark-lighter">
+            <div className="p-2 rounded bg-dark-lighter transition-all duration-200 hover:bg-dark-lighter/80 hover:scale-[1.02] cursor-pointer">
               <div className="flex items-center justify-between gap-1 mb-1">
                 <span className="text-xs font-medium whitespace-nowrap">{t.overall}</span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success bg-opacity-20 text-success whitespace-nowrap">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success bg-opacity-20 text-success whitespace-nowrap transition-colors duration-200">
                   {statusSummary?.down && statusSummary.down > 0 
                     ? t.partialOutage
                     : statusSummary?.degraded && statusSummary.degraded > 0 
@@ -85,10 +85,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 <li key={category.id} className="mb-0.5">
                   <a 
                     href={`#${category.slug}`} 
-                    className="flex items-center px-2 py-1.5 text-xs text-gray-300 rounded hover:bg-dark-lighter gap-2 overflow-x-auto min-w-0"
+                    className="flex items-center px-2 py-1.5 text-xs text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40 gap-2 overflow-x-auto min-w-0"
                     onClick={onClose}
                   >
-                    <i className={`${category.icon} w-5 mr-1 flex-shrink-0`}></i>
+                    <i className={`${category.icon} w-5 mr-1 flex-shrink-0 transition-transform duration-200 group-hover:scale-110`}></i>
                     <span className="truncate max-w-[110px]">{getCategoryTranslation(category.name)}</span>
                   </a>
                 </li>
@@ -101,19 +101,19 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             <ul>
               <li className="mb-0.5">
                 <button 
-                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
                   onClick={() => handleNavigate('/info')}
                 >
-                  <i className="w-5 mr-1 fas fa-info-circle"></i>
+                  <i className="w-5 mr-1 fas fa-info-circle transition-transform duration-200 group-hover:scale-110"></i>
                   <span>{t.infoAndContacts}</span>
                 </button>
               </li>
               <li className="mb-0.5">
                 <button 
-                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
                   onClick={() => handleNavigate('/incidents')}
                 >
-                  <i className="w-5 mr-1 fas fa-history"></i>
+                  <i className="w-5 mr-1 fas fa-history transition-transform duration-200 group-hover:scale-110"></i>
                   <span>{t.incidentHistory || 'Incident History'}</span>
                 </button>
               </li>
@@ -126,22 +126,22 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             <ul>
               <li className="mb-0.5">
                 <button 
-                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
                   onClick={() => {
                     window.dispatchEvent(new CustomEvent('open-settings-dialog'));
                     onClose();
                   }}
                 >
-                  <i className="w-5 mr-2 fas fa-cog"></i>
+                  <i className="w-5 mr-2 fas fa-cog transition-transform duration-200 group-hover:scale-110"></i>
                   <span>{t.settings || 'Impostazioni'}</span>
                 </button>
               </li>
               <li className="mb-0.5">
                 <button 
-                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded hover:bg-dark-lighter"
+                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
                   onClick={() => handleNavigate('/account-dashboard')}
                 >
-                  <i className="w-5 mr-2 fas fa-user"></i>
+                  <i className="w-5 mr-2 fas fa-user transition-transform duration-200 group-hover:scale-110"></i>
                   <span>Account</span>
                 </button>
               </li>

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import MobileMenu from "@/components/MobileMenu";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/use-settings";
 import { 
   Card,
   CardContent,
@@ -15,8 +15,9 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 
-const InfoPage: React.FC = () => {
+const UpdatesPage: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useSettings();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -44,6 +45,20 @@ const InfoPage: React.FC = () => {
     // Search functionality can be implemented here
   };
 
+  // Lista degli aggiornamenti del sito
+  const updates = [
+    {
+      version: "0.3.00",
+      date: "??/12/2025",
+      changes: [
+        "Aggiunta sezione Aggiornamenti del sito",
+        "Migliorata la visualizzazione dei tooltip",
+        "Correzioni di bug minori"
+      ]
+    }
+    // Aggiungi qui altri aggiornamenti quando necessario
+  ];
+
   return (
     <div className="min-h-screen font-sans bg-background text-foreground">
       <Header onMenuToggle={toggleMobileMenu} onSearch={handleSearch} services={services} />
@@ -65,65 +80,31 @@ const InfoPage: React.FC = () => {
                 className="inline-flex items-center px-3 py-2 mb-4 transition-all duration-200 rounded-md text-primary hover:text-primary/80 hover:bg-muted/50 hover:-translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
               >
                 <i className="mr-2 transition-transform duration-200 fas fa-arrow-left group-hover:scale-110"></i>
-                Torna alla Dashboard
+                {t.backToDashboard}
               </Link>
             </div>
 
             <Card className="w-full max-w-3xl px-2 mx-auto sm:px-6">
               <CardHeader className="text-center">
-                <CardTitle className="text-xl md:text-3xl">Info & Contatti</CardTitle>
-                <CardDescription className="text-sm md:text-base">Informazioni sul nostro servizio e come contattarci</CardDescription>
+                <CardTitle className="text-xl md:text-3xl">{t.siteUpdates}</CardTitle>
+                <CardDescription className="text-sm md:text-base">Cronologia degli aggiornamenti e delle novità</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="p-3 rounded-lg sm:p-4 bg-muted/50">
-                  <h3 className="mb-2 text-lg font-medium">Supporto Tecnico</h3>
-                  <p className="mb-2 text-sm sm:text-base">
-                    Per informazioni e reclami scrivere al nostro team di supporto tecnico:
-                  </p>
-                  <a 
-                    href="mailto:server.status2317@gmail.com" 
-                    className="font-medium break-all text-primary hover:text-primary/80"
-                  >
-                    server.status2317@gmail.com
-                  </a>
-                </div>
-
-                <div className="p-3 rounded-lg sm:p-4 bg-muted/50">
-                  <h3 className="mb-2 text-lg font-medium">Informazioni sul progetto</h3>
-                  <p className="mb-4 text-sm sm:text-base">
-                    Se avete problemi con qualche app o sito, in questo sistema potrete controllare 
-                    se effettivamente ci sono dei problemi.
-                  </p>
-                  <p className="font-medium">
-                    Versione: 0.3.00
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-lg sm:p-4 bg-muted/50">
-                  <h3 className="mb-2 text-lg font-medium">Team</h3>
-                  <p className="mb-2 text-sm sm:text-base">Creato da:</p>
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                    <a 
-                      href="https://www.instagram.com/_insubrico_/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary hover:text-primary/80"
-                    >
-                      <i className="fab fa-instagram"></i>
-                      <span>Matteo</span>
-                    </a>
-                    <span>&</span>
-                    <a 
-                      href="https://www.instagram.com/liampz_08/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary hover:text-primary/80"
-                    >
-                      <i className="fab fa-instagram"></i>
-                      <span>Liam</span>
-                    </a>
+                {updates.map((update, index) => (
+                  <div key={index} className="p-3 rounded-lg sm:p-4 bg-muted/50">
+                    <div className="flex items-baseline justify-between mb-2">
+                      <h3 className="text-lg font-medium">Versione {update.version}</h3>
+                      <span className="text-sm text-muted-foreground">{update.date}</span>
+                    </div>
+                    <ul className="ml-4 space-y-1 list-disc">
+                      {update.changes.map((change, changeIndex) => (
+                        <li key={changeIndex} className="text-sm sm:text-base">
+                          {change}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
+                ))}
               </CardContent>
               <CardFooter className="flex justify-center pt-6 border-t">
                 <p className="text-sm text-muted-foreground">
@@ -140,4 +121,4 @@ const InfoPage: React.FC = () => {
   );
 };
 
-export default InfoPage;
+export default UpdatesPage;

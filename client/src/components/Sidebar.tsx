@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'wouter';
 import { Category, Service, StatusSummary } from '../types';
 import { useSettings } from '@/hooks/use-settings';
 import { formatTimeAgo } from '@/lib/utils';
@@ -11,6 +12,11 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
   const { t, language } = useSettings();
+  const [_, navigate] = useLocation();
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
 
   // Ottieni i servizi per ogni categoria
   const { data: services = [] } = useQuery<Service[]>({
@@ -85,20 +91,20 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
           <ul>
             <li className="mb-0.5">
               <button 
-                className="flex items-center w-full px-3 py-2 text-sm font-normal text-left text-gray-300 rounded-md hover:bg-dark-lighter"
+                className="flex items-center w-full px-3 py-2 text-sm font-normal text-left text-gray-300 transition-all duration-200 rounded-md hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
                 onClick={() => handleNavigate('/info')}
               >
-                <i className="w-5 mr-2 fas fa-info-circle"></i>
+                <i className="w-5 mr-2 transition-transform duration-200 fas fa-info-circle group-hover:scale-110"></i>
                 <span>{t.infoAndContacts}</span>
               </button>
             </li>
             <li className="mb-0.5">
               <button 
-                className="flex items-center w-full px-3 py-2 text-sm font-normal text-left text-gray-300 rounded-md hover:bg-dark-lighter"
-                onClick={() => handleNavigate('/incidents')}
+                className="flex items-center w-full px-3 py-2 text-sm font-normal text-left text-gray-300 transition-all duration-200 rounded-md hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                onClick={() => handleNavigate('/updates')}
               >
-                <i className="w-5 mr-2 fas fa-history"></i>
-                <span>{t.incidentHistory || 'Incident History'}</span>
+                <i className="w-5 mr-2 fas fa-clock-rotate-left"></i>
+                <span>{t.siteUpdates}</span>
               </button>
             </li>
           </ul>
