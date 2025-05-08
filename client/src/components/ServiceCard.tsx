@@ -60,7 +60,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
 
   return (
     <div className="relative overflow-hidden transition-all duration-300 border rounded-lg bg-card border-border hover:border-border/80 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 group">
-      <div className="p-4" onClick={onClick}>
+      <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
             <div className="flex items-center justify-center w-8 h-8 mr-3 transition-transform duration-300 rounded-full bg-background group-hover:scale-110 group-hover:shadow-md">
@@ -71,7 +71,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
           <StatusBadge status={status} className="transition-transform duration-300 group-hover:scale-105" />
         </div>
         <div className="mb-3 text-xs text-muted-foreground">
-          <div className="flex items-center justify-between mb-1 transition-colors duration-300 group-hover:text-foreground">
+          <div className="flex items-center justify-between transition-colors duration-300 group-hover:text-foreground">
             <span>{t.lastCheck}:</span>
             <span className="font-mono">{formattedLastChecked}</span>
           </div>
@@ -87,22 +87,27 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
 
       <div className="flex items-center gap-2 px-2 pb-2">
         <Link 
-          to={`/services/${slug}`} 
+          href={`/services/${slug}`} 
+          onClick={(e) => {
+            e.preventDefault();
+            if (onClick) onClick();
+          }}
           className="flex-1 px-4 py-2 text-sm text-center transition-all duration-300 rounded-full bg-muted hover:bg-background focus:z-10 group-hover:bg-primary/10 group-hover:text-primary"
         >
           {t.viewDetails || 'View Details'}
         </Link>
-        <TooltipProvider delayDuration={200}>
+        
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className={`relative z-10 rounded-full border border-border transition-all duration-300
+                className={`relative z-10 w-10 h-10 rounded-full border border-border transition-all duration-300
                   ${isFav 
                     ? 'text-amber-400 hover:border-amber-400 hover:-translate-y-1' 
                     : 'text-gray-400 hover:text-amber-400 hover:border-amber-400 hover:-translate-y-1'}
-                  group flex items-center justify-center w-9 h-9`}
+                  group flex items-center justify-center`}
                 onClick={handleFavoriteToggle}
                 tabIndex={0}
                 aria-label={isFav ? t.removeFromFavorites : t.addToFavorites}
@@ -116,7 +121,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="top">
+            <TooltipContent side="bottom">
               {isFav ? t.removeFromFavorites : t.addToFavorites}
             </TooltipContent>
           </Tooltip>

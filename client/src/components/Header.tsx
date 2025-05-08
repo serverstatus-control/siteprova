@@ -89,14 +89,30 @@ const Header: React.FC<HeaderProps> = ({
     logoutMutation.mutate();
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate('/');
+  };
+
   return (
     <header className="sticky top-0 z-50 transition-colors duration-300 ease-in-out border-b shadow-sm bg-background border-border backdrop-blur-md">
       <div className="flex items-center w-full gap-2 px-0 py-3 transition-all duration-300 ease-in-out sm:px-2 md:px-6 md:gap-4">
-        {/* Colonna sinistra: logo sempre allineato a sinistra, ottimizzato per mobile */}
+        {/* Colonna sinistra: logo */}
         <div className="flex items-center select-none flex-shrink-0 flex-grow-0 min-w-[90px] md:min-w-[160px] pl-2 md:pl-0 justify-start ml-0 md:ml-0 transition-all duration-300 ease-in-out">
-          <span className="text-lg font-extrabold leading-none tracking-tight uppercase transition-colors duration-200 cursor-default sm:text-2xl md:text-3xl text-primary drop-shadow-sm md:leading-tight">
-            {t.serverStatus}
-          </span>
+          <Link 
+            href="/" 
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              navigate('/');
+            }} 
+            className="group"
+          >
+            <span className="text-lg font-extrabold leading-none tracking-tight uppercase transition-colors duration-200 sm:text-2xl md:text-3xl text-primary drop-shadow-sm md:leading-tight group-hover:text-primary/80">
+              {t.serverStatus}
+            </span>
+          </Link>
           <span className="items-center hidden px-2 py-1 ml-2 font-mono text-xs transition-colors duration-200 rounded sm:ml-4 md:inline-flex bg-muted">
             v: 0.3.00
           </span>
@@ -174,15 +190,7 @@ const Header: React.FC<HeaderProps> = ({
           >
             <Menu className="w-5 h-5 transition-transform duration-200" />
           </button>
-          {/* Impostazioni desktop/tablet */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden transition-colors duration-200 lg:flex text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            onClick={() => setSettingsOpen(true)}
-          >
-            <Settings className="w-5 h-5 transition-transform duration-200" />
-          </Button>
+          {/* Admin button desktop/tablet */}
           {user?.role === UserRole.ADMIN && (
             <Link href="/admin">
               <Button
@@ -194,6 +202,15 @@ const Header: React.FC<HeaderProps> = ({
               </Button>
             </Link>
           )}
+          {/* Impostazioni desktop/tablet */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden transition-colors duration-200 lg:flex text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <Settings className="w-5 h-5 transition-transform duration-200" />
+          </Button>
           {/* Account solo desktop */}
           <Button
             variant="ghost"

@@ -221,6 +221,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user's favorites
+  apiRouter.get("/favorites", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    try {
+      const userId = (req.user as any).id;
+      const favorites = await storage.getFavorites(userId);
+      res.json(favorites);
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+      res.status(500).json({ message: "Failed to fetch favorites" });
+    }
+  });
+
+  // Add a favorite
+  apiRouter.post("/favorites/:serviceId", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    try {
+      const userId = (req.user as any).id;
+      const serviceId = parseInt(req.params.serviceId, 10);
+      
+      if (isNaN(serviceId)) {
+        return res.status(400).json({ message: "Invalid service ID" });
+      }
+
+      await storage.addFavorite(userId, serviceId);
+      res.status(201).json({ message: "Favorite added successfully" });
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+      res.status(500).json({ message: "Failed to add favorite" });
+    }
+  });
+
+  // Remove a favorite
+  apiRouter.delete("/favorites/:serviceId", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    try {
+      const userId = (req.user as any).id;
+      const serviceId = parseInt(req.params.serviceId, 10);
+      
+      if (isNaN(serviceId)) {
+        return res.status(400).json({ message: "Invalid service ID" });
+      }
+
+      await storage.removeFavorite(userId, serviceId);
+      res.status(200).json({ message: "Favorite removed successfully" });
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+      res.status(500).json({ message: "Failed to remove favorite" });
+    }
+  });
+
   app.use("/api", apiRouter);
 
   const httpServer = createServer(app);

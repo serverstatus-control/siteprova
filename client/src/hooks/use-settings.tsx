@@ -1,4 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "./use-auth";
+import { apiRequest } from "../lib/api";
+import { useToast } from "./use-toast";
+import { toast } from "./use-toast";
 
 export type Theme = "light" | "dark" | "system";
 export type Language = "en" | "it" | "es" | "fr" | "de" | "zh" | "ja" | "pt" | "ru";
@@ -97,7 +102,11 @@ export const translations = {
     subscribeToUpdates: "Subscribe to Updates",
     serviceDetails: "Service Details",
     terms: "Terms",
-    privacy: "Privacy"
+    privacy: "Privacy",
+    success: "Success",
+    error: "Error",
+    favoriteAdded: "Service added to favorites",
+    favoriteRemoved: "Service removed from favorites",
   },
   it: {
     settings: "Impostazioni",
@@ -191,7 +200,11 @@ export const translations = {
     subscribeToUpdates: "Iscriviti agli aggiornamenti",
     serviceDetails: "Dettagli Servizio",
     terms: "Termini",
-    privacy: "Privacy"
+    privacy: "Privacy",
+    success: "Successo",
+    error: "Errore",
+    favoriteAdded: "Servizio aggiunto ai preferiti",
+    favoriteRemoved: "Servizio rimosso dai preferiti",
   },
   es: {
     settings: "Configuración",
@@ -226,6 +239,10 @@ export const translations = {
     degraded: "Rendimiento degradado",
     down: "Inactivo",
     lastUpdated: "Última actualización",
+    dashboard: "Panel",
+    dashboardDescription: "Comprueba el estado de los servicios en tiempo real y recibe actualizaciones instantáneas.",
+    checkingNow: "Comprobando...",
+    checkNow: "Comprobar ahora",
     accountTitle: "Tu Cuenta",
     username: "Usuario",
     email: "Correo electrónico",
@@ -281,7 +298,11 @@ export const translations = {
     subscribeToUpdates: "Suscribirse a Actualizaciones",
     serviceDetails: "Detalles del Servicio",
     terms: "Términos",
-    privacy: "Privacidad"
+    privacy: "Privacidad",
+    success: "Éxito",
+    error: "Error",
+    favoriteAdded: "Servicio añadido a favoritos",
+    favoriteRemoved: "Servicio eliminado de favoritos",
   },
   fr: {
     settings: "Paramètres",
@@ -316,6 +337,10 @@ export const translations = {
     degraded: "Performances dégradées",
     down: "Indisponible",
     lastUpdated: "Dernière mise à jour",
+    dashboard: "Tableau de bord",
+    dashboardDescription: "Vérifiez l'état des services en temps réel et recevez des mises à jour instantanées.",
+    checkingNow: "Vérification...",
+    checkNow: "Vérifier maintenant",
     accountTitle: "Votre Compte",
     username: "Nom d'utilisateur",
     email: "E-mail",
@@ -371,7 +396,11 @@ export const translations = {
     subscribeToUpdates: "S'abonner aux mises à jour",
     serviceDetails: "Détails du Service",
     terms: "Conditions",
-    privacy: "Confidentialité"
+    privacy: "Confidentialité",
+    success: "Succès",
+    error: "Erreur",
+    favoriteAdded: "Service ajouté aux favoris",
+    favoriteRemoved: "Service retiré des favoris",
   },
   de: {
     settings: "Einstellungen",
@@ -442,10 +471,38 @@ export const translations = {
     subscribeToUpdates: "Für Updates abonnieren",
     serviceDetails: "Servicedetails",
     terms: "Bedingungen",
-    privacy: "Datenschutz"
+    privacy: "Datenschutz",
+    settingsDescription: "Personalisiere deine Erfahrung durch Ändern von Thema und Sprache",
+    selectTheme: "Thema auswählen",
+    selectLanguage: "Sprache auswählen",
+    operational: "Betriebsbereit",
+    degraded: "Eingeschränkte Leistung",
+    down: "Nicht verfügbar",
+    dashboard: "Dashboard",
+    dashboardDescription: "Überprüfen Sie den Status der Dienste in Echtzeit und erhalten Sie sofortige Updates.",
+    checkingNow: "Überprüfung...",
+    checkNow: "Jetzt überprüfen",
+    currentStatus: "Aktueller Status",
+    responseTime: "Antwortzeit",
+    uptime30d: "Verfügbarkeit (30 Tage)",
+    lastOutage: "Letzter Ausfall",
+    avgResponse: "Durchschn. Antwortzeit",
+    uptimeHistory: "Verfügbarkeitsverlauf",
+    recentIncidents: "Aktuelle Vorfälle",
+    noHistoryAvailable: "Kein Verlauf verfügbar",
+    noIncidentsReported: "Keine Vorfälle gemeldet",
+    noRecentOutages: "Keine kürzlichen Ausfälle",
+    overall: "Gesamtstatus",
+    partialOutage: "Teilweiser Ausfall",
+    success: "Erfolg",
+    error: "Fehler",
+    favoriteAdded: "Dienst zu Favoriten hinzugefügt",
+    favoriteRemoved: "Dienst aus Favoriten entfernt",
+    lastUpdated: "Zuletzt aktualisiert",
   },
   zh: {
     settings: "设置",
+    settingsDescription: "通过更改主题和语言自定义您的体验",
     theme: "主题",
     language: "语言",
     system: "系统",
@@ -513,10 +570,37 @@ export const translations = {
     subscribeToUpdates: "订阅更新",
     serviceDetails: "服务详情",
     terms: "条款",
-    privacy: "隐私"
+    privacy: "隐私",
+    selectTheme: "选择主题",
+    selectLanguage: "选择语言",
+    operational: "正常运行",
+    degraded: "性能下降",
+    down: "服务中断",
+    currentStatus: "当前状态",
+    responseTime: "响应时间",
+    uptime30d: "运行时间（30天）",
+    lastOutage: "上次中断",
+    avgResponse: "平均响应",
+    uptimeHistory: "运行历史",
+    recentIncidents: "最近事件",
+    noHistoryAvailable: "无历史记录",
+    noIncidentsReported: "无事件报告",
+    noRecentOutages: "最近无中断",
+    overall: "总体状态",
+    partialOutage: "部分中断",
+    lastUpdated: "最后更新",
+    dashboard: "仪表板",
+    dashboardDescription: "实时检查服务状态并获取即时更新",
+    checkingNow: "检查中...",
+    checkNow: "立即检查",
+    success: "成功",
+    error: "错误",
+    favoriteAdded: "服务已添加到收藏夹",
+    favoriteRemoved: "服务已从收藏夹中移除",
   },
   ja: {
     settings: "設定",
+    settingsDescription: "テーマと言語を変更してカスタマイズ",
     theme: "テーマ",
     language: "言語",
     system: "システム",
@@ -572,22 +656,49 @@ export const translations = {
     shopping: "ショッピング",
     various: "その他",
     connection: "接続",
-    browserai: "ブラウザ＆AI",
-    infoAndContacts: "情報 & 連絡先",
+    browserai: "ブラウザとAI",
+    infoAndContacts: "情報と連絡先",
     expand: "展開",
     collapse: "折りたたむ",
     searchServices: "サービスを検索",
     links: "リンク",
-    siteUpdates: "サイト更新",
+    siteUpdates: "サイトの更新",
     viewDetails: "詳細を見る",
-    viewFullHistory: "全履歴を見る",
+    viewFullHistory: "完全な履歴を見る",
     subscribeToUpdates: "更新を購読する",
-    serviceDetails: "サービス詳細",
+    serviceDetails: "サービスの詳細",
     terms: "利用規約",
-    privacy: "プライバシー"
+    privacy: "プライバシー",
+    selectTheme: "テーマを選択",
+    selectLanguage: "言語を選択",
+    operational: "正常稼働",
+    degraded: "性能低下",
+    down: "停止中",
+    currentStatus: "現在の状態",
+    responseTime: "応答時間",
+    uptime30d: "稼働率（30日間）",
+    lastOutage: "最終停止",
+    avgResponse: "平均応答",
+    uptimeHistory: "稼働履歴",
+    recentIncidents: "最近のインシデント",
+    noHistoryAvailable: "履歴なし",
+    noIncidentsReported: "インシデントなし",
+    noRecentOutages: "最近の停止なし",
+    overall: "全体状態",
+    partialOutage: "一部停止",
+    lastUpdated: "最終更新",
+    dashboard: "ダッシュボード",
+    dashboardDescription: "サービスの状態をリアルタイムで確認し、即時更新を受け取ります",
+    checkingNow: "確認中...",
+    checkNow: "今すぐ確認",
+    success: "成功",
+    error: "エラー",
+    favoriteAdded: "サービスをお気に入りに追加しました",
+    favoriteRemoved: "サービスをお気に入りから削除しました",
   },
   pt: {
     settings: "Configurações",
+    settingsDescription: "Personalize sua experiência alterando o tema e o idioma",
     theme: "Tema",
     language: "Idioma",
     system: "Sistema",
@@ -655,7 +766,11 @@ export const translations = {
     subscribeToUpdates: "Inscrever-se para Atualizações",
     serviceDetails: "Detalhes do Serviço",
     terms: "Termos",
-    privacy: "Privacidade"
+    privacy: "Privacidade",
+    success: "Sucesso",
+    error: "Erro",
+    favoriteAdded: "Serviço adicionado aos favoritos",
+    favoriteRemoved: "Serviço removido dos favoritos",
   },
   ru: {
     settings: "Настройки",
@@ -726,13 +841,45 @@ export const translations = {
     subscribeToUpdates: "Подписаться на обновления",
     serviceDetails: "Детали сервиса",
     terms: "Условия",
-    privacy: "Конфиденциальность"
+    privacy: "Конфиденциальность",
+    success: "Успех",
+    error: "Ошибка",
+    favoriteAdded: "Сервис добавлен в избранное",
+    favoriteRemoved: "Сервис удален из избранного",
+    lastUpdated: "Последнее обновление",
   }
 };
 
-// Tipo per la traduzione che include la nuova chiave 'categories'
+// Tipo per la traduzione che include tutte le proprietà necessarie
 export type Translation = typeof translations.en & {
   categories: string;
+  dashboard: string;
+  dashboardDescription: string;
+  checkingNow: string;
+  checkNow: string;
+  success: string;
+  error: string;
+  favoriteAdded: string;
+  favoriteRemoved: string;
+  lastUpdated: string;
+  settingsDescription: string;
+  selectTheme: string;
+  selectLanguage: string;
+  operational: string;
+  degraded: string;
+  down: string;
+  currentStatus: string;
+  responseTime: string;
+  uptime30d: string;
+  lastOutage: string;
+  avgResponse: string;
+  uptimeHistory: string;
+  recentIncidents: string;
+  noHistoryAvailable: string;
+  noIncidentsReported: string;
+  noRecentOutages: string;
+  overall: string;
+  partialOutage: string;
 };
 
 interface SettingsContextType {
@@ -750,20 +897,71 @@ interface SettingsContextType {
 export const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  // Carica i valori salvati da localStorage o usa il tema chiaro di default
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  
+  // Stato del tema
   const [theme, setThemeState] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem("theme");
     return (savedTheme as Theme) || "light";
   });
 
+  // Stato della lingua
   const [language, setLanguageState] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem("language");
     return (savedLanguage as Language) || "en";
   });
   
-  const [favorites, setFavorites] = useState<number[]>(() => {
-    const savedFavorites = localStorage.getItem("favorites");
-    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  // Query per ottenere i preferiti dall'API
+  const { data: favorites = [] } = useQuery({
+    queryKey: ['favorites'],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await apiRequest("GET", "/api/favorites");
+      return await res.json();
+    },
+    enabled: !!user
+  });
+
+  // Mutazioni per aggiungere/rimuovere preferiti
+  const addFavoriteMutation = useMutation({
+    mutationFn: async (serviceId: number) => {
+      await apiRequest("POST", `/api/favorites/${serviceId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      toast({
+        title: t.success || "Success",
+        description: t.favoriteAdded || "Service added to favorites",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t.error || "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
+  const removeFavoriteMutation = useMutation({
+    mutationFn: async (serviceId: number) => {
+      await apiRequest("DELETE", `/api/favorites/${serviceId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      toast({
+        title: t.success || "Success",
+        description: t.favoriteRemoved || "Service removed from favorites",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t.error || "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   });
 
   // Gestisce il cambiamento del tema
@@ -793,12 +991,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("language", language);
   }, [language]);
 
-  // Gestisce il cambiamento dei preferiti
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
-
-  // Funzioni per gestire l'impostazione del tema
+  // Funzione per impostare il tema
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
   };
@@ -810,13 +1003,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   // Funzioni per gestire i servizi preferiti
   const addFavorite = (serviceId: number) => {
-    if (!favorites.includes(serviceId)) {
-      setFavorites([...favorites, serviceId]);
-    }
+    if (!user) return;
+    addFavoriteMutation.mutate(serviceId);
   };
 
   const removeFavorite = (serviceId: number) => {
-    setFavorites(favorites.filter(id => id !== serviceId));
+    if (!user) return;
+    removeFavoriteMutation.mutate(serviceId);
   };
 
   const isFavorite = (serviceId: number): boolean => {

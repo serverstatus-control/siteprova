@@ -9,35 +9,32 @@ import AuthPage from "@/pages/auth-page";
 import InfoPage from "@/pages/info-page";
 import UpdatesPage from "@/pages/updates-page";
 import AccountDashboard from "@/pages/account-dashboard";
-import { AuthProvider } from "@/hooks/use-auth";
-import { SettingsProvider } from "@/hooks/use-settings";
 import { ProtectedRoute } from "@/lib/protected-route";
 import CustomCursor from "@/components/CustomCursor";
 
 function ScrollProgressBar() {
-  const [width, setWidth] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setWidth(progress);
+    const updateScrollProgress = () => {
+      const scrollPx = document.documentElement.scrollTop;
+      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = scrollPx ? (scrollPx / winHeightPx) * 100 : 0;
+      setScrollProgress(progress);
     };
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", updateScrollProgress);
+    updateScrollProgress();
+
+    return () => window.removeEventListener("scroll", updateScrollProgress);
   }, []);
 
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 9999 }}>
-      <div style={{
-        height: 4,
-        width: `${width}%`,
-        background: "#facc15",
-        transition: "width 0.6s cubic-bezier(0.4,0,0.2,1)",
-        borderRadius: 2
-      }} />
+    <div className="fixed top-0 left-0 z-50 w-full h-1 bg-background/20">
+      <div
+        className="h-full transition-all duration-150 bg-primary/50"
+        style={{ width: `${scrollProgress}%` }}
+      ></div>
     </div>
   );
 }
@@ -59,14 +56,12 @@ function Router() {
 
 function App() {
   return (
-    <SettingsProvider>
-      <AuthProvider>
-        <CustomCursor />
-        <ScrollProgressBar />
-        <Router />
-        <Toaster />
-      </AuthProvider>
-    </SettingsProvider>
+    <>
+      <CustomCursor />
+      <ScrollProgressBar />
+      <Router />
+      <Toaster />
+    </>
   );
 }
 
