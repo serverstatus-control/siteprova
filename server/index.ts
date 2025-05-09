@@ -40,25 +40,46 @@ app.use((req, res, next) => {
 
 // Intervallo di controllo in millisecondi (20 minuti)
 const CHECK_INTERVAL = 20 * 60 * 1000;
+let isChecking = false;
+let nextCheckTimeout: NodeJS.Timeout;
+
+async function scheduleNextCheck() {
+  if (nextCheckTimeout) {
+    clearTimeout(nextCheckTimeout);
+  }
+  
+  nextCheckTimeout = setTimeout(runCheck, CHECK_INTERVAL);
+}
+
+async function runCheck() {
+  if (isChecking) {
+    console.log("Un controllo è già in corso, salto questo intervallo");
+    scheduleNextCheck();
+    return;
+  }
+
+  isChecking = true;
+  try {
+    console.log("Esecuzione controllo automatico dei servizi...");
+    await checkAllServices();
+    console.log("Controllo automatico completato");
+  } catch (error) {
+    console.error("Errore durante il controllo automatico:", error);
+  } finally {
+    isChecking = false;
+    scheduleNextCheck();
+  }
+}
 
 (async () => {
   const server = await registerRoutes(app);
 
-  // Avvia il controllo automatico
-  console.log("Avvio del controllo automatico dei servizi ogni 20 minuti...");
-  setInterval(async () => {
-    try {
-      console.log("Esecuzione controllo automatico dei servizi...");
-      await checkAllServices();
-      console.log("Controllo automatico completato");
-    } catch (error) {
-      console.error("Errore durante il controllo automatico:", error);
-    }
-  }, CHECK_INTERVAL);
-
+  // Avvia il sistema di controllo automatico
+  console.log("Avvio del sistema di controllo automatico dei servizi ogni 20 minuti...");
+  
   // Esegui il primo controllo all'avvio
   console.log("Esecuzione controllo iniziale dei servizi...");
-  await checkAllServices();
+  await runCheck();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

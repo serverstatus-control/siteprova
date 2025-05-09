@@ -29,12 +29,13 @@ export function setupAuth(app: Express) {
   // Session configuration
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "dev-secret-key",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: 'lax'
     },
     store: storage.sessionStore,
   };
@@ -172,13 +173,9 @@ export function setupAuth(app: Express) {
       return res.status(401).json({ message: "Non autenticato" });
     }
     if (req.user) {
-      const user = req.user as any;
-      if (user.password) {
-        const { password, ...userWithoutPassword } = user;
-        res.json(userWithoutPassword);
-      } else {
-        res.json(user);
-      }
+      const user = req.user as User;
+      const { password: _password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
     } else {
       res.status(401).json({ message: "Non autenticato" });
     }

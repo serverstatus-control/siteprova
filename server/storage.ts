@@ -4,6 +4,7 @@ import {
   uptimeHistory,
   incidents,
   users,
+  favorites,
   type Category,
   type Service,
   type UptimeHistory,
@@ -15,10 +16,14 @@ import {
   type InsertIncident,
   type InsertUser,
   StatusType,
-  type UpdateServiceStatus
+  type UpdateServiceStatus,
+  UserRole
 } from "../shared/schema.ts";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { db } from './db';
+import { and, desc, eq } from 'drizzle-orm';
 
 export interface IStorage {
   // Categories
@@ -63,28 +68,31 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
-  private categories: Map<number, Category>;
-  private services: Map<number, Service>;
-  private history: Map<number, UptimeHistory>;
-  private incidents: Map<number, Incident>;
-
-  private categoryCurrentId: number;
-  private serviceCurrentId: number;
-  private historyCurrentId: number;
-  private incidentCurrentId: number;
+  private categories = new Map<number, Category>();
+  private services = new Map<number, Service>();
+  private uptimeHistory = new Map<number, UptimeHistory>();
+  private incidents = new Map<number, Incident>();
+  private users = new Map<number, User>();
+  private favorites = new Map<number, Set<number>>();
+  private categoryCurrentId = 1;
+  private serviceCurrentId = 1;
+  private historyCurrentId = 1;
+  private incidentCurrentId = 1;
+  sessionStore: any;
 
   constructor() {
     this.categories = new Map();
     this.services = new Map();
     this.history = new Map();
     this.incidents = new Map();
+    this.users = new Map();
+    
+    // Initialize session store for memory storage
+    const MemoryStore = require('memorystore')(session);
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    });
 
-    this.categoryCurrentId = 1;
-    this.serviceCurrentId = 1;
-    this.historyCurrentId = 1;
-    this.incidentCurrentId = 1;
-
-    // Initialize with sample data
     this.initializeData();
   }
 
@@ -137,7 +145,8 @@ export class MemStorage implements IStorage {
       ...insertService, 
       id, 
       lastChecked: new Date(),
-      uptimePercentage: 100
+      uptimePercentage: 100,
+      responseTime: insertService.responseTime || null
     };
     this.services.set(id, service);
     return service;
@@ -168,7 +177,11 @@ export class MemStorage implements IStorage {
 
   async createUptimeHistory(insertHistory: InsertUptimeHistory): Promise<UptimeHistory> {
     const id = this.historyCurrentId++;
-    const history: UptimeHistory = { ...insertHistory, id };
+    const history: UptimeHistory = { 
+      ...insertHistory, 
+      id,
+      responseTime: insertHistory.responseTime || null
+    };
     this.history.set(id, history);
     return history;
   }
@@ -184,7 +197,11 @@ export class MemStorage implements IStorage {
 
   async createIncident(insertIncident: InsertIncident): Promise<Incident> {
     const id = this.incidentCurrentId++;
-    const incident: Incident = { ...insertIncident, id };
+    const incident: Incident = { 
+      ...insertIncident, 
+      id,
+      endTime: insertIncident.endTime || null
+    };
     this.incidents.set(id, incident);
     return incident;
   }
@@ -213,7 +230,7 @@ export class MemStorage implements IStorage {
     // Find the most recent check
     let lastChecked = new Date(0);
     services.forEach(service => {
-      if (service.lastChecked > lastChecked) {
+      if (service.lastChecked && service.lastChecked > lastChecked) {
         lastChecked = service.lastChecked;
       }
     });
@@ -222,24 +239,37 @@ export class MemStorage implements IStorage {
       operational,
       degraded,
       down,
-      lastChecked: lastChecked
+      lastChecked
     };
   }
 
   // Users
+  async getUserById(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      user => user.username === username
+    );
+  }
+
   async getUserByEmail(email: string): Promise<User | undefined> {
-    // Per l'implementazione in memoria, simula un utente di test
-    if (email === "test@example.com") {
-      return {
-        id: 1,
-        username: "test",
-        password: "hashedpassword",
-        email: "test@example.com",
-        role: UserRole.USER,
-        createdAt: new Date()
-      };
-    }
-    return undefined;
+    return Array.from(this.users.values()).find(
+      user => user.email === email
+    );
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const id = this.users.size + 1;
+    const newUser: User = {
+      ...user,
+      id,
+      role: UserRole.USER,
+      createdAt: new Date()
+    };
+    this.users.set(id, newUser);
+    return newUser;
   }
 
   // Helper method to seed initial data
@@ -365,9 +395,6 @@ export class MemStorage implements IStorage {
     });
   }
 }
-
-import { db } from './db';
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
 
 export class DatabaseStorage implements IStorage {
   sessionStore: any;
@@ -524,6 +551,31 @@ export class DatabaseStorage implements IStorage {
       down: Number(summary.down) || 0,
       lastChecked: summary.last_checked ? new Date(summary.last_checked) : new Date()
     };
+  }
+
+  // Favorites methods
+  async getFavorites(userId: number): Promise<number[]> {
+    const results = await db.select({
+      serviceId: favorites.serviceId,
+    })
+    .from(favorites)
+    .where(eq(favorites.userId, userId));
+    
+    return results.map(f => f.serviceId);
+  }
+
+  async addFavorite(userId: number, serviceId: number): Promise<void> {
+    await db.insert(favorites)
+      .values({ userId, serviceId })
+      .onConflictDoNothing();
+  }
+
+  async removeFavorite(userId: number, serviceId: number): Promise<void> {
+    await db.delete(favorites)
+      .where(and(
+        eq(favorites.userId, userId),
+        eq(favorites.serviceId, serviceId)
+      ));
   }
 }
 

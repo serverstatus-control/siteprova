@@ -60,6 +60,14 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Nuova tabella per i preferiti
+export const favorites = pgTable("favorites", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  serviceId: integer("service_id").notNull().references(() => services.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertCategorySchema = createInsertSchema(categories).pick({
   name: true,
   icon: true,
@@ -126,3 +134,4 @@ export type UptimeHistory = typeof uptimeHistory.$inferSelect;
 export type Incident = typeof incidents.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type UpdateServiceStatus = z.infer<typeof updateServiceStatusSchema>;
+export type Favorite = typeof favorites.$inferSelect;

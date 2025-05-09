@@ -3,6 +3,7 @@ import {
   useQuery,
   useMutation,
   UseMutationResult,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { insertUserSchema, loginUserSchema } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
@@ -32,7 +33,8 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 // Auth provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
-  
+  const queryClient = useQueryClient();
+
   // Query to fetch the current user
   const {
     data: user,
@@ -43,14 +45,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
+  // Function to migrate favorites from localStorage
+  const migrateFavorites = async () => {
+    const savedFavorites = localStorage.getItem("favorites");
+    if (!savedFavorites) return;
+
+    const favorites = JSON.parse(savedFavorites);
+    if (!Array.isArray(favorites) || favorites.length === 0) return;
+
+    // Add favorites through the API
+    for (const serviceId of favorites) {
+      try {
+        await apiRequest("POST", `/api/favorites/${serviceId}`);
+      } catch (error) {
+        console.error("Error migrating favorite:", error);
+      }
+    }
+
+    // Remove favorites from localStorage after migration
+    localStorage.removeItem("favorites");
+  };
+
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
       const res = await apiRequest("POST", "/api/login", credentials);
       return await res.json();
     },
-    onSuccess: (user: User) => {
+    onSuccess: async (user: User) => {
       queryClient.setQueryData(["/api/user"], user);
+      // Migrate favorites after login
+      await migrateFavorites();
+      // Invalidate the favorites query to force a refresh
+      queryClient.invalidateQueries(['favorites']);
       toast({
         title: "Login successful",
         description: `Welcome back, ${user.username}!`,

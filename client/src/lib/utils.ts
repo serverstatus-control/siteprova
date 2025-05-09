@@ -24,23 +24,42 @@ export const localeMap: Record<string, Locale> = {
 export function formatTimeAgo(date: Date | string | number, language: string = 'it'): string {
   const locale = localeMap[language] || localeMap.it;
   const dateObj = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date;
-  const formatted = formatDistanceToNow(dateObj, { 
-    addSuffix: true,
-    locale 
-  });
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
 
+  // Gestione speciale per l'italiano
   if (language === 'it') {
-    // Migliora la formattazione italiana
-    return formatted
-      .replace('circa', '')
-      .replace('meno di un minuto fa', 'poco fa')
-      .replace('un minuto fa', '1 minuto fa')
-      .replace('un giorno fa', '1 giorno fa')
-      .replace('un mese fa', '1 mese fa')
-      .replace('un anno fa', '1 anno fa')
-      .trim();
+    if (diffInSeconds < 5) return 'proprio ora';
+    if (diffInSeconds < 60) return `${diffInSeconds} secondi fa`;
+    if (diffInSeconds < 120) return 'un minuto fa';
+    if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minuti fa`;
+    }
+    if (diffInSeconds < 7200) return 'un\'ora fa';
+    if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} ore fa`;
+    }
+
+    // Per periodi più lunghi, usa il formato giornaliero
+    return formatDistanceToNow(dateObj, {
+      addSuffix: true,
+      locale
+    })
+    .replace('circa', '')
+    .replace('meno di un minuto fa', 'poco fa')
+    .replace('un giorno fa', '1 giorno fa')
+    .replace('un mese fa', '1 mese fa')
+    .replace('un anno fa', '1 anno fa')
+    .trim();
   }
-  return formatted;
+
+  // Per altre lingue usa il comportamento predefinito
+  return formatDistanceToNow(dateObj, {
+    addSuffix: true,
+    locale
+  });
 }
 
 // Traduzioni base (italiano)

@@ -28,8 +28,6 @@ const Footer: React.FC = () => {
             <button type="button" onClick={() => setShowTerms(true)} className="text-sm font-semibold text-gray-400 capitalize transition-colors hover:text-primary focus:outline-none">{t('Terms')}</button>
             <span className="mx-1 text-gray-500">|</span>
             <button type="button" onClick={() => setShowPrivacy(true)} className="text-sm font-semibold text-gray-400 capitalize transition-colors hover:text-primary focus:outline-none">{t('Privacy')}</button>
-            <span className="mx-1 text-gray-500">|</span>
-            <Link href="/admin" className="text-sm text-gray-400 transition-colors hover:text-primary">Admin</Link>
           </div>
         </div>
       </footer>

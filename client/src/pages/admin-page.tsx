@@ -15,177 +15,137 @@ import { Textarea } from '@/components/ui/textarea';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import StatusBadge from '@/components/StatusBadge';
+import { useAuth } from '@/hooks/use-auth';
+import { UserRole } from '@shared/schema';
+import { useLocation } from 'wouter';
+import { Loader2 } from 'lucide-react';
 
 const AdminPage: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [_, navigate] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isIncidentDialogOpen, setIsIncidentDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [incidentTitle, setIncidentTitle] = useState('');
   const [incidentDescription, setIncidentDescription] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<'operational' | 'degraded' | 'down'>('operational');
 
-  // Fetch categories
-  const { 
-    data: categories = [],
-    isLoading: isCategoriesLoading
-  } = useQuery<Category[]>({
+  // Fetch data
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
     queryKey: ['/api/categories'],
   });
 
-  // Fetch services
-  const { 
-    data: services = [],
-    isLoading: isServicesLoading
-  } = useQuery<Service[]>({
+  const { data: services = [], isLoading: isServicesLoading } = useQuery({
     queryKey: ['/api/services'],
   });
 
-  // Fetch status summary
-  const { 
-    data: statusSummary = {
-      operational: 0,
-      degraded: 0,
-      down: 0,
-      lastChecked: new Date().toISOString()
-    },
-    isLoading: isSummaryLoading,
-  } = useQuery<StatusSummary>({
+  const { data: statusSummary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['/api/status-summary'],
   });
 
-  // Update service status mutation
-  const { mutate: updateServiceStatus, isPending: isUpdatingStatus } = useMutation({
-    mutationFn: async ({ serviceId, status, responseTime }: { serviceId: number, status: string, responseTime?: number }) => {
-      return apiRequest('PATCH', `/api/services/${serviceId}/status`, { status, responseTime });
+  // Mutations
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ serviceId, status }: { serviceId: number; status: string }) => {
+      return await apiRequest('PATCH', `/api/services/${serviceId}/status`, { status });
     },
     onSuccess: () => {
-      // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/services'] });
       queryClient.invalidateQueries({ queryKey: ['/api/status-summary'] });
-      
       toast({
-        title: "Status Updated",
-        description: "Service status has been updated successfully.",
+        title: 'Status updated',
+        description: 'The service status has been updated successfully.',
       });
     },
-    onError: (error) => {
-      console.error("Error updating service status:", error);
+    onError: (error: Error) => {
       toast({
-        title: "Update Failed",
-        description: "Failed to update service status. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
       });
-    }
+    },
   });
 
-  // Create incident mutation
-  const { mutate: createIncident, isPending: isCreatingIncident } = useMutation({
-    mutationFn: async ({ serviceId, title, description, status }: { serviceId: number, title: string, description: string, status: string }) => {
-      return apiRequest('POST', `/api/incidents`, { 
-        serviceId, 
-        title, 
-        description, 
-        status,
-        startTime: new Date().toISOString(),
-        endTime: null 
-      });
+  const createIncidentMutation = useMutation({
+    mutationFn: async (data: { serviceId: number; title: string; description: string }) => {
+      return await apiRequest('POST', `/api/services/${data.serviceId}/incidents`, data);
     },
     onSuccess: () => {
-      // Clear form and close dialog
+      setIsIncidentDialogOpen(false);
       setIncidentTitle('');
       setIncidentDescription('');
-      setIsIncidentDialogOpen(false);
       setSelectedService(null);
-      
-      // Invalidate incident queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['/api/services'] });
-      
       toast({
-        title: "Incident Created",
-        description: "New incident has been created successfully.",
+        title: 'Incident created',
+        description: 'The incident has been created successfully.',
       });
     },
-    onError: (error) => {
-      console.error("Error creating incident:", error);
+    onError: (error: Error) => {
       toast({
-        title: "Creation Failed",
-        description: "Failed to create incident. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
       });
-    }
+    },
   });
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  // Protect admin route
+  React.useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+    } else if (user.role !== UserRole.ADMIN) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
+  // Handlers
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
 
-  const handleStatusChange = (serviceId: number, status: 'operational' | 'degraded' | 'down') => {
-    // Get mock response times based on status
-    const responseTime = status === 'operational' ? 120 : 
-                        status === 'degraded' ? 450 : 0;
-    
-    // Update service status
-    updateServiceStatus({ serviceId, status, responseTime });
+  const handleStatusChange = async (serviceId: number, status: string) => {
+    await updateStatusMutation.mutate({ serviceId, status });
   };
 
   const openIncidentDialog = (service: Service) => {
     setSelectedService(service);
-    setSelectedStatus(service.status as 'operational' | 'degraded' | 'down');
     setIsIncidentDialogOpen(true);
   };
 
-  const handleCreateIncident = () => {
-    if (!selectedService) return;
-    
-    if (!incidentTitle || !incidentDescription) {
-      toast({
-        title: "Missing Information",
-        description: "Please provide both a title and description for the incident.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // Create incident
-    createIncident({
+  const handleCreateIncident = async () => {
+    if (!selectedService || !incidentTitle || !incidentDescription) return;
+
+    await createIncidentMutation.mutate({
       serviceId: selectedService.id,
       title: incidentTitle,
       description: incidentDescription,
-      status: selectedStatus
-    });
-    
-    // Also update the service status to match the incident
-    updateServiceStatus({ 
-      serviceId: selectedService.id, 
-      status: selectedStatus,
-      responseTime: selectedStatus === 'operational' ? 120 : 
-                   selectedStatus === 'degraded' ? 450 : 0
     });
   };
 
-  // Filter services based on search term
-  const filteredServices = services.filter(service => 
+  // Filter services based on search
+  const filteredServices = services.filter(service =>
     service.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Loading state
-  if (isCategoriesLoading || isServicesLoading || isSummaryLoading) {
+  if (isServicesLoading || isCategoriesLoading || isSummaryLoading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="text-white text-xl">Loading dashboard...</div>
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
+  if (!user || user.role !== UserRole.ADMIN) {
+    return null;
+  }
+
   return (
-    <div className="bg-dark text-gray-100 font-sans min-h-screen">
-      <Header onMenuToggle={toggleMobileMenu} onSearch={handleSearch} />
+    <div className="min-h-screen bg-background">
+      <Header services={services} onMenuToggle={toggleMobileMenu} onSearch={handleSearch} />
       
       <div className="flex min-h-[calc(100vh-64px)]">
         <Sidebar categories={categories} statusSummary={statusSummary} />
@@ -196,17 +156,17 @@ const AdminPage: React.FC = () => {
           statusSummary={statusSummary}
         />
         
-        <main className="flex-1 lg:ml-64 pb-12">
-          <div className="bg-dark-light p-4 md:p-6 border-b border-dark-lighter">
+        <main className="flex-1 pb-12 lg:ml-64">
+          <div className="p-4 border-b md:p-6 border-border">
             <div className="container mx-auto">
-              <h1 className="text-2xl font-bold mb-2">Admin Dashboard</h1>
-              <p className="text-gray-400">Manage service statuses and incidents</p>
+              <h1 className="mb-2 text-2xl font-bold">Admin Dashboard</h1>
+              <p className="text-muted-foreground">Manage service statuses and incidents</p>
             </div>
           </div>
           
-          <div className="container mx-auto px-4 py-6">
-            <div className="bg-dark-light rounded-lg border border-dark-lighter p-4 mb-8">
-              <h2 className="text-xl font-semibold mb-4">Service Status Management</h2>
+          <div className="container px-4 py-6 mx-auto">
+            <div className="p-4 mb-8 border rounded-lg bg-card border-border">
+              <h2 className="mb-4 text-xl font-semibold">Service Status Management</h2>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -236,8 +196,8 @@ const AdminPage: React.FC = () => {
                             <div className="flex items-center space-x-2">
                               <Select 
                                 defaultValue={service.status} 
-                                onValueChange={(value) => handleStatusChange(service.id, value as 'operational' | 'degraded' | 'down')}
-                                disabled={isUpdatingStatus}
+                                onValueChange={(value) => handleStatusChange(service.id, value)}
+                                disabled={updateStatusMutation.isPending}
                               >
                                 <SelectTrigger className="w-32">
                                   <SelectValue placeholder="Status" />
@@ -254,7 +214,7 @@ const AdminPage: React.FC = () => {
                                 size="sm" 
                                 onClick={() => openIncidentDialog(service)}
                               >
-                                <i className="fas fa-exclamation-triangle mr-1"></i> New Incident
+                                <i className="mr-1 fas fa-exclamation-triangle"></i> New Incident
                               </Button>
                             </div>
                           </TableCell>
@@ -273,42 +233,41 @@ const AdminPage: React.FC = () => {
       
       {/* New Incident Dialog */}
       <Dialog open={isIncidentDialogOpen} onOpenChange={setIsIncidentDialogOpen}>
-        <DialogContent className="bg-dark-light border-dark-lighter text-white">
+        <DialogContent className="border-border">
           <DialogHeader>
             <DialogTitle>New Incident</DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-muted-foreground">
               Create a new incident for {selectedService?.name}
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
+          <div className="py-4 space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Title</label>
               <Input 
                 placeholder="Incident title" 
                 value={incidentTitle} 
                 onChange={(e) => setIncidentTitle(e.target.value)} 
-                className="bg-dark-lighter border-dark-lighter"
               />
             </div>
             
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
-              <Textarea 
-                placeholder="Incident description" 
-                value={incidentDescription} 
-                onChange={(e) => setIncidentDescription(e.target.value)} 
-                className="bg-dark-lighter border-dark-lighter min-h-[100px]"
+              <Textarea
+                placeholder="Describe the incident..."
+                value={incidentDescription}
+                onChange={(e) => setIncidentDescription(e.target.value)}
+                rows={4}
               />
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Status</label>
               <Select 
-                value={selectedStatus} 
-                onValueChange={(value) => setSelectedStatus(value as 'operational' | 'degraded' | 'down')}
+                defaultValue={selectedService?.status} 
+                onValueChange={(value) => selectedService && handleStatusChange(selectedService.id, value)}
               >
-                <SelectTrigger className="w-full bg-dark-lighter border-dark-lighter">
+                <SelectTrigger>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -329,9 +288,9 @@ const AdminPage: React.FC = () => {
             </Button>
             <Button 
               onClick={handleCreateIncident} 
-              disabled={isCreatingIncident || !incidentTitle || !incidentDescription}
+              disabled={createIncidentMutation.isPending || !incidentTitle || !incidentDescription}
             >
-              {isCreatingIncident ? 'Creating...' : 'Create Incident'}
+              {createIncidentMutation.isPending ? 'Creating...' : 'Create Incident'}
             </Button>
           </DialogFooter>
         </DialogContent>
