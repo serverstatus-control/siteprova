@@ -1,0 +1,12 @@
+{
+  "name": "server-status-client",
+  "version": "0.3.00",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  }
+}
