@@ -23,7 +23,7 @@ import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { db } from './db';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 
 export interface IStorage {
   // Categories
@@ -70,7 +70,7 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private categories = new Map<number, Category>();
   private services = new Map<number, Service>();
-  private uptimeHistory = new Map<number, UptimeHistory>();
+  private history = new Map<number, UptimeHistory>();
   private incidents = new Map<number, Incident>();
   private users = new Map<number, User>();
   private favorites = new Map<number, Set<number>>();
@@ -81,11 +81,11 @@ export class MemStorage implements IStorage {
   sessionStore: any;
 
   constructor() {
-    this.categories = new Map();
-    this.services = new Map();
-    this.history = new Map();
-    this.incidents = new Map();
-    this.users = new Map();
+  this.categories = new Map();
+  this.services = new Map();
+  this.history = new Map();
+  this.incidents = new Map();
+  this.users = new Map();
     
     // Initialize session store for memory storage
     const MemoryStore = require('memorystore')(session);
@@ -141,13 +141,14 @@ export class MemStorage implements IStorage {
 
   async createService(insertService: InsertService): Promise<Service> {
     const id = this.serviceCurrentId++;
-    const service: Service = { 
-      ...insertService, 
-      id, 
+    const service: Service = {
+      ...insertService,
+      id,
       lastChecked: new Date(),
       uptimePercentage: 100,
-      responseTime: insertService.responseTime || null
-    };
+      responseTime: insertService.responseTime !== undefined ? insertService.responseTime : null,
+      status: insertService.status !== undefined ? String(insertService.status) : String(StatusType.UP),
+    } as unknown as Service;
     this.services.set(id, service);
     return service;
   }
@@ -543,7 +544,7 @@ export class DatabaseStorage implements IStorage {
       FROM ${services}
     `);
     
-    const summary = results.rows[0];
+  const summary: any = results.rows[0];
     
     return {
       operational: Number(summary.operational) || 0,

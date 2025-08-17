@@ -125,9 +125,10 @@ export function setupAuth(app: Express) {
           return res.status(500).json({ message: "Login fallito dopo la registrazione" });
         }
         
-        // Return user without password
-        const { password, ...userWithoutPassword } = user;
-        res.status(201).json(userWithoutPassword);
+  // Return user without password (cast to any to avoid strict typing here)
+  const u: any = user;
+  const { password: _password, ...userWithoutPassword } = u;
+  res.status(201).json(userWithoutPassword);
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -150,9 +151,10 @@ export function setupAuth(app: Express) {
           return next(err);
         }
         
-        // Return user without password
-        const { password, ...userWithoutPassword } = user;
-        return res.json(userWithoutPassword);
+  // Return user without password (cast to any to avoid strict typing here)
+  const u2: any = user;
+  const { password: _password2, ...userWithoutPassword } = u2;
+  return res.json(userWithoutPassword);
       });
     })(req, res, next);
   });

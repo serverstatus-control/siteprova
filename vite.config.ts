@@ -20,15 +20,23 @@ export default defineConfig(({ mode }) => {
     base: '/siteprova/',
     plugins: [react(), runtimeErrorOverlay(), themePlugin()],
     server: {
-      port: 5173,
+  port: 3000,
       strictPort: true,
+      fs: {
+        allow: ['.']
+      },
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: 'http://localhost:3001',
           changeOrigin: true,
-          secure: false,
-          ws: true,
         },
+      },
+  // proxy rimosso, non serve più
+      // Gestisce correttamente il routing SPA
+      historyApiFallback: {
+        rewrites: [
+          { from: /^\/siteprova\/.*$/, to: '/index.html' }
+        ]
       },
       hmr: { overlay: false },
       watch: { usePolling: true, ignored: ['**/node_modules/**', '**/dist/**', '**/.git/**'] },

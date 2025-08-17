@@ -42,13 +42,14 @@ function ScrollProgressBar() {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/services/:slug" component={ServiceDetail} />
-      <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
-      <ProtectedRoute path="/account-dashboard" component={AccountDashboard} />
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/info" component={InfoPage} />
-      <Route path="/updates" component={UpdatesPage} />
+      <Route path="/siteprova/" component={Home} />
+      <Route path="/siteprova/services/:slug" component={ServiceDetail} />
+      <ProtectedRoute path="/siteprova/admin" component={AdminPage} adminOnly={true} />
+      <ProtectedRoute path="/siteprova/account-dashboard" component={AccountDashboard} />
+      <Route path="/siteprova/auth" component={AuthPage} />
+      <Route path="/siteprova/info" component={InfoPage} />
+      <Route path="/siteprova/:rest*" component={NotFound} />
+      <Route path="/siteprova/updates" component={UpdatesPage} />
       <Route component={NotFound} />
     </Switch>
   );

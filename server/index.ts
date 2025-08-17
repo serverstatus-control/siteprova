@@ -75,11 +75,11 @@ async function runCheck() {
   const server = await registerRoutes(app);
 
   // Avvia il sistema di controllo automatico
-  console.log("Avvio del sistema di controllo automatico dei servizi ogni 20 minuti...");
+  console.log("Avvio del sistema di controllo automatico dei servizi ogni 20 minuti!");
   
-  // Esegui il primo controllo all'avvio
-  console.log("Esecuzione controllo iniziale dei servizi...");
-  await runCheck();
+  // Non eseguire il controllo iniziale immediato: avvia il primo controllo dopo l'intervallo configurato
+  console.log("Primo controllo automatico programmato tra 20 minuti!");
+  scheduleNextCheck();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -101,7 +101,7 @@ async function runCheck() {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = 5000;
+  const port = process.env.PORT || 3000;
   server.listen(port, () => {
     log(`serving on port ${port}`);
   });

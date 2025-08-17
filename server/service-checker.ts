@@ -9,7 +9,7 @@ interface CheckResult {
 
 export async function checkService(service: Service): Promise<CheckResult> {
   const startTime = Date.now();
-  let status = StatusType.UP;
+  let status: typeof StatusType[keyof typeof StatusType] = StatusType.UP;
   let responseTime = 0;
   
   try {
