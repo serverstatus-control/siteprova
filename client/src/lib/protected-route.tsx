@@ -20,7 +20,7 @@ export function ProtectedRoute({
     return (
       <Route path={path}>
         <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </Route>
     );
@@ -30,7 +30,7 @@ export function ProtectedRoute({
   if (!user) {
     return (
       <Route path={path}>
-        <Redirect to="/auth" />
+        <Redirect to="/siteprova/auth" />
       </Route>
     );
   }
@@ -39,7 +39,7 @@ export function ProtectedRoute({
   if (adminOnly && user.role !== UserRole.ADMIN) {
     return (
       <Route path={path}>
-        <Redirect to="/" />
+        <Redirect to="/siteprova/" />
       </Route>
     );
   }

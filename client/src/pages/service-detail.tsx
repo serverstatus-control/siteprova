@@ -124,7 +124,7 @@ const ServiceDetail: React.FC = () => {
         <main className="flex-1 lg:ml-64 pb-12">
           <div className="container mx-auto px-4 py-6">
             <div className="mb-6">
-              <a href="/" className="text-primary hover:text-blue-400 mb-4 inline-flex items-center">
+              <a href="/siteprova/" className="text-primary hover:text-blue-400 mb-4 inline-flex items-center">
                 <i className="fas fa-arrow-left mr-2"></i>
                 Back to Dashboard
               </a>

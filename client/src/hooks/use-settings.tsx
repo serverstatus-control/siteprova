@@ -32,6 +32,7 @@ export const translations = {
     portuguese: "Portuguese",
     russian: "Russian",
     close: "Close",
+  register: "Register",
     login: "Login",
     logout: "Logout",
     admin: "Admin",
@@ -130,6 +131,7 @@ export const translations = {
     portuguese: "Portoghese",
     russian: "Russo",
     close: "Chiudi",
+  register: "Registrati",
     login: "Accedi",
     logout: "Esci",
     admin: "Amministratore",
@@ -228,6 +230,7 @@ export const translations = {
     portuguese: "Portugués",
     russian: "Ruso",
     close: "Cerrar",
+  register: "Registrarse",
     login: "Iniciar sesión",
     logout: "Cerrar sesión",
     admin: "Administrador",
@@ -326,6 +329,7 @@ export const translations = {
     portuguese: "Portugais",
     russian: "Russe",
     close: "Fermer",
+  register: "S'inscrire",
     login: "Connexion",
     logout: "Déconnexion",
     admin: "Admin",
@@ -423,6 +427,7 @@ export const translations = {
     portuguese: "Portugiesisch",
     russian: "Russisch",
     close: "Schließen",
+  register: "Registrieren",
     login: "Anmelden",
     logout: "Abmelden",
     admin: "Administrator",
@@ -522,6 +527,7 @@ export const translations = {
     portuguese: "葡萄牙语",
     russian: "俄语",
     close: "关闭",
+  register: "注册",
     login: "登录",
     logout: "登出",
     admin: "管理员",
@@ -620,6 +626,7 @@ export const translations = {
     portuguese: "ポルトガル語",
     russian: "ロシア語",
     close: "閉じる",
+  register: "登録",
     login: "ログイン",
     logout: "ログアウト",
     admin: "管理者",
@@ -718,6 +725,7 @@ export const translations = {
     portuguese: "Português",
     russian: "Russo",
     close: "Fechar",
+  register: "Registrar",
     login: "Entrar",
     logout: "Sair",
     admin: "Administrador",
@@ -793,6 +801,7 @@ export const translations = {
     portuguese: "Португальский",
     russian: "Русский",
     close: "Закрыть",
+  register: "Зарегистрироваться",
     login: "Войти",
     logout: "Выйти",
     admin: "Администратор",
@@ -850,37 +859,8 @@ export const translations = {
   }
 };
 
-// Tipo per la traduzione che include tutte le proprietà necessarie
-export type Translation = typeof translations.en & {
-  categories: string;
-  dashboard: string;
-  dashboardDescription: string;
-  checkingNow: string;
-  checkNow: string;
-  success: string;
-  error: string;
-  favoriteAdded: string;
-  favoriteRemoved: string;
-  lastUpdated: string;
-  settingsDescription: string;
-  selectTheme: string;
-  selectLanguage: string;
-  operational: string;
-  degraded: string;
-  down: string;
-  currentStatus: string;
-  responseTime: string;
-  uptime30d: string;
-  lastOutage: string;
-  avgResponse: string;
-  uptimeHistory: string;
-  recentIncidents: string;
-  noHistoryAvailable: string;
-  noIncidentsReported: string;
-  noRecentOutages: string;
-  overall: string;
-  partialOutage: string;
-};
+// Tipo generico per le traduzioni (mappa chiave->stringa)
+export type Translation = Record<string, string>;
 
 interface SettingsContextType {
   theme: Theme;
@@ -968,21 +948,37 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem("theme", theme);
     const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-      root.classList.add(systemTheme);
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      const handleChange = (e: MediaQueryListEvent) => {
+
+    const applyTheme = (applied: "light" | "dark") => {
+      // only update if changed to avoid layout thrashing
+      if (!root.classList.contains(applied)) {
         root.classList.remove("light", "dark");
-        root.classList.add(e.matches ? "dark" : "light");
+        root.classList.add(applied);
+      }
+      // set data attribute for CSS hooks
+      if (root.getAttribute('data-theme') !== applied) {
+        root.setAttribute('data-theme', applied);
+      }
+    };
+
+    if (theme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const systemTheme = mediaQuery.matches ? "dark" : "light";
+      applyTheme(systemTheme);
+
+      // debounce updates from media query changes
+      let timeout: number | null = null;
+      const handleChange = (e: MediaQueryListEvent) => {
+        if (timeout) window.clearTimeout(timeout);
+        timeout = window.setTimeout(() => {
+          applyTheme(e.matches ? "dark" : "light");
+          timeout = null;
+        }, 50);
       };
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     } else {
-      root.classList.add(theme);
+      applyTheme(theme as "light" | "dark");
     }
   }, [theme]);
 

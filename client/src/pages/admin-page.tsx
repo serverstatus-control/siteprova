@@ -32,16 +32,28 @@ const AdminPage: React.FC = () => {
   const [incidentDescription, setIncidentDescription] = useState('');
 
   // Fetch data
-  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
+    queryFn: async () => {
+      const res = await apiRequest('GET', '/api/categories');
+      return res.json();
+    },
   });
 
-  const { data: services = [], isLoading: isServicesLoading } = useQuery({
+  const { data: services = [], isLoading: isServicesLoading } = useQuery<Service[]>({
     queryKey: ['/api/services'],
+    queryFn: async () => {
+      const res = await apiRequest('GET', '/api/services');
+      return res.json();
+    },
   });
 
-  const { data: statusSummary, isLoading: isSummaryLoading } = useQuery({
+  const { data: statusSummary = null, isLoading: isSummaryLoading } = useQuery<StatusSummary | null>({
     queryKey: ['/api/status-summary'],
+    queryFn: async () => {
+      const res = await apiRequest('GET', '/api/status-summary');
+      return res.json();
+    },
   });
 
   // Mutations
@@ -93,9 +105,9 @@ const AdminPage: React.FC = () => {
   // Protect admin route
   React.useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate('/siteprova/auth');
     } else if (user.role !== UserRole.ADMIN) {
-      navigate('/');
+      navigate('/siteprova/');
     }
   }, [user, navigate]);
 

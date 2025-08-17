@@ -27,7 +27,7 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
   const handleBackToDashboard = (e: React.MouseEvent) => {
     e.preventDefault();
     onClose();
-    navigate('/');
+    navigate('/siteprova/');
   };
 
   // Aggiungi gestore tasto ESC
@@ -69,21 +69,31 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             <i className="transition-colors duration-200 fas fa-times text-muted-foreground group-hover:text-foreground"></i>
           </button>
         </div>
-        
-        <div className="flex-1 p-6 overflow-y-auto scrollbar-hide">
-          <div className="flex items-center mb-6">
-            <div className="flex items-center justify-center w-12 h-12 mr-4 rounded-full bg-dark-lighter">
-              <i className={logo || getServiceIcon(name) + " text-2xl"}></i>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold">{name}</h3>
-              <div className="flex items-center mt-1">
-                <StatusBadge status={status} className="mr-2" />
-                <span className="text-xs text-gray-400">{t.lastCheck} {formattedLastChecked}</span>
-              </div>
-            </div>
-          </div>
 
+        <div className="flex-1 p-6 overflow-y-auto scrollbar-hide">
+          <div className="mb-4">
+            <Link 
+              href={`/siteprova/services/${slug}`}
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+                navigate(`/siteprova/services/${slug}`);
+              }}
+              className="inline-flex items-center gap-3 mb-3 text-sm text-primary hover:text-primary/80"
+            >
+              <i className={(logo || getServiceIcon(name)) + " text-2xl"}></i>
+              {t.viewDetails || 'View Details'}
+            </Link>
+          </div>
++
+          <div>
++            <h3 className="text-xl font-bold">{name}</h3>
++            <div className="flex items-center mt-1">
++              <StatusBadge status={status} className="mr-2" />
++              <span className="text-xs text-gray-400">{t.lastCheck} {formattedLastChecked}</span>
++            </div>
++          </div>
++
           <div className="grid grid-cols-2 gap-4 mb-6 sm:grid-cols-3">
             <div className="p-4 rounded-lg bg-dark-lighter">
               <p className="mb-1 text-xs text-gray-400">{t.responseTime || 'Response Time'}</p>
@@ -105,11 +115,11 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
           <div className="text-center">
             <Link 
-              href={`/services/${slug}`}
+              href={`/siteprova/services/${slug}`}
               onClick={(e) => {
                 e.preventDefault();
                 onClose();
-                navigate(`/services/${slug}`);
+                navigate(`/siteprova/services/${slug}`);
               }}
               className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md text-primary hover:text-primary/80 hover:bg-muted/50"
             >

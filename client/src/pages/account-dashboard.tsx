@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Home } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function AccountDashboard() {
@@ -13,7 +13,7 @@ export default function AccountDashboard() {
 
   React.useEffect(() => {
     if (!isLoading && !user) {
-      navigate("/auth");
+  navigate("/siteprova/auth");
     }
   }, [user, isLoading, navigate]);
 
@@ -52,10 +52,10 @@ export default function AccountDashboard() {
             <Button 
               variant="secondary"
               className="w-full transition-transform duration-300 hover:scale-105 hover:shadow-lg"
-              onClick={() => navigate("/")}
+              onClick={() => window.history.back()}
             >
-              <Home className="h-4 w-4 mr-2" />
-              {t.backToDashboard || "Torna alla Dashboard"}
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t.backToDashboard || "Torna indietro"}
             </Button>
             <Button 
               variant="destructive" 

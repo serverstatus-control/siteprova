@@ -9,6 +9,8 @@ import AuthPage from "@/pages/auth-page";
 import InfoPage from "@/pages/info-page";
 import UpdatesPage from "@/pages/updates-page";
 import AccountDashboard from "@/pages/account-dashboard";
+import ResetRequest from "@/pages/reset-password";
+import ResetConfirm from "@/pages/reset-confirm";
 import { ProtectedRoute } from "@/lib/protected-route";
 import CustomCursor from "@/components/CustomCursor";
 
@@ -16,17 +18,40 @@ function ScrollProgressBar() {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
+    let rafId: number | null = null;
+
     const updateScrollProgress = () => {
-      const scrollPx = document.documentElement.scrollTop;
-      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const progress = scrollPx ? (scrollPx / winHeightPx) * 100 : 0;
+      // Use pageYOffset for cross-browser consistency, fallback to documentElement/body
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      // Compute document height using the larger of body and documentElement
+      const docHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+      const winHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
+      const scrollable = Math.max(0, docHeight - winHeight);
+      const progress = scrollable > 0 ? (scrollTop / scrollable) * 100 : 0;
       setScrollProgress(progress);
     };
 
-    window.addEventListener("scroll", updateScrollProgress);
+    const onScroll = () => {
+      // throttle updates to animation frames
+      if (rafId !== null) return;
+      rafId = window.requestAnimationFrame(() => {
+        updateScrollProgress();
+        rafId = null;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    // initial calc
     updateScrollProgress();
 
-    return () => window.removeEventListener("scroll", updateScrollProgress);
+    return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   return (
@@ -43,6 +68,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/siteprova/" component={Home} />
+  <Route path="/siteprova/reset-password" component={ResetRequest} />
+  <Route path="/siteprova/reset" component={ResetConfirm} />
       <Route path="/siteprova/services/:slug" component={ServiceDetail} />
       <ProtectedRoute path="/siteprova/admin" component={AdminPage} adminOnly={true} />
       <ProtectedRoute path="/siteprova/account-dashboard" component={AccountDashboard} />
