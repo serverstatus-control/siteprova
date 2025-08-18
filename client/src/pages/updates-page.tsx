@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import MobileMenu from "@/components/MobileMenu";
 import { useQuery } from "@tanstack/react-query";
 import { useSettings } from "@/hooks/use-settings";
+import { Category, Service, StatusSummary } from "@/types";
 import { 
   Card,
   CardContent,
@@ -24,16 +25,16 @@ const UpdatesPage: React.FC = () => {
   }, []);
   
   // Fetch categories and status summary for sidebar and mobile menu
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
   });
 
-  const { data: statusSummary } = useQuery({
+  const { data: statusSummary = null } = useQuery<StatusSummary | null>({
     queryKey: ['/api/status-summary'],
   });
 
   // Fetch services for header component
-  const { data: services = [] } = useQuery({
+  const { data: services = [] } = useQuery<Service[]>({
     queryKey: ['/api/services'],
   });
 

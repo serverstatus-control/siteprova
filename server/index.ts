@@ -14,7 +14,7 @@ const allowedOriginsRaw = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN ||
 const allowedOrigins = allowedOriginsRaw.split(",").map(s => s.trim()).filter(Boolean);
 
 app.use(cors({
-  origin: (origin, callback) => {
+  origin: (origin: string | undefined | null, callback: (err: Error | null, allow?: boolean) => void) => {
     // allow requests with no origin like curl/postman
     if (!origin) return callback(null, true);
     if (allowedOrigins.length === 0) {
