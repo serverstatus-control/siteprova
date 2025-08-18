@@ -105,7 +105,9 @@ async function runCheck() {
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ message });
-    throw err;
+  // Log the error but do not rethrow: rethrowing here will crash the server process
+  // and cause the platform (Render) to return 502/Bad Gateway to clients.
+  console.error('Unhandled error handled by middleware:', err);
   });
 
   // importantly only setup vite in development and after
