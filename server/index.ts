@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { checkAllServices } from './service-checker';
@@ -7,6 +8,24 @@ import { checkAllServices } from './service-checker';
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Configure CORS: allow single origin or multiple origins via comma-separated env var
+const allowedOriginsRaw = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || "";
+const allowedOrigins = allowedOriginsRaw.split(",").map(s => s.trim()).filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // allow requests with no origin like curl/postman
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.length === 0) {
+      // if no origins configured, allow all (not recommended for production)
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error("CORS not allowed by server"));
+  },
+  credentials: true
+}));
 
 app.use((req, res, next) => {
   const start = Date.now();

@@ -12,7 +12,13 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  // Allow overriding API base at build time with VITE_API_BASE.
+  // When deployed to GitHub Pages the API will usually be hosted elsewhere,
+  // so set VITE_API_BASE to the full backend URL (for example https://api.example.com)
+  const API_BASE = (import.meta.env as any).VITE_API_BASE || '';
+  const resolvedUrl = url.startsWith('/api') && API_BASE ? `${API_BASE}${url}` : url;
+
+  const res = await fetch(resolvedUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,7 +35,11 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+  const API_BASE = (import.meta.env as any).VITE_API_BASE || '';
+  const raw = queryKey[0] as string;
+  const finalUrl = raw.startsWith('/api') && API_BASE ? `${API_BASE}${raw}` : raw;
+
+  const res = await fetch(finalUrl, {
       credentials: "include",
     });
 
