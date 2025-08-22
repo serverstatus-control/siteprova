@@ -55,11 +55,11 @@ function ScrollProgressBar() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 z-50 w-full h-1 bg-background/20">
+    <div className="fixed top-0 left-0 z-[9999] w-full h-1 bg-background/20 pointer-events-none">
       <div
-        className="h-full transition-all duration-150 bg-primary/50"
-        style={{ width: `${scrollProgress}%` }}
-      ></div>
+        className="h-full origin-left transform transition-transform duration-300 ease-out bg-amber-400 shadow-sm pointer-events-none"
+        style={{ transform: `scaleX(${scrollProgress / 100})`, width: '100%', willChange: 'transform' }}
+      />
     </div>
   );
 }
@@ -67,16 +67,16 @@ function ScrollProgressBar() {
 function Router() {
   return (
     <Switch>
-      <Route path="/siteprova/" component={Home} />
-  <Route path="/siteprova/reset-password" component={ResetRequest} />
-  <Route path="/siteprova/reset" component={ResetConfirm} />
-      <Route path="/siteprova/services/:slug" component={ServiceDetail} />
-      <ProtectedRoute path="/siteprova/admin" component={AdminPage} adminOnly={true} />
-      <ProtectedRoute path="/siteprova/account-dashboard" component={AccountDashboard} />
-      <Route path="/siteprova/auth" component={AuthPage} />
-      <Route path="/siteprova/info" component={InfoPage} />
-      <Route path="/siteprova/:rest*" component={NotFound} />
-      <Route path="/siteprova/updates" component={UpdatesPage} />
+      <Route path="/" component={Home} />
+      <Route path="/reset-password" component={ResetRequest} />
+      <Route path="/reset" component={ResetConfirm} />
+      <Route path="/services/:slug" component={ServiceDetail} />
+      <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
+      <ProtectedRoute path="/account-dashboard" component={AccountDashboard} />
+      <Route path="/auth" component={AuthPage} />
+      <Route path="/info" component={InfoPage} />
+      <Route path="/updates" component={UpdatesPage} />
+      <Route path="/:rest*" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );

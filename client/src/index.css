@@ -103,13 +103,7 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 
-  html, body {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE 10+ */
-  }
-  html::-webkit-scrollbar, body::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
+  /* Keep default browser scrollbars visible; use .scrollbar-hide on elements that must hide them */
 
   *:focus {
     outline: none !important;
@@ -163,8 +157,8 @@
 
   @media (hover: hover) {
     * {
-      @apply border-border;
-      cursor: none !important;
+  @apply border-border;
+  cursor: none !important;
     }
 
     html:has(#cursor) * {
@@ -208,6 +202,15 @@
       opacity: 0;
       transition: opacity 0.15s ease-out;
       pointer-events: none;
+    }
+
+    /* Hide native vertical scrollbar on desktop; prefer top progress bar as indicator */
+    html, body {
+      -ms-overflow-style: none; /* IE 10+ */
+      scrollbar-width: none; /* Firefox */
+    }
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
     }
   }
 }

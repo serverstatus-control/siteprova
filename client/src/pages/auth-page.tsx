@@ -51,13 +51,13 @@ export default function AuthPage() {
   // Effettua il redirect automatico dopo la registrazione
   React.useEffect(() => {
     if (registerMutation.isSuccess && user) {
-  navigate("/siteprova/");
+  navigate("/");
     }
   }, [registerMutation.isSuccess, user, navigate]);
 
   // Redirect if already logged in
   if (user) {
-  navigate("/siteprova/");
+  navigate("/");
     return null;
   }
 
@@ -67,7 +67,7 @@ export default function AuthPage() {
       <Button
         variant="ghost"
         className="fixed z-20 flex items-center px-3 py-2 text-sm top-2 left-2 md:absolute md:top-4 md:left-4 md:z-0 md:text-base"
-  onClick={() => navigate("/siteprova/")}
+  onClick={() => navigate("/")}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         <span className="hidden xs:inline">{t.backToDashboard || "Torna alla Dashboard"}</span>

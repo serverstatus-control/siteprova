@@ -87,7 +87,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
 
       <div className="flex items-center gap-2 px-2 pb-2">
         <Link 
-          href={`/siteprova/services/${slug}`} 
+          href={`/services/${slug}`} 
           onClick={(e) => {
             e.preventDefault();
             if (onClick) onClick();

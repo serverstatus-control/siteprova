@@ -30,7 +30,7 @@ export function ProtectedRoute({
   if (!user) {
     return (
       <Route path={path}>
-        <Redirect to="/siteprova/auth" />
+    <Redirect to="/auth" />
       </Route>
     );
   }
@@ -39,7 +39,7 @@ export function ProtectedRoute({
   if (adminOnly && user.role !== UserRole.ADMIN) {
     return (
       <Route path={path}>
-        <Redirect to="/siteprova/" />
+    <Redirect to="/" />
       </Route>
     );
   }

@@ -13,7 +13,7 @@ export default function AccountDashboard() {
 
   React.useEffect(() => {
     if (!isLoading && !user) {
-  navigate("/siteprova/auth");
+  navigate("/auth");
     }
   }, [user, isLoading, navigate]);
 

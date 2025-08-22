@@ -25,7 +25,7 @@ export default function ResetConfirmPage() {
       const res = await apiRequest('POST', '/api/reset-password/confirm', { token, password });
       await res.json();
       toast({ title: 'Password aggiornata', description: 'La tua password è stata aggiornata con successo.' });
-      navigate('/siteprova/auth');
+  navigate('/auth');
     } catch (err: any) {
       toast({ title: 'Errore', description: err?.message || 'Si è verificato un errore', variant: 'destructive' });
     } finally {
@@ -44,7 +44,7 @@ export default function ResetConfirmPage() {
         <Input type="password" value={confirm} onChange={(e) => setConfirm((e.target as HTMLInputElement).value)} />
         <div className="mt-4 flex gap-2">
           <Button type="submit" disabled={isPending}>{isPending ? 'Invio...' : 'Imposta password'}</Button>
-          <Button variant="secondary" onClick={() => navigate('/siteprova/')} type="button">Annulla</Button>
+          <Button variant="secondary" onClick={() => navigate('/')} type="button">Annulla</Button>
         </div>
       </form>
     </div>

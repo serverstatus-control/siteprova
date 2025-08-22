@@ -101,11 +101,11 @@ const Header: React.FC<HeaderProps> = ({
         {/* Colonna sinistra: logo */}
         <div className="flex items-center select-none flex-shrink-0 flex-grow-0 min-w-[90px] md:min-w-[160px] pl-2 md:pl-0 justify-start ml-0 md:ml-0 transition-all duration-300 ease-in-out">
           <Link 
-            href="/siteprova/" 
+            href="/" 
             onClick={(e) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
-              navigate('/siteprova/');
+              navigate('/');
             }} 
             className="group"
           >
@@ -153,9 +153,9 @@ const Header: React.FC<HeaderProps> = ({
                           {favoriteServices.map((service) => (
                             <DropdownMenuItem key={service.id} asChild>
                               <Link
-                                href={`/services/${service.slug}`}
-                                className="flex items-center gap-2 cursor-pointer"
-                              >
+                                  href={`/services/${service.slug}`}
+                                  className="flex items-center gap-2 cursor-pointer"
+                                >
                                 <i className={service.logo + " w-4 h-4"}></i>
                                 <span>{service.name}</span>
                               </Link>
@@ -192,7 +192,7 @@ const Header: React.FC<HeaderProps> = ({
           </button>
           {/* Admin button desktop/tablet */}
           {user?.role === UserRole.ADMIN && (
-            <Link href="/siteprova/admin">
+            <Link href="/admin">
               <Button
                 variant="outline"
                 className="items-center hidden gap-2 transition-colors duration-200 md:flex text-foreground hover:bg-accent hover:text-accent-foreground"
@@ -216,7 +216,7 @@ const Header: React.FC<HeaderProps> = ({
             variant="ghost"
             size="icon"
             className="hidden transition-colors duration-200 lg:flex text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            onClick={() => navigate("/siteprova/account-dashboard")}
+            onClick={() => navigate("/account-dashboard")}
           >
             <User className="w-5 h-5 transition-transform duration-200" />
           </Button>

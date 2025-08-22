@@ -121,9 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Login non riuscito",
         description: userMessage,
         variant: "destructive",
-        action: (
+            action: (
           <ToastAction asChild altText="Recupera password">
-            <button onClick={() => navigate('/siteprova/reset')}>Recupera password</button>
+            <button onClick={() => navigate('/reset')}>Recupera password</button>
           </ToastAction>
         ),
         // show technical details only in development for debugging (appended to description)

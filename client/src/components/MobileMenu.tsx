@@ -100,20 +100,20 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             <div className="mb-1 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.links || 'Links'}</div>
             <ul>
               <li className="mb-0.5">
-                <button 
-                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
-                  onClick={() => handleNavigate('/info')}
-                >
-                  <i className="w-5 mr-1 fas fa-info-circle transition-transform duration-200 group-hover:scale-110"></i>
+                  <button 
+                    className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                    onClick={() => handleNavigate('/info')}
+                  >
+                  <i className="w-5 mr-1 transition-transform duration-200 fas fa-info-circle group-hover:scale-110"></i>
                   <span>{t.infoAndContacts}</span>
                 </button>
               </li>
               <li className="mb-0.5">
-                <button 
-                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
-                  onClick={() => handleNavigate('/incidents')}
-                >
-                  <i className="w-5 mr-1 fas fa-history transition-transform duration-200 group-hover:scale-110"></i>
+                  <button 
+                    className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                    onClick={() => handleNavigate('/updates')}
+                  >
+                  <i className="w-5 mr-1 transition-transform duration-200 fas fa-history group-hover:scale-110"></i>
                   <span>{t.incidentHistory || 'Incident History'}</span>
                 </button>
               </li>
@@ -132,16 +132,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                     onClose();
                   }}
                 >
-                  <i className="w-5 mr-2 fas fa-cog transition-transform duration-200 group-hover:scale-110"></i>
+                  <i className="w-5 mr-2 transition-transform duration-200 fas fa-cog group-hover:scale-110"></i>
                   <span>{t.settings || 'Impostazioni'}</span>
                 </button>
               </li>
               <li className="mb-0.5">
-                <button 
-                  className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
-                  onClick={() => handleNavigate('/account-dashboard')}
-                >
-                  <i className="w-5 mr-2 fas fa-user transition-transform duration-200 group-hover:scale-110"></i>
+                  <button 
+                    className="flex items-center w-full px-2 py-1.5 text-xs text-left text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                    onClick={() => handleNavigate('/account-dashboard')}
+                  >
+                  <i className="w-5 mr-2 transition-transform duration-200 fas fa-user group-hover:scale-110"></i>
                   <span>Account</span>
                 </button>
               </li>

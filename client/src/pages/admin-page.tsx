@@ -105,9 +105,9 @@ const AdminPage: React.FC = () => {
   // Protect admin route
   React.useEffect(() => {
     if (!user) {
-      navigate('/siteprova/auth');
+  navigate('/auth');
     } else if (user.role !== UserRole.ADMIN) {
-      navigate('/siteprova/');
+  navigate('/');
     }
   }, [user, navigate]);
 

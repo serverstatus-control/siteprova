@@ -19,7 +19,7 @@ export default function ResetPasswordPage() {
       const res = await apiRequest('POST', '/api/reset-password', { email });
       await res.json();
       toast({ title: 'Richiesta inviata', description: 'Controlla la tua casella email per le istruzioni.' });
-      navigate('/siteprova/');
+  navigate('/');
     } catch (err: any) {
       toast({ title: 'Errore', description: err?.message || 'Si è verificato un errore', variant: 'destructive' });
     } finally {
@@ -36,7 +36,7 @@ export default function ResetPasswordPage() {
         <Input value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} type="email" />
         <div className="flex gap-2 mt-4">
           <Button type="submit" disabled={isPending}>{isPending ? 'Invio...' : 'Invia istruzioni'}</Button>
-          <Button variant="secondary" onClick={() => navigate('/siteprova/')} type="button">Annulla</Button>
+          <Button variant="secondary" onClick={() => navigate('/')} type="button">Annulla</Button>
         </div>
       </form>
     </div>
