@@ -37,10 +37,10 @@ const Home: React.FC = () => {
 
   // Fetch status summary
   const { 
-    data: statusSummary,
+    data: statusSummary = null,
     isLoading: isSummaryLoading,
     refetch: refetchSummary
-  } = useQuery({
+  } = useQuery<import('../types').StatusSummary | null>({
     queryKey: ['/api/status-summary'],
     refetchInterval: 30000, // Aggiorna ogni 30 secondi
     staleTime: 29000, // Considera i dati "stale" dopo 29 secondi
@@ -50,19 +50,16 @@ const Home: React.FC = () => {
   // Check now mutation
   const { mutate: checkNow, isPending: isChecking } = useMutation({
     mutationFn: async () => {
-      return await apiRequest('POST', '/api/check-now', {});
+      const res = await apiRequest('POST', '/api/check-now', {});
+      // server returns { message, lastChecked }
+      return res.json();
     },
-    onSuccess: (data) => {
-      // Se la risposta contiene il nuovo lastChecked, aggiorna subito la cache
-      if (data && data.summary && data.summary.lastChecked) {
-        queryClient.setQueryData(['/api/status-summary'], (old: any) => ({
-          ...old,
-          ...data.summary
-        }));
-      }
-      // Poi forza comunque il refetch per sicurezza
+    onSuccess: () => {
+      // Invalida e forza il refetch della cache rilevante
       queryClient.invalidateQueries({ queryKey: ['/api/status-summary'] });
       queryClient.invalidateQueries({ queryKey: ['/api/services'] });
+      // opzionale: richiedi il refetch immediato
+      refetchSummary();
     }
   });
 

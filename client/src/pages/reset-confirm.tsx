@@ -22,7 +22,7 @@ export default function ResetConfirmPage() {
 
     setPending(true);
     try {
-      const res = await apiRequest('POST', '/api/reset-password/confirm', { token, password });
+  const res = await apiRequest('POST', '/api/reset-password', { token, password });
       await res.json();
       toast({ title: 'Password aggiornata', description: 'La tua password è stata aggiornata con successo.' });
   navigate('/auth');

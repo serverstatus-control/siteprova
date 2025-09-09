@@ -194,6 +194,125 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Forgot password - generate token and (optionally) send email
+  apiRouter.post('/forgot-password', async (req, res) => {
+    try {
+      const { email } = req.body || {};
+      if (!email) return res.status(400).json({ message: 'Email richiesta' });
+
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        // Do not reveal whether email exists
+        return res.json({ message: 'Se l\'email è registrata, riceverai istruzioni per il reset.' });
+      }
+
+  // Generate token (use dynamic import for ESM)
+  const { randomBytes } = await import('crypto');
+  const token = randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
+      const reset = await storage.createPasswordReset(user.id, token, expiresAt);
+
+  // If SMTP configured, send email. Otherwise log token (for local dev)
+      // Load nodemailer dynamically (ESM-safe)
+      const _nodemailer = await import('nodemailer');
+      const nodemailer = _nodemailer.default || _nodemailer;
+      // If SMTP configured, send real email
+      if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587,
+          secure: process.env.SMTP_SECURE === 'true',
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          }
+        });
+
+        const resetUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+        await transporter.sendMail({
+          from: process.env.SMTP_FROM || 'no-reply@example.com',
+          to: user.email,
+          subject: 'Password reset',
+          text: `Per resettare la password visita: ${resetUrl}`,
+          html: `<p>Per resettare la password visita: <a href="${resetUrl}">${resetUrl}</a></p>`
+        });
+      } else if (process.env.NODE_ENV === 'development' || (process.env.BASE_URL || '').includes('localhost')) {
+        // Use Ethereal test account to send a preview email in development
+        try {
+          const testAccount = await nodemailer.createTestAccount();
+          const transporter = nodemailer.createTransport({
+            host: testAccount.smtp.host,
+            port: testAccount.smtp.port,
+            secure: testAccount.smtp.secure,
+            auth: {
+              user: testAccount.user,
+              pass: testAccount.pass,
+            }
+          });
+
+          const resetUrl = `${process.env.BASE_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
+          const info = await transporter.sendMail({
+            from: process.env.SMTP_FROM || 'no-reply@example.com',
+            to: user.email,
+            subject: 'Password reset (dev preview)',
+            text: `Per resettare la password visita: ${resetUrl}`,
+            html: `<p>Per resettare la password visita: <a href="${resetUrl}">${resetUrl}</a></p>`
+          });
+
+          const previewUrl = nodemailer.getTestMessageUrl(info);
+          console.log('Ethereal preview URL:', previewUrl);
+        } catch (err) {
+          console.log('Password reset token (no SMTP configured):', token);
+        }
+      } else {
+        console.log('Password reset token (no SMTP configured):', token);
+      }
+
+      // In development include token in the response to allow easy local testing
+      const resp: any = { message: 'Se l\'email è registrata, riceverai istruzioni per il reset.' };
+      if (process.env.NODE_ENV === 'development' || (process.env.BASE_URL || '').includes('localhost')) {
+        resp.token = token;
+        resp.resetUrl = `${process.env.BASE_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
+      }
+
+      return res.json(resp);
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      res.status(500).json({ message: 'Impossibile processare la richiesta' });
+    }
+  });
+
+  // Reset password endpoint
+  apiRouter.post('/reset-password', async (req, res) => {
+    try {
+      const { token, password } = req.body || {};
+      if (!token || !password) return res.status(400).json({ message: 'Token e password richiesti' });
+
+      const reset = await storage.getPasswordResetByToken(token);
+      if (!reset) return res.status(400).json({ message: 'Token non valido o scaduto' });
+
+      const expiresAt = new Date(reset.expiresAt || reset.expires_at);
+      if (expiresAt.getTime() < Date.now()) {
+        // Clean up expired
+        await storage.deletePasswordResetById(reset.id);
+        return res.status(400).json({ message: 'Token scaduto' });
+      }
+
+      // Hash new password
+      const { hashPassword } = await import('./auth');
+      const hashed = await hashPassword(password);
+
+      await storage.updateUserPassword(reset.userId, hashed);
+      await storage.deletePasswordResetById(reset.id);
+
+      return res.json({ message: 'Password aggiornata con successo' });
+    } catch (error) {
+      console.error('Reset password error:', error);
+      res.status(500).json({ message: 'Impossibile resettare la password' });
+    }
+  });
+
   // Update incident (mark as resolved)
   apiRouter.patch("/incidents/:id", async (req, res) => {
     try {

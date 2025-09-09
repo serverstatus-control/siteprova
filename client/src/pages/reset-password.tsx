@@ -1,44 +1,92 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'wouter';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
-import { useLocation } from 'wouter';
+
+const resetSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(6, 'La password deve essere almeno 6 caratteri'),
+  confirmPassword: z.string().min(1)
+}).refine((d) => d.password === d.confirmPassword, {
+  message: 'Le password non corrispondono',
+  path: ['confirmPassword']
+});
 
 export default function ResetPasswordPage() {
-  const { toast } = useToast();
-  const [email, setEmail] = useState('');
-  const [isPending, setPending] = useState(false);
-  const [, navigate] = useLocation();
+  const [location] = useLocation();
+  const params = new URLSearchParams(location.split('?')[1] || '');
+  const tokenParam = params.get('token') || '';
+  const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return toast({ title: 'Email mancante', description: 'Inserisci la tua email', variant: 'destructive' });
-    setPending(true);
+  const form = useForm<z.infer<typeof resetSchema>>({
+    resolver: zodResolver(resetSchema),
+    defaultValues: { token: tokenParam, password: '', confirmPassword: '' }
+  });
+
+  useEffect(() => {
+    if (tokenParam) {
+      form.setValue('token', tokenParam);
+    }
+  }, [tokenParam]);
+
+  const onSubmit = async (data: z.infer<typeof resetSchema>) => {
+    setIsLoading(true);
+    setMessage(null);
     try {
-      const res = await apiRequest('POST', '/api/reset-password', { email });
-      await res.json();
-      toast({ title: 'Richiesta inviata', description: 'Controlla la tua casella email per le istruzioni.' });
-  navigate('/');
-    } catch (err: any) {
-      toast({ title: 'Errore', description: err?.message || 'Si è verificato un errore', variant: 'destructive' });
+      const res = await fetch('/api/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: data.token, password: data.password })
+      });
+      const payload = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setMessage('Password aggiornata con successo. Verrai reindirizzato alla schermata di login.');
+        setTimeout(() => window.location.href = '/siteprova/auth', 2000);
+      } else {
+        setMessage(payload?.message || 'Errore durante il reset della password');
+      }
+    } catch (err) {
+      setMessage('Errore di rete');
     } finally {
-      setPending(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <form onSubmit={handleSubmit} className="w-full max-w-md p-6 rounded-lg bg-card">
-        <h2 className="mb-4 text-xl font-bold">Recupera password</h2>
-        <p className="mb-4 text-sm text-muted-foreground">Inserisci l'email associata al tuo account e ti invieremo le istruzioni.</p>
-        <label className="block mb-2">Email</label>
-        <Input value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} type="email" />
-        <div className="flex gap-2 mt-4">
-          <Button type="submit" disabled={isPending}>{isPending ? 'Invio...' : 'Invia istruzioni'}</Button>
-          <Button variant="secondary" onClick={() => navigate('/')} type="button">Annulla</Button>
-        </div>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md">
+        <Card>
+          <CardHeader>
+            <CardTitle>Reset Password</CardTitle>
+            <CardDescription>Inserisci la nuova password</CardDescription>
+          </CardHeader>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="space-y-4">
+              <Input type="hidden" {...form.register('token')} />
+              <div>
+                <label className="block mb-1 text-sm">Nuova password</label>
+                <Input type="password" {...form.register('password')} />
+                <div className="text-sm text-red-400">{form.formState.errors.password?.message as any}</div>
+              </div>
+              <div>
+                <label className="block mb-1 text-sm">Conferma password</label>
+                <Input type="password" {...form.register('confirmPassword')} />
+                <div className="text-sm text-red-400">{form.formState.errors.confirmPassword?.message as any}</div>
+              </div>
+              {message && <div className="text-sm text-gray-300">{message}</div>}
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full" disabled={isLoading}>{isLoading ? 'Invio...' : 'Aggiorna Password'}</Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 }
+

@@ -11,6 +11,8 @@ import UpdatesPage from "@/pages/updates-page";
 import AccountDashboard from "@/pages/account-dashboard";
 import ResetRequest from "@/pages/reset-password";
 import ResetConfirm from "@/pages/reset-confirm";
+import ForgotPassword from "@/pages/forgot-password";
+import ResetSuccess from "@/pages/reset-success";
 import { ProtectedRoute } from "@/lib/protected-route";
 import CustomCursor from "@/components/CustomCursor";
 
@@ -68,8 +70,10 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/reset-password" component={ResetRequest} />
-      <Route path="/reset" component={ResetConfirm} />
+  <Route path="/reset-password" component={ResetRequest} />
+  <Route path="/reset" component={ResetConfirm} />
+  <Route path="/forgot-password" component={ForgotPassword} />
+  <Route path="/reset-success" component={ResetSuccess} />
       <Route path="/services/:slug" component={ServiceDetail} />
       <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
       <ProtectedRoute path="/account-dashboard" component={AccountDashboard} />

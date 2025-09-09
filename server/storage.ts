@@ -5,11 +5,13 @@ import {
   incidents,
   users,
   favorites,
+  passwordResets,
   type Category,
   type Service,
   type UptimeHistory,
   type Incident,
   type User,
+  type PasswordReset,
   type InsertCategory,
   type InsertService,
   type InsertUptimeHistory,
@@ -55,6 +57,12 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
 
+  // Password resets
+  createPasswordReset(userId: number, token: string, expiresAt: Date): Promise<any>;
+  getPasswordResetByToken(token: string): Promise<any | undefined>;
+  deletePasswordResetById(id: number): Promise<void>;
+  updateUserPassword(userId: number, newHashedPassword: string): Promise<void>;
+
   // Stats
   getStatusSummary(): Promise<{
     operational: number;
@@ -78,6 +86,7 @@ export class MemStorage implements IStorage {
   private serviceCurrentId = 1;
   private historyCurrentId = 1;
   private incidentCurrentId = 1;
+  private passwordResetCurrentId = 1;
   sessionStore: any;
 
   constructor() {
@@ -271,6 +280,31 @@ export class MemStorage implements IStorage {
     };
     this.users.set(id, newUser);
     return newUser;
+  }
+
+  // Password resets (memory)
+  async createPasswordReset(userId: number, token: string, expiresAt: Date): Promise<any> {
+    const id = this.passwordResetCurrentId++;
+    const reset = { id, userId, token, expiresAt, createdAt: new Date() };
+    // reuse incidents map to store resets for simplicity in memory mode
+    (this.incidents as any).set(`pr_${id}`, reset);
+    return reset;
+  }
+
+  async getPasswordResetByToken(token: string): Promise<any | undefined> {
+    const items = Array.from((this.incidents as any).values()).filter((v: any) => v.token === token);
+    return items.length ? items[0] : undefined;
+  }
+
+  async deletePasswordResetById(id: number): Promise<void> {
+    (this.incidents as any).delete(`pr_${id}`);
+  }
+
+  async updateUserPassword(userId: number, newHashedPassword: string): Promise<void> {
+    const user = Array.from(this.users.values()).find(u => u.id === userId);
+    if (!user) throw new Error('User not found');
+    (user as any).password = newHashedPassword;
+    this.users.set(user.id, user);
   }
 
   // Helper method to seed initial data
@@ -577,6 +611,25 @@ export class DatabaseStorage implements IStorage {
         eq(favorites.userId, userId),
         eq(favorites.serviceId, serviceId)
       ));
+  }
+
+  // Password resets (database)
+  async createPasswordReset(userId: number, token: string, expiresAt: Date): Promise<any> {
+    const [inserted] = await db.insert(passwordResets).values({ userId, token, expiresAt }).returning();
+    return inserted;
+  }
+
+  async getPasswordResetByToken(token: string): Promise<any | undefined> {
+    const [row] = await db.select().from(passwordResets).where(eq(passwordResets.token, token));
+    return row;
+  }
+
+  async deletePasswordResetById(id: number): Promise<void> {
+    await db.delete(passwordResets).where(eq(passwordResets.id, id));
+  }
+
+  async updateUserPassword(userId: number, newHashedPassword: string): Promise<void> {
+    await db.update(users).set({ password: newHashedPassword }).where(eq(users.id, userId));
   }
 }
 

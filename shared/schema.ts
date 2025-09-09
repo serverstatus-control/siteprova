@@ -68,6 +68,14 @@ export const favorites = pgTable("favorites", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const passwordResets = pgTable("password_resets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertCategorySchema = createInsertSchema(categories).pick({
   name: true,
   icon: true,
@@ -135,3 +143,4 @@ export type Incident = typeof incidents.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type UpdateServiceStatus = z.infer<typeof updateServiceStatusSchema>;
 export type Favorite = typeof favorites.$inferSelect;
+export type PasswordReset = typeof passwordResets.$inferSelect;

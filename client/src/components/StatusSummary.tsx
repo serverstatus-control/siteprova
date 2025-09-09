@@ -6,7 +6,7 @@ import { useToast } from '../hooks/use-toast';
 import { useSettings } from "@/hooks/use-settings";
 
 interface StatusSummaryProps {
-  summary: StatusSummary;
+  summary: StatusSummary | null;
   onCheckNow: () => void;
   isChecking: boolean;
 }
@@ -18,23 +18,16 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
 }) => {
   const { toast } = useToast();
   const { t, language } = useSettings();
-  const total = summary?.operational + summary?.degraded + summary?.down || 0;
+  const op = summary?.operational ?? 0;
+  const deg = summary?.degraded ?? 0;
+  const down = summary?.down ?? 0;
+  const total = op + deg + down;
 
-  const operationalPercentage = total > 0 
-    ? (summary.operational / total) * 100 
-    : 0;
+  const operationalPercentage = total > 0 ? (op / total) * 100 : 0;
+  const degradedPercentage = total > 0 ? (deg / total) * 100 : 0;
+  const downPercentage = total > 0 ? (down / total) * 100 : 0;
 
-  const degradedPercentage = total > 0 
-    ? (summary.degraded / total) * 100 
-    : 0;
-
-  const downPercentage = total > 0 
-    ? (summary.down / total) * 100 
-    : 0;
-
-  const formattedLastChecked = summary?.lastChecked
-    ? formatTimeAgo(summary.lastChecked, language)
-    : t.unknown || 'Unknown';
+  const formattedLastChecked = summary?.lastChecked ? formatTimeAgo(summary.lastChecked, language) : t?.unknown || 'Unknown';
 
   const handleCheckNow = async () => {
     if (isChecking) return;
