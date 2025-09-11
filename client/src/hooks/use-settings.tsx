@@ -906,7 +906,15 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   // Mutazioni per aggiungere/rimuovere preferiti
   const addFavoriteMutation = useMutation({
     mutationFn: async (serviceId: number) => {
-      await apiRequest("POST", `/api/favorites/${serviceId}`);
+      console.log('Attempting to add favorite:', serviceId);
+      try {
+        const response = await apiRequest("POST", `/api/favorites/${serviceId}`);
+        console.log('Add favorite response:', response);
+        return response;
+      } catch (error) {
+        console.error('Error adding favorite:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] });

@@ -4,9 +4,11 @@ import { Service } from '../types';
 import StatusBadge from './StatusBadge';
 import { getServiceIcon } from '../lib/icons';
 import { useSettings } from '@/hooks/use-settings';
+import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Star, StarOff } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
 import { formatTimeAgo } from '@/lib/utils';
 
 interface ServiceCardProps {
@@ -26,6 +28,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
   } = service;
 
   const { isFavorite, addFavorite, removeFavorite, t, language } = useSettings();
+  const { user } = useAuth();
   const isFav = isFavorite(id);
 
   // Create a status history visualization with 7 days
@@ -48,13 +51,35 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
     formatTimeAgo(lastChecked, language) : 
     t.unknown || 'Unknown';
 
-  const handleFavoriteToggle = (e: React.MouseEvent) => {
+  const { toast } = useToast();
+
+  const handleFavoriteToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (isFav) {
-      removeFavorite(id);
-    } else {
-      addFavorite(id);
+    
+    if (!user) {
+      toast({
+        title: t.error || "Error",
+        description: "Devi effettuare l'accesso per aggiungere servizi ai preferiti",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      console.log('Toggling favorite for service:', id, 'Current state:', isFav);
+      if (isFav) {
+        await removeFavorite(id);
+      } else {
+        await addFavorite(id);
+      }
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+      toast({
+        title: "Errore",
+        description: error instanceof Error ? error.message : "Errore nell'aggiornamento dei preferiti",
+        variant: "destructive",
+      });
     }
   };
 

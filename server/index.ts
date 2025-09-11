@@ -92,6 +92,16 @@ async function runCheck() {
 
 (async () => {
   const server = await registerRoutes(app);
+  // In development, ensure the favorites table exists to avoid 42P01 errors
+  try {
+    if (process.env.NODE_ENV === 'development') {
+      // import lazily to avoid circular deps at module load time
+      const { ensureFavoritesTable } = await import('./db');
+      await ensureFavoritesTable();
+    }
+  } catch (err) {
+    console.error('Error while ensuring dev DB schema:', err);
+  }
 
   // Avvia il sistema di controllo automatico
   console.log("Avvio del sistema di controllo automatico dei servizi ogni 20 minuti!");

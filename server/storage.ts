@@ -237,8 +237,11 @@ export class MemStorage implements IStorage {
     const degraded = services.filter(s => s.status === StatusType.DEGRADED).length;
     const down = services.filter(s => s.status === StatusType.DOWN).length;
 
-    // Find the most recent check
-    let lastChecked = new Date(0);
+      console.error("Storage: Error adding favorite:", error);
+      if (error instanceof Error && (error as any).stack) {
+        console.error((error as any).stack);
+      }
+      throw error;
     services.forEach(service => {
       if (service.lastChecked && service.lastChecked > lastChecked) {
         lastChecked = service.lastChecked;
@@ -600,9 +603,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async addFavorite(userId: number, serviceId: number): Promise<void> {
-    await db.insert(favorites)
-      .values({ userId, serviceId })
-      .onConflictDoNothing();
+    console.log("Storage: Adding favorite - userId:", userId, "serviceId:", serviceId);
+    try {
+      await db.insert(favorites)
+        .values({ userId, serviceId })
+        .onConflictDoNothing();
+      console.log("Storage: Favorite added successfully");
+    } catch (error) {
+      console.error("Storage: Error adding favorite:", error);
+      throw error;
+    }
   }
 
   async removeFavorite(userId: number, serviceId: number): Promise<void> {

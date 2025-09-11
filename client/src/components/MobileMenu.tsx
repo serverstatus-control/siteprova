@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'wouter';
 import { Category, StatusSummary } from '../types';
+import { getCategoryIconComponent } from '@/lib/categoryIcons';
 import { useAuth } from '@/hooks/use-auth';
 import { useSettings } from '@/hooks/use-settings';
 import { UserRole } from '@shared/schema';
@@ -88,7 +89,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                     className="flex items-center px-2 py-1.5 text-xs text-gray-300 rounded transition-all duration-200 hover:bg-dark-lighter hover:text-primary hover:translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40 gap-2 overflow-x-auto min-w-0"
                     onClick={onClose}
                   >
-                    <i className={`${category.icon} w-5 mr-1 flex-shrink-0 transition-transform duration-200 group-hover:scale-110`}></i>
+                    <span className="flex-shrink-0 w-5 mr-1 transition-transform duration-200">
+                      {getCategoryIconComponent(category.name, 'w-5 h-5')}
+                    </span>
                     <span className="truncate max-w-[110px]">{getCategoryTranslation(category.name)}</span>
                   </a>
                 </li>
@@ -114,7 +117,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                     onClick={() => handleNavigate('/updates')}
                   >
                   <i className="w-5 mr-1 transition-transform duration-200 fas fa-history group-hover:scale-110"></i>
-                  <span>{t.incidentHistory || 'Incident History'}</span>
+                  <span>{t.Aggiornamenti || 'Aggiornamenti'}</span>
                 </button>
               </li>
             </ul>

@@ -357,22 +357,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Add a favorite
   apiRouter.post("/favorites/:serviceId", async (req, res) => {
+    console.log("POST /favorites/:serviceId - Auth check");
     if (!req.isAuthenticated()) {
+      console.log("User not authenticated");
       return res.status(401).json({ message: "Non autenticato" });
     }
     try {
       const userId = (req.user as any).id;
       const serviceId = parseInt(req.params.serviceId, 10);
       
+      console.log("Adding favorite - User:", userId, "Service:", serviceId);
+
       if (isNaN(serviceId)) {
+        console.log("Invalid service ID:", req.params.serviceId);
         return res.status(400).json({ message: "Invalid service ID" });
       }
 
+      // Verify service exists
+      const svc = await storage.getServiceById(serviceId);
+      if (!svc) {
+        console.log("Service not found for id:", serviceId);
+        return res.status(404).json({ message: "Service not found" });
+      }
+
+      console.log("Calling storage.addFavorite");
       await storage.addFavorite(userId, serviceId);
+      console.log("Favorite added successfully");
       res.status(201).json({ message: "Favorite added successfully" });
     } catch (error) {
       console.error("Error adding favorite:", error);
-      res.status(500).json({ message: "Failed to add favorite" });
+      if (error instanceof Error && (error as any).stack) {
+        console.error((error as any).stack);
+      }
+      const payload: any = { message: error instanceof Error ? error.message : "Failed to add favorite" };
+      if (process.env.NODE_ENV === 'development' && error instanceof Error) {
+        payload.stack = error.stack;
+      }
+      res.status(500).json(payload);
     }
   });
 
