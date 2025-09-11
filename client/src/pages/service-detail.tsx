@@ -39,6 +39,8 @@ const ServiceDetail: React.FC = () => {
   } = useQuery<Service>({
     queryKey: [`/api/services/${params?.slug}`],
     enabled: !!params?.slug,
+    refetchInterval: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   const { 
@@ -54,6 +56,9 @@ const ServiceDetail: React.FC = () => {
   } = useQuery<UptimeHistory[]>({
     queryKey: [`/api/services/${service?.id}/history`],
     enabled: !!service?.id,
+    // refetch once per day so the uptime history updates daily
+    refetchInterval: 24 * 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   const { 

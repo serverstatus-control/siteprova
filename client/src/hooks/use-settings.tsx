@@ -8,9 +8,128 @@ import { toast } from "./use-toast";
 export type Theme = "light" | "dark" | "system";
 export type Language = "en" | "it" | "es" | "fr" | "de" | "zh" | "ja" | "pt" | "ru";
 
+export interface Translation {
+  settings: string;
+  settingsDescription: string;
+  theme: string;
+  language: string;
+  system: string;
+  light: string;
+  dark: string;
+  favorites: string;
+  noFavorites: string;
+  addToFavorites: string;
+  removeFromFavorites: string;
+  english: string;
+  italian: string;
+  spanish: string;
+  french: string;
+  german: string;
+  chinese: string;
+  japanese: string;
+  portuguese: string;
+  games: string;
+  streaming: string;
+  bank: string;
+  social: string;
+  mail: string;
+  shopping: string;
+  various: string;
+  connection: string;
+  browserai: string;
+  music: string;
+  gaming: string;
+  productivity: string;
+  education: string;
+  technology: string;
+  entertainment: string;
+  financial: string;
+  russian: string;
+  close: string;
+  register: string;
+  login: string;
+  logout: string;
+  admin: string;
+  search: string;
+  serverStatus: string;
+  selectTheme: string;
+  selectLanguage: string;
+  operational: string;
+  degraded: string;
+  down: string;
+  lastUpdated: string;
+  dashboard: string;
+  dashboardDescription: string;
+  checkingNow: string;
+  checkNow: string;
+  terms: string;
+  privacy: string;
+  siteUpdates: string;
+  footerText: string;
+  currentStatus: string;
+  categories: string;
+  responseTime: string;
+  lastCheck: string;
+  uptime30d: string;
+  lastOutage: string;
+  avgResponse: string;
+  uptimeHistory: string;
+  recentIncidents: string;
+  noHistoryAvailable: string;
+  noIncidentsReported: string;
+  infoAndContacts: string;
+  noRecentOutages: string;
+  expand: string;
+  overall: string;
+  collapse: string;
+  partialOutage: string;
+  searchServices: string;
+  links: string;
+  viewDetails: string;
+  viewFullHistory: string;
+  subscribeToUpdates: string;
+  serviceDetails: string;
+  // Messages and UI
+  success: string;
+  error: string;
+  unknown: string;
+  loggingOut: string;
+  loggingIn: string;
+  creatingAccount: string;
+  loginDescription: string;
+  registerDescription: string;
+  emailPlaceholder: string;
+  passwordPlaceholder: string;
+  usernamePlaceholder: string;
+  confirmPassword: string;
+  confirmPasswordPlaceholder: string;
+  passwordMismatch: string;
+  favoriteAdded: string;
+  favoriteRemoved: string;
+  accountTitle: string;
+  username: string;
+  email: string;
+  role: string;
+  registeredAt: string;
+  backToDashboard: string;
+  heroDescription: string;
+  to: string;
+  toPresent: string;
+};
+
 // Oggetto che contiene le traduzioni per ogni lingua
-export const translations = {
+export const translations: Record<Language, Translation> = {
   en: {
+    // Categories
+    music: "Music",
+    gaming: "Gaming",
+    productivity: "Productivity",
+    education: "Education",
+    technology: "Technology",
+    entertainment: "Entertainment",
+    financial: "Financial",
+    
+    // Other translations
     settings: "Settings",
     settingsDescription: "Customize your experience by changing theme and language",
     theme: "Theme",
@@ -102,8 +221,9 @@ export const translations = {
     viewFullHistory: "View Full History",
     subscribeToUpdates: "Subscribe to Updates",
     serviceDetails: "Service Details",
-    terms: "Terms",
-    privacy: "Privacy",
+    terms: "Terms of Service",
+    privacy: "Privacy Policy",
+    footerText: "© 2025 Server Status | Version",
     success: "Success",
     error: "Error",
     favoriteAdded: "Service added to favorites",
@@ -207,6 +327,14 @@ export const translations = {
     error: "Errore",
     favoriteAdded: "Servizio aggiunto ai preferiti",
     favoriteRemoved: "Servizio rimosso dai preferiti",
+    footerText: "© 2025 Server Status | Versione",
+    music: "Musica",
+    gaming: "Giochi",
+    productivity: "Produttività",
+    education: "Educazione",
+    technology: "Tecnologia",
+    entertainment: "Intrattenimento",
+    financial: "Finanza",
   },
   es: {
     settings: "Configuración",
@@ -300,12 +428,20 @@ export const translations = {
     viewFullHistory: "Ver Historial Completo",
     subscribeToUpdates: "Suscribirse a Actualizaciones",
     serviceDetails: "Detalles del Servicio",
-    terms: "Términos",
-    privacy: "Privacidad",
+    terms: "Términos de uso",
+    privacy: "Política de privacidad",
+    footerText: "© 2025 Server Status | Versión", 
     success: "Éxito",
     error: "Error",
     favoriteAdded: "Servicio añadido a favoritos",
     favoriteRemoved: "Servicio eliminado de favoritos",
+    music: "Música",
+    gaming: "Juegos",
+    productivity: "Productividad",
+    education: "Educación",
+    technology: "Tecnología",
+    entertainment: "Entretenimiento",
+    financial: "Finanzas",
   },
   fr: {
     settings: "Paramètres",
@@ -405,6 +541,14 @@ export const translations = {
     error: "Erreur",
     favoriteAdded: "Service ajouté aux favoris",
     favoriteRemoved: "Service retiré des favoris",
+    footerText: "© 2025 Server Status | Version",
+    music: "Musique",
+    gaming: "Jeux",
+    productivity: "Productivité",
+    education: "Éducation",
+    technology: "Technologie",
+    entertainment: "Divertissement",
+    financial: "Finance",
   },
   de: {
     settings: "Einstellungen",
@@ -504,6 +648,14 @@ export const translations = {
     favoriteAdded: "Dienst zu Favoriten hinzugefügt",
     favoriteRemoved: "Dienst aus Favoriten entfernt",
     lastUpdated: "Zuletzt aktualisiert",
+    footerText: "© 2025 Server Status | Version",
+    music: "Musik",
+    gaming: "Gaming",
+    productivity: "Produktivität",
+    education: "Bildung",
+    technology: "Technologie",
+    entertainment: "Unterhaltung",
+    financial: "Finanzen",
   },
   zh: {
     settings: "设置",
@@ -599,10 +751,18 @@ export const translations = {
     dashboardDescription: "实时检查服务状态并获取即时更新",
     checkingNow: "检查中...",
     checkNow: "立即检查",
+    entertainment: "娱乐",
+    financial: "金融",
+    footerText: "© 2025 Server Status | 版本",
+    music: "音乐",
+    gaming: "游戏",
+    productivity: "生产力",
+    education: "教育",
+    technology: "技术",
     success: "成功",
     error: "错误",
-    favoriteAdded: "服务已添加到收藏夹",
-    favoriteRemoved: "服务已从收藏夹中移除",
+    favoriteAdded: "服务已添加到收藏",
+    favoriteRemoved: "服务已从收藏中移除",
   },
   ja: {
     settings: "設定",
@@ -702,6 +862,14 @@ export const translations = {
     error: "エラー",
     favoriteAdded: "サービスをお気に入りに追加しました",
     favoriteRemoved: "サービスをお気に入りから削除しました",
+    footerText: "© 2025 Server Status | バージョン",
+    music: "音楽",
+    gaming: "ゲーム",
+    productivity: "生産性",
+    education: "教育",
+    technology: "技術",
+    entertainment: "エンターテイメント",
+    financial: "金融",
   },
   pt: {
     settings: "Configurações",
@@ -779,9 +947,40 @@ export const translations = {
     error: "Erro",
     favoriteAdded: "Serviço adicionado aos favoritos",
     favoriteRemoved: "Serviço removido dos favoritos",
+    selectTheme: "Selecionar tema",
+    selectLanguage: "Selecionar idioma",
+    operational: "Operacional",
+    degraded: "Desempenho degradado",
+    down: "Inativo",
+    lastUpdated: "Última atualização",
+    dashboard: "Painel",
+    dashboardDescription: "Verifique o status dos serviços em tempo real e receba atualizações instantâneas.",
+    checkingNow: "Verificando...",
+    checkNow: "Verificar agora",
+    currentStatus: "Estado Atual",
+    responseTime: "Tempo de Resposta",
+    uptime30d: "Tempo de Atividade (30 dias)",
+    lastOutage: "Última Interrupção",
+    avgResponse: "Resposta Média",
+    uptimeHistory: "Histórico de Disponibilidade",
+    recentIncidents: "Incidentes Recentes",
+    noHistoryAvailable: "Nenhum histórico disponível",
+    noIncidentsReported: "Nenhum incidente reportado",
+    noRecentOutages: "Sem interrupções recentes",
+    overall: "Estado Geral",
+    partialOutage: "Interrupção Parcial",
+    footerText: "© 2025 Server Status | Versão",
+    music: "Música",
+    gaming: "Jogos",
+    productivity: "Produtividade",
+    education: "Educação",
+    technology: "Tecnologia",
+    entertainment: "Entretenimento",
+    financial: "Financeiro",
   },
   ru: {
     settings: "Настройки",
+    settingsDescription: "Настройте внешний вид, изменив тему и язык",
     theme: "Тема",
     language: "Язык",
     system: "Система",
@@ -789,8 +988,8 @@ export const translations = {
     dark: "Темная",
     favorites: "Избранное",
     noFavorites: "Нет добавленных в избранное",
-    addFavorite: "Добавить в избранное",
-    removeFavorite: "Удалить из избранного",
+    addToFavorites: "Добавить в избранное",
+    removeFromFavorites: "Удалить из избранного",
     english: "Английский",
     italian: "Итальянский",
     spanish: "Испанский",
@@ -801,7 +1000,7 @@ export const translations = {
     portuguese: "Португальский",
     russian: "Русский",
     close: "Закрыть",
-  register: "Зарегистрироваться",
+    register: "Зарегистрироваться",
     login: "Войти",
     logout: "Выйти",
     admin: "Администратор",
@@ -856,11 +1055,40 @@ export const translations = {
     favoriteAdded: "Сервис добавлен в избранное",
     favoriteRemoved: "Сервис удален из избранного",
     lastUpdated: "Последнее обновление",
+    selectTheme: "Выберите тему",
+    selectLanguage: "Выберите язык",
+    operational: "Работает",
+    degraded: "Пониженная производительность",
+    down: "Не работает",
+    dashboard: "Панель управления",
+    dashboardDescription: "Проверяйте состояние сервисов в реальном времени и получайте мгновенные обновления",
+    checkingNow: "Проверка...",
+    checkNow: "Проверить сейчас",
+    footerText: "© 2025 Server Status | Версия",
+    music: "Музыка",
+    gaming: "Игры",
+    productivity: "Продуктивность",
+    education: "Образование",
+    technology: "Технологии",
+    entertainment: "Развлечения",
+    financial: "Финансы",
+    currentStatus: "Текущий статус",
+    responseTime: "Время отклика",
+    uptime30d: "Время работы (30 дней)",
+    lastOutage: "Последний сбой",
+    avgResponse: "Средний отклик",
+    uptimeHistory: "История доступности",
+    recentIncidents: "Недавние инциденты",
+    noHistoryAvailable: "История недоступна",
+    noIncidentsReported: "Инциденты не зарегистрированы",
+    noRecentOutages: "Недавних сбоев не было",
+    overall: "Общий статус",
+    partialOutage: "Частичный сбой",
   }
 };
 
 // Tipo generico per le traduzioni (mappa chiave->stringa)
-export type Translation = Record<string, string>;
+
 
 interface SettingsContextType {
   theme: Theme;

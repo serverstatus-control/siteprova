@@ -16,7 +16,7 @@ interface ServiceCardProps {
   onClick?: () => void;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
+const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
   const {
     id,
     name,
@@ -43,7 +43,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
     }
     
     statusHistory.push(
-      <span key={i} className={`inline-block w-2 h-8 ${statusClass} rounded-sm`}></span>
+      <span key={i} className={`inline-block w-2 h-8 ${statusClass} rounded-sm`} />
     );
   }
 
@@ -84,73 +84,88 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
   };
 
   return (
-    <div className="relative overflow-hidden transition-all duration-300 border rounded-lg bg-card border-border hover:border-border/80 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 group">
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center">
-            <div className="flex items-center justify-center w-8 h-8 mr-3 transition-transform duration-300 rounded-full bg-background group-hover:scale-110 group-hover:shadow-md">
-              <i className={`${logo || getServiceIcon(name)} text-lg transition-all duration-300 group-hover:text-primary`}></i>
+    <div className="relative w-full overflow-hidden transition-all duration-300 border rounded-lg bg-card border-border hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 group">
+
+
+      <div
+        onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
+        className="absolute inset-0 cursor-pointer"
+        aria-label={t.viewDetails || 'View Details'}
+        role="button"
+        tabIndex={-1}
+      />
+      
+      <div className="relative flex flex-col h-full pb-16">
+        <div className="flex items-start justify-between p-4 mb-2">
+          <div className="flex items-start flex-1 min-w-0 mr-4">
+            <div className="flex items-center justify-center w-10 h-10 mr-3 transition-transform duration-300 rounded-lg bg-background group-hover:scale-110 group-hover:shadow-md shrink-0">
+              <i className={`${logo || getServiceIcon(name)} text-xl transition-all duration-300 group-hover:text-primary`} />
             </div>
-            <h3 className="font-medium transition-colors duration-300 group-hover:text-primary">{name}</h3>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-medium leading-tight transition-colors duration-300 group-hover:text-primary">{name}</h3>
+            </div>
           </div>
-          <StatusBadge status={status} className="transition-transform duration-300 group-hover:scale-105" />
+          <StatusBadge status={status} className="transition-transform duration-300 group-hover:scale-105 shrink-0" />
         </div>
-        <div className="mb-3 text-xs text-muted-foreground">
-          <div className="flex items-center justify-between transition-colors duration-300 group-hover:text-foreground">
-            <span>{t.lastCheck}:</span>
-            <span className="font-mono">{formattedLastChecked}</span>
+        
+        <div className="grid gap-2 px-4 mb-4 text-sm text-muted-foreground">
+          <div className="grid grid-cols-[auto,1fr] items-center gap-x-4 transition-colors duration-300 group-hover:text-foreground">
+            <span className="flex items-center whitespace-nowrap">
+              <i className="mr-2 text-xs far fa-clock opacity-70" />
+              {t.lastCheck}:
+            </span>
+            <span className="min-w-0 font-mono font-medium text-right break-all">{formattedLastChecked}</span>
           </div>
-          <div className="flex items-center justify-between transition-colors duration-300 group-hover:text-foreground">
-            <span>{t.responseTime || 'Response time'}:</span>
-            <span className="font-mono">{status === 'down' ? 'Timeout' : `${responseTime}ms`}</span>
+          <div className="grid grid-cols-[auto,1fr] items-center gap-x-4 transition-colors duration-300 group-hover:text-foreground">
+            <span className="flex items-center whitespace-nowrap">
+              <i className="mr-2 text-xs fas fa-tachometer-alt opacity-70" />
+              {t.responseTime || 'Response time'}:
+            </span>
+            <span className="font-mono font-medium text-right">{status === 'down' ? 'Timeout' : `${responseTime}ms`}</span>
           </div>
         </div>
-        <div className="flex items-center space-x-1">
+        
+        <div className="flex items-center px-4 mb-2 space-x-1.5">
           {statusHistory}
         </div>
-      </div>
 
-      <div className="flex items-center gap-2 px-2 pb-2">
-        <Link 
-          href={`/services/${slug}`} 
-          onClick={(e) => {
-            e.preventDefault();
-            if (onClick) onClick();
-          }}
-          className="flex-1 px-4 py-2 text-sm text-center transition-all duration-300 rounded-full bg-muted hover:bg-background focus:z-10 group-hover:bg-primary/10 group-hover:text-primary"
-        >
-          {t.viewDetails || 'View Details'}
-        </Link>
-        
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={`relative z-10 w-10 h-10 rounded-full border border-border transition-all duration-300
-                  ${isFav 
-                    ? 'text-amber-400 hover:border-amber-400 hover:-translate-y-1' 
-                    : 'text-gray-400 hover:text-amber-400 hover:border-amber-400 hover:-translate-y-1'}
-                  group flex items-center justify-center`}
-                onClick={handleFavoriteToggle}
-                tabIndex={0}
-                aria-label={isFav ? t.removeFromFavorites : t.addToFavorites}
-                onMouseDown={e => e.stopPropagation()}
-                onTouchStart={e => e.stopPropagation()}
-              >
-                {isFav ? (
-                  <Star className="w-5 h-5 transition-transform duration-300 fill-amber-400 drop-shadow" />
-                ) : (
-                  <StarOff className="w-5 h-5 transition-all duration-300" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              {isFav ? t.removeFromFavorites : t.addToFavorites}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="absolute bottom-0 left-0 right-0 transition-all duration-300 border-t border-border/50 bg-muted/50 backdrop-blur-sm group-hover:bg-primary">
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-2.5 text-sm font-semibold text-foreground group-hover:text-primary-foreground">
+              <i className="fas fa-chart-line" />
+              <span>{t.viewDetails || 'View Details'}</span>
+              <i className="transition-all duration-300 opacity-50 fas fa-chevron-right group-hover:opacity-100 group-hover:translate-x-1.5" />
+            </div>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`relative z-50 w-8 h-8 rounded-full border border-border transition-all duration-300
+                      ${isFav 
+                        ? 'text-amber-400 hover:border-amber-400 hover:-translate-y-1' 
+                        : 'text-gray-400 hover:text-amber-400 hover:border-amber-400 hover:-translate-y-1'}
+                      group flex items-center justify-center hover:bg-background/50`}
+                    onClick={(e) => { e.stopPropagation(); handleFavoriteToggle(e); }}
+                    tabIndex={0}
+                    aria-label={isFav ? t.removeFromFavorites : t.addToFavorites}
+                  >
+                    {isFav ? (
+                      <Star className="w-4 h-4 transition-transform duration-300 fill-amber-400 drop-shadow" />
+                    ) : (
+                      <StarOff className="w-4 h-4 transition-all duration-300" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {isFav ? t.removeFromFavorites : t.addToFavorites}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
       </div>
     </div>
   );

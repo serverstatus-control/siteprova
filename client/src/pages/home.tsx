@@ -67,13 +67,13 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (selectedService) {
       // Fetch service history
-      fetch(`/api/services/${selectedService.id}/history`)
+      fetch(`/api/services/${selectedService.id}/history`, { credentials: 'include' })
         .then(res => res.json())
         .then(data => setServiceHistory(data))
         .catch(err => console.error('Error fetching service history:', err));
 
       // Fetch service incidents
-      fetch(`/api/services/${selectedService.id}/incidents`)
+      fetch(`/api/services/${selectedService.id}/incidents`, { credentials: 'include' })
         .then(res => res.json())
         .then(data => setServiceIncidents(data))
         .catch(err => console.error('Error fetching service incidents:', err));

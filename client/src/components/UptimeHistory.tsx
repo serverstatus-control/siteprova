@@ -39,6 +39,12 @@ const UptimeHistoryDisplay: React.FC<UptimeHistoryProps> = ({ history }) => {
     return format(date, 'd MMM HH:mm', { locale });
   };
 
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <TooltipProvider>
       <div className="space-y-3">
@@ -49,25 +55,23 @@ const UptimeHistoryDisplay: React.FC<UptimeHistoryProps> = ({ history }) => {
           const tooltipText = `${item.uptimePercentage}% uptime - ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}`;
           return (
             <div key={index} className="flex items-center gap-3">
-              <span className="text-xs text-gray-400 w-16">{displayDate}</span>
+              <span className="text-xs text-gray-400 w-20">{displayDate}</span>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="flex-1 flex items-center h-4 cursor-pointer">
-                    {item.uptimePercentage === 100 ? (
-                      <span className={`inline-block h-3 w-full ${statusColor} rounded-full transition-all`}></span>
-                    ) : (
-                      <>
-                        <span className={`inline-block h-3 rounded-l-full ${item.uptimePercentage > 0 ? 'bg-success' : ''}`} style={{ width: `${item.uptimePercentage}%` }}></span>
-                        <span className={`inline-block h-3 rounded-r-full ${item.status === 'down' ? 'bg-danger' : 'bg-warning'}`} style={{ width: `${100 - item.uptimePercentage}%` }}></span>
-                      </>
-                    )}
+                  <div className="flex-1 h-3 rounded overflow-hidden bg-dark-light cursor-pointer">
+                    {/* inner bar: width represents uptimePercentage; transition for smooth daily updates */}
+                    <div
+                      className={`${statusColor} h-full rounded transition-all duration-700 ease-out`}
+                      style={{ width: mounted ? `${item.uptimePercentage}%` : '0%' }}
+                      aria-hidden
+                    />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="top">
                   {tooltipText}
                 </TooltipContent>
               </Tooltip>
-              <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${statusColor} bg-opacity-80 text-white font-semibold shadow`}>
+              <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${textColor} bg-opacity-90 bg-gray-800 text-white font-semibold shadow`}>
                 {item.uptimePercentage}%
               </span>
             </div>

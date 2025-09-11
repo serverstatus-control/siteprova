@@ -149,6 +149,10 @@
     html:has(#cursor) * {
       cursor: auto !important;
     }
+
+    button, a, [role="button"], select, input[type="submit"] {
+      cursor: pointer !important;
+    }
     
     #cursor {
       display: none !important;

@@ -50,11 +50,21 @@ const UpdatesPage: React.FC = () => {
   const updates = [
     {
       version: "0.3.00",
-      date: "??/12/2025",
+      date: "20/12/2025",
       changes: [
-        "Aggiunta sezione Aggiornamenti del sito",
-        "Migliorata la visualizzazione dei tooltip",
-        "Correzioni di bug minori"
+        "Possibilità di recupero password",
+        "Nuovo sito con grafica completamente nuova",
+        "Controllo automatico",
+        "Molti nuovi server",
+        "Aggiunta box MUSICA",
+        "Molte piu informazioni sullo stato dei server"
+      ]
+    },
+    {
+      version: "APP MOBILE",
+      date: "??/??/2027",
+      changes: [
+        
       ]
     }
     // Aggiungi qui altri aggiornamenti quando necessario

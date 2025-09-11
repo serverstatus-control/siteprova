@@ -62,22 +62,22 @@ export function formatTimeAgo(date: Date | string | number, language: string = '
   });
 }
 
-// Traduzioni base (italiano)
-const translations: Record<string, string> = {
-  'showAllCategory': 'Mostra tutti i servizi {{category}} ({{count}})',
-  'showLessCategory': 'Mostra meno servizi',
-  'infoAndContacts': 'Info & Contatti',
-  'expand': 'Espandi',
-  'collapse': 'Comprimi',
-};
+import { Translation, translations as allTranslations } from './translations';
 
 // Funzione di traduzione semplice
-export function t(key: string, vars?: Record<string, string | number>) {
-  let str = translations[key] || key;
-  if (vars) {
-    Object.entries(vars).forEach(([k, v]) => {
-      str = str.replace(`{{${k}}}`, String(v));
-    });
+export function t(key: keyof Translation, vars?: Record<string, string | number>, language: string = 'it'): string {
+  const translations = allTranslations[language] || allTranslations.it;
+  let value = translations[key];
+  
+  if (typeof value === 'string') {
+    let str = value;
+    if (vars) {
+      Object.entries(vars).forEach(([k, v]) => {
+        str = str.replace(`{{${k}}}`, String(v));
+      });
+    }
+    return str;
   }
-  return str;
+  
+  return String(key);
 }
