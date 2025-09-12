@@ -141,13 +141,17 @@
     @apply border-gray-700;
   }
 
-  @media (hover: none) and (pointer: coarse) {
+  @media (hover: none), (pointer: coarse) {
     * {
       cursor: auto !important;
     }
     
     html:has(#cursor) * {
       cursor: auto !important;
+    }
+
+    a, button, [role="button"], input[type="submit"], select {
+      cursor: pointer !important;
     }
 
     button, a, [role="button"], select, input[type="submit"] {
