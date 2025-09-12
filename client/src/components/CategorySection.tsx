@@ -73,7 +73,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            className="relative px-3 py-2 pr-8 text-sm border rounded-md outline-none appearance-none cursor-pointer h-9 text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground border-input hover:border-primary focus:ring-1 focus:ring-primary"
+            className="relative px-3 py-2 pr-8 text-sm border rounded-md outline-none appearance-none cursor-none h-9 text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground border-input hover:border-primary focus:ring-1 focus:ring-primary"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
               backgroundPosition: 'right 0.5rem center',

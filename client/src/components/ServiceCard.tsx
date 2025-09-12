@@ -84,16 +84,12 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden transition-all duration-300 border rounded-lg bg-card border-border hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 group">
-
-
-      <div
+    <div 
+        className="relative w-full overflow-hidden transition-all duration-300 border rounded-lg bg-card border-border hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 group cursor-pointer"
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
-        className="absolute inset-0 cursor-pointer"
         aria-label={t.viewDetails || 'View Details'}
         role="button"
-        tabIndex={-1}
-      />
+        tabIndex={0}>
       
       <div className="relative flex flex-col h-full pb-16">
         <div className="flex items-start justify-between p-4 mb-2">
@@ -139,7 +135,6 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
 
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -149,7 +144,6 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
                         : 'text-gray-400 hover:text-amber-400 hover:border-amber-400 hover:-translate-y-1'}
                       group flex items-center justify-center hover:bg-background/50`}
                     onClick={(e) => { e.stopPropagation(); handleFavoriteToggle(e); }}
-                    tabIndex={0}
                     aria-label={isFav ? t.removeFromFavorites : t.addToFavorites}
                   >
                     {isFav ? (
@@ -158,10 +152,6 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
                       <StarOff className="w-4 h-4 transition-all duration-300" />
                     )}
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  {isFav ? t.removeFromFavorites : t.addToFavorites}
-                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>

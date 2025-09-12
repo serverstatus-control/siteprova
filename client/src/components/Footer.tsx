@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
       {/* Modale Terms */}
       {showTerms && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60">
-          <div className="relative bg-dark-light rounded-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-lg">
+          <div className="relative bg-dark-light rounded-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto scrollbar-hide shadow-lg">
             <button 
               onClick={() => setShowTerms(false)} 
               aria-label={currentTranslations.close}
@@ -74,7 +74,7 @@ const Footer: React.FC = () => {
       {/* Modale Privacy */}
       {showPrivacy && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60">
-          <div className="relative bg-dark-light rounded-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-lg">
+          <div className="relative bg-dark-light rounded-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto scrollbar-hide shadow-lg">
             <button 
               onClick={() => setShowPrivacy(false)} 
               aria-label={currentTranslations.close}
