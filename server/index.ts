@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
-import { registerRoutes } from "./routes";
+import { registerRoutes } from "./routes.ts";
 import { setupVite, serveStatic, log } from "./vite";
 import { checkAllServices } from './service-checker';
 

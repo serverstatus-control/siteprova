@@ -1,10 +1,11 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { updateServiceStatusSchema, insertIncidentSchema } from "../shared/schema.ts";
+import { updateServiceStatusSchema, insertIncidentSchema } from "../shared/schema";
 import { fromZodError } from "zod-validation-error";
 import { checkAllServices } from "./service-checker";
 import { setupAuth } from "./auth";
+import { handleForgotPassword } from './password-reset';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
@@ -12,6 +13,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // API routes with /api prefix
   const apiRouter = express.Router();
+
+  // Reset Password
+  apiRouter.post("/forgot-password", async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: "Email richiesta" });
+      }
+
+      const baseUrl = process.env.BASE_URL || 'http://localhost:5173';
+      const result = await handleForgotPassword(email, baseUrl);
+      res.json(result);
+    } catch (error) {
+      console.error("Errore nel reset password:", error);
+      res.status(500).json({ 
+        message: "Errore nell'invio dell'email di reset password"
+      });
+    }
+  });
 
   // Get all categories
   apiRouter.get("/categories", async (_req, res) => {

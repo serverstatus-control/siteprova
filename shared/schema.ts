@@ -39,6 +39,7 @@ export const uptimeHistory = pgTable("uptime_history", {
   uptimePercentage: integer("uptime_percentage").notNull(),
   status: text("status").notNull(),
   responseTime: integer("response_time").default(0),
+  downtimeMinutes: integer("downtime_minutes").default(0),
 });
 
 export const incidents = pgTable("incidents", {
@@ -97,6 +98,7 @@ export const insertUptimeHistorySchema = createInsertSchema(uptimeHistory).pick(
   uptimePercentage: true,
   status: true,
   responseTime: true,
+  downtimeMinutes: true,
 });
 
 export const insertIncidentSchema = createInsertSchema(incidents).pick({

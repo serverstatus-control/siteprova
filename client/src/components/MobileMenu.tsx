@@ -117,7 +117,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                     onClick={() => handleNavigate('/updates')}
                   >
                   <i className="w-5 mr-1 transition-transform duration-200 fas fa-history group-hover:scale-110"></i>
-                  <span>{t.Aggiornamenti || 'Aggiornamenti'}</span>
+                  <span>{t.updates}</span>
                 </button>
               </li>
             </ul>

@@ -6,6 +6,14 @@ export default defineConfig({
   base: '/siteprova/',
   plugins: [react()],
   root: process.cwd(),
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(process.cwd(), 'src'),

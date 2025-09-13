@@ -31,21 +31,76 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
   const { user } = useAuth();
   const isFav = isFavorite(id);
 
-  // Create a status history visualization with 7 days
-  const statusHistory = [];
-  for (let i = 0; i < 7; i++) {
-    let statusClass = 'bg-success';
-    
-    if (status === 'degraded' && i < 2) {
-      statusClass = 'bg-warning';
-    } else if (status === 'down' && i < 4) {
-      statusClass = i < 3 ? 'bg-danger' : 'bg-warning';
+  // Generate default history bars if no history is available
+  const statusHistory = (() => {
+    const bars: React.ReactNode[] = [];
+    for (let i = 0; i < 18; i++) {
+      let statusClass = 'bg-success';
+      let statusText = 'Nessun dato disponibile';
+
+
+        // Se è l'ultima barra (i === 0), usa lo stato attuale del servizio
+        if (i === 0) {
+          if (status === 'down') {
+            statusClass = 'bg-danger';
+            statusText = 'Servizio non disponibile';
+          } else if (status === 'degraded') {
+            statusClass = 'bg-warning';
+            statusText = 'Servizio degradato';
+          }
+        }
+
+        const day = service.history?.[i];
+        if (day) {
+          const dm = day.downtimeMinutes ?? 0;
+
+          // Per le barre storiche, mantieni la logica precedente
+          if (i !== 0) {
+            if (day.status === 'down') {
+              statusClass = 'bg-danger';
+              statusText = 'Servizio non disponibile';
+            } else if (day.status === 'degraded') {
+              statusClass = 'bg-warning';
+              statusText = 'Servizio degradato';
+            } else if (day.status === 'operational') {
+              // Quando è operational, controlla per quanto tempo è stato down
+              if (dm >= 30) {
+                statusClass = 'bg-danger';
+                statusText = 'Non disponibile per più di 30 minuti';
+              } else if (dm > 0) {
+                statusClass = 'bg-warning';
+                statusText = `Non disponibile per ${dm} minuti`;
+              } else {
+                statusClass = 'bg-success';
+                statusText = 'Completamente operativo';
+              }
+            }
+          }
+        const date = new Date(day.date);
+        const formattedDate = new Intl.DateTimeFormat('it-IT', {
+          day: 'numeric',
+          month: 'long'
+        }).format(date);
+
+        bars.push(
+          <div
+            key={i}
+            className={`inline-block w-[3%] h-7 ${statusClass} rounded-sm transition-all duration-300`}
+            title={`${formattedDate}: ${statusText}\nTempo di risposta medio: ${day.responseTime}ms\nUptime: ${day.uptimePercentage}%`}
+          />
+        );
+      } else {
+        bars.push(
+          <div
+            key={i}
+            className={`inline-block w-[3%] h-7 ${statusClass} rounded-sm transition-all duration-300`}
+            title={statusText}
+          />
+        );
+      }
     }
-    
-    statusHistory.push(
-      <span key={i} className={`inline-block w-2 h-8 ${statusClass} rounded-sm`} />
-    );
-  }
+    return bars;
+  })();
 
   const formattedLastChecked = lastChecked ? 
     formatTimeAgo(lastChecked, language) : 
@@ -85,7 +140,7 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
 
   return (
     <div 
-        className="relative w-full overflow-hidden transition-all duration-300 border rounded-lg bg-card border-border hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 group cursor-pointer"
+        className="relative w-full overflow-hidden transition-all duration-300 border rounded-lg cursor-pointer bg-card border-border hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 group"
         onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
         aria-label={t.viewDetails || 'View Details'}
         role="button"
@@ -121,7 +176,7 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
           </div>
         </div>
         
-        <div className="flex items-center px-4 mb-2 space-x-1.5">
+        <div className="flex items-center justify-between w-full px-4 mb-2">
           {statusHistory}
         </div>
 

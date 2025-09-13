@@ -11,6 +11,7 @@ export type Language = "en" | "it" | "es" | "fr" | "de" | "zh" | "ja" | "pt" | "
 export interface Translation {
   settings: string;
   settingsDescription: string;
+  updates: string;
   theme: string;
   language: string;
   system: string;
@@ -131,6 +132,7 @@ export const translations: Record<Language, Translation> = {
     
     // Other translations
     settings: "Settings",
+  updates: "Updates",
     settingsDescription: "Customize your experience by changing theme and language",
     theme: "Theme",
     language: "Language",
@@ -231,6 +233,7 @@ export const translations: Record<Language, Translation> = {
   },
   it: {
     settings: "Impostazioni",
+    updates: "Aggiornamenti",
     settingsDescription: "Personalizza la tua esperienza cambiando tema e lingua",
     theme: "Tema",
     language: "Lingua",
@@ -338,6 +341,7 @@ export const translations: Record<Language, Translation> = {
   },
   es: {
     settings: "Configuración",
+    updates: "Actualizaciones",
     settingsDescription: "Personaliza tu experiencia cambiando el tema y el idioma",
     theme: "Tema",
     language: "Idioma",
@@ -445,6 +449,7 @@ export const translations: Record<Language, Translation> = {
   },
   fr: {
     settings: "Paramètres",
+    updates: "Mises à jour",
     settingsDescription: "Personnalisez votre expérience en changeant de thème et de langue",
     theme: "Thème",
     language: "Langue",
@@ -552,6 +557,7 @@ export const translations: Record<Language, Translation> = {
   },
   de: {
     settings: "Einstellungen",
+    updates: "Website-Updates",
     theme: "Thema",
     language: "Sprache",
     system: "System",
@@ -659,6 +665,7 @@ export const translations: Record<Language, Translation> = {
   },
   zh: {
     settings: "设置",
+    updates: "网站更新",
     settingsDescription: "通过更改主题和语言自定义您的体验",
     theme: "主题",
     language: "语言",
@@ -766,6 +773,7 @@ export const translations: Record<Language, Translation> = {
   },
   ja: {
     settings: "設定",
+    updates: "アップデート",
     settingsDescription: "テーマと言語を変更してカスタマイズ",
     theme: "テーマ",
     language: "言語",
@@ -873,6 +881,7 @@ export const translations: Record<Language, Translation> = {
   },
   pt: {
     settings: "Configurações",
+    updates: "Atualizações",
     settingsDescription: "Personalize sua experiência alterando o tema e o idioma",
     theme: "Tema",
     language: "Idioma",
@@ -980,6 +989,7 @@ export const translations: Record<Language, Translation> = {
   },
   ru: {
     settings: "Настройки",
+    updates: "Обновления",
     settingsDescription: "Настройте внешний вид, изменив тему и язык",
     theme: "Тема",
     language: "Язык",
@@ -1250,7 +1260,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   // Ottiene le traduzioni correnti
   const t = translations[language];
-
   return (
     <SettingsContext.Provider
       value={{
@@ -1262,7 +1271,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         addFavorite,
         removeFavorite,
         isFavorite,
-        t
+        t,
       }}
     >
       {children}
@@ -1270,10 +1279,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useSettings() {
-  const context = useContext(SettingsContext);
-  if (!context) {
-    throw new Error("useSettings must be used within a SettingsProvider");
-  }
-  return context;
+// Hook helper per usare il contesto in modo semplice
+export function useSettings(): SettingsContextType {
+  const ctx = useContext(SettingsContext);
+  if (!ctx) throw new Error("useSettings must be used within SettingsProvider");
+  return ctx;
 }

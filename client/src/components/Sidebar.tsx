@@ -77,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
             {categories.map(category => (
               <li key={category.id} className="mb-1">
                 <a href={`#${category.slug}`} className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md cursor-pointer hover:bg-dark-lighter">
-                  <span className="w-5 mr-2 flex items-center justify-center">{getCategoryIconComponent(category.name, 'w-5 h-5')}</span>
+                  <span className="flex items-center justify-center w-5 mr-2">{getCategoryIconComponent(category.name, 'w-5 h-5')}</span>
                   <span>{getCategoryTranslation(category.name)}</span>
                   <span className="ml-auto text-xs text-gray-500">{servicesByCategory[category.id]?.length || 0}</span>
                 </a>

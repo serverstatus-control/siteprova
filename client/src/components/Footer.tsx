@@ -29,7 +29,7 @@ const Footer: React.FC = () => {
       <footer className="py-4 border-t bg-dark-light border-dark-lighter">
         <div className="container px-4 mx-auto">
           <div className="flex flex-wrap items-center justify-center text-center gap-x-2 gap-y-2">
-            <span className="text-sm text-gray-400">&copy; 2025 Server Status <span className="mx-1">|</span> <span className="font-mono">v: 0.3.00</span></span>
+            <span className="text-sm text-gray-400">&copy; 2025 {currentTranslations.appName} <span className="mx-1">|</span> <span className="font-mono">{currentTranslations.version} 0.3.00</span></span>
             <span className="mx-1 text-gray-500">|</span>
             <button type="button" onClick={() => setShowTerms(true)} className="text-sm font-semibold text-gray-400 capitalize transition-colors hover:text-primary focus:outline-none">
               {currentTranslations.terms}

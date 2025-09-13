@@ -5,7 +5,7 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { UserRole, insertUserSchema, type User } from "../shared/schema.ts";
+import { UserRole, insertUserSchema, type User } from "../shared/schema";
 import { fromZodError } from "zod-validation-error";
 
 const scryptAsync = promisify(scrypt);

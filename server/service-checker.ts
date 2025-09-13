@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { storage } from './storage';
-import { StatusType, type Service, type InsertUptimeHistory, type InsertIncident } from '../shared/schema.ts';
+import { StatusType, type Service, type InsertUptimeHistory, type InsertIncident } from '../shared/schema';
+import { updateDailyDowntime } from './downtime-calculator';
 
 interface CheckResult {
   status: typeof StatusType[keyof typeof StatusType];
@@ -34,8 +35,15 @@ export async function checkService(service: Service): Promise<CheckResult> {
     // Network error or timeout
     status = StatusType.DOWN;
   }
+
+  const result = { status, responseTime: status === StatusType.DOWN ? 0 : responseTime };
   
-  return { status, responseTime: status === StatusType.DOWN ? 0 : responseTime };
+  // Aggiorna il downtime se il servizio è down
+  if (status === StatusType.DOWN) {
+    await updateDailyDowntime(service.id, new Date());
+  }
+  
+  return result;
 }
 
 function getServiceURL(service: Service): string {
@@ -83,7 +91,8 @@ async function updateServiceStatus(service: Service, checkResult: CheckResult): 
     status: checkResult.status,
     responseTime: checkResult.responseTime,
     uptimePercentage: checkResult.status === StatusType.UP ? 100 : 
-                      checkResult.status === StatusType.DEGRADED ? 95 : 0
+                      checkResult.status === StatusType.DEGRADED ? 95 : 0,
+    downtimeMinutes: checkResult.status === StatusType.DOWN ? 5 : 0 // Imposta 5 minuti di downtime per ogni check fallito
   };
   await storage.createUptimeHistory(historyEntry);
   

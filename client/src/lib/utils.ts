@@ -29,7 +29,7 @@ export function formatTimeAgo(date: Date | string | number, language: string = '
 
   // Gestione speciale per l'italiano
   if (language === 'it') {
-    if (diffInSeconds < 5) return 'proprio ora';
+    if (diffInSeconds < 5) return 'ora';
     if (diffInSeconds < 60) return `${diffInSeconds} secondi fa`;
     if (diffInSeconds < 120) return 'un minuto fa';
     if (diffInSeconds < 3600) {
@@ -40,6 +40,11 @@ export function formatTimeAgo(date: Date | string | number, language: string = '
     if (diffInSeconds < 86400) {
       const hours = Math.floor(diffInSeconds / 3600);
       return `${hours} ore fa`;
+    }
+    if (diffInSeconds < 172800) return 'ieri';
+    if (diffInSeconds < 604800) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} giorni fa`;
     }
 
     // Per periodi più lunghi, usa il formato giornaliero

@@ -1,5 +1,5 @@
-import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema.ts";
-import { db } from "./db.ts";
+import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema";
+import { db } from "./db";
 
 async function seed() {
   console.log("🌱 Seeding database...");

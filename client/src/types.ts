@@ -7,6 +7,14 @@ export interface Category {
   slug: string;
 }
 
+export interface DailyHistory {
+  date: string;
+  uptimePercentage: number;
+  responseTime: number;
+  downtimeMinutes: number;
+  status: ServiceStatus;
+}
+
 export interface Service {
   id: number;
   name: string;
@@ -17,6 +25,7 @@ export interface Service {
   lastChecked: string;
   uptimePercentage: number;
   slug: string;
+  history?: DailyHistory[];
 }
 
 export interface UptimeHistory {
@@ -26,6 +35,7 @@ export interface UptimeHistory {
   uptimePercentage: number;
   status: ServiceStatus;
   responseTime: number;
+  downtimeMinutes: number;
 }
 
 export interface Incident {

@@ -20,7 +20,7 @@ import {
   StatusType,
   type UpdateServiceStatus,
   UserRole
-} from "../shared/schema.ts";
+} from "../shared/schema";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -177,12 +177,18 @@ export class MemStorage implements IStorage {
   }
 
   // Uptime History
-  async getUptimeHistory(serviceId: number, limit = 7): Promise<UptimeHistory[]> {
-    const histories = Array.from(this.history.values())
-      .filter((history) => history.serviceId === serviceId)
-      .sort((a, b) => b.date.getTime() - a.date.getTime());
-    
-    return histories.slice(0, limit);
+  async getUptimeHistory(serviceId: number, limit = 18): Promise<UptimeHistory[]> {
+    const result = await db
+      .select()
+      .from(uptimeHistory)
+      .where(eq(uptimeHistory.serviceId, serviceId))
+      .orderBy(desc(uptimeHistory.date))
+      .limit(limit);
+
+    return result.map(history => ({
+      ...history,
+      downtimeMinutes: history.downtimeMinutes ?? null
+    } as unknown as UptimeHistory));
   }
 
   async createUptimeHistory(insertHistory: InsertUptimeHistory): Promise<UptimeHistory> {
@@ -191,6 +197,8 @@ export class MemStorage implements IStorage {
       ...insertHistory, 
       id,
       responseTime: insertHistory.responseTime || null
+      ,
+      downtimeMinutes: insertHistory.downtimeMinutes ?? null
     };
     this.history.set(id, history);
     return history;
@@ -237,11 +245,8 @@ export class MemStorage implements IStorage {
     const degraded = services.filter(s => s.status === StatusType.DEGRADED).length;
     const down = services.filter(s => s.status === StatusType.DOWN).length;
 
-      console.error("Storage: Error adding favorite:", error);
-      if (error instanceof Error && (error as any).stack) {
-        console.error((error as any).stack);
-      }
-      throw error;
+    // Determine the most recent lastChecked across services
+    let lastChecked = new Date(0);
     services.forEach(service => {
       if (service.lastChecked && service.lastChecked > lastChecked) {
         lastChecked = service.lastChecked;
