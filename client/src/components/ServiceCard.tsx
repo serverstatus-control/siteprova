@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Service } from '../types';
 import StatusBadge from './StatusBadge';
 import { getServiceIcon } from '../lib/icons';
@@ -17,6 +17,7 @@ interface ServiceCardProps {
 }
 
 const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
+  const [, setLocation] = useLocation();
   const {
     id,
     name,
@@ -141,7 +142,10 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
   return (
     <div 
         className="relative w-full overflow-hidden transition-all duration-300 border rounded-lg cursor-pointer bg-card border-border hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 group"
-        onClick={(e) => { e.preventDefault(); if (onClick) onClick(); }}
+        onClick={(e) => { 
+          e.preventDefault(); 
+          setLocation(`/services/${slug}`);
+        }}
         aria-label={t.viewDetails || 'View Details'}
         role="button"
         tabIndex={0}>
