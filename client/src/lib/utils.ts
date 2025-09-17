@@ -29,7 +29,7 @@ export function formatTimeAgo(date: Date | string | number, language: string = '
 
   // Gestione speciale per l'italiano
   if (language === 'it') {
-    if (diffInSeconds < 5) return 'ora';
+    if (diffInSeconds < 5) return `${diffInSeconds} secondi fa`;
     if (diffInSeconds < 60) return `${diffInSeconds} secondi fa`;
     if (diffInSeconds < 120) return 'un minuto fa';
     if (diffInSeconds < 3600) {

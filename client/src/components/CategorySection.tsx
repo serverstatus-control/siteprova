@@ -3,6 +3,14 @@ import { Service } from '../types';
 import ServiceCard from './ServiceCard';
 import { useSettings, type Translation } from '@/hooks/use-settings';
 import { getCategoryIconComponent } from '@/lib/categoryIcons';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowDownWideNarrow, ArrowUpAZ, Clock, TrendingUp } from "lucide-react";
 
 interface CategorySectionProps {
   name: string;
@@ -70,30 +78,40 @@ const CategorySection: React.FC<CategorySectionProps> = ({
         </button>
         
         <div className="flex items-center gap-2">
-          <select
+          <Select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            className="relative px-3 py-2 pr-8 text-sm border rounded-md outline-none appearance-none cursor-none h-9 text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground border-input hover:border-primary focus:ring-1 focus:ring-primary"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-              backgroundPosition: 'right 0.5rem center',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: '1.5em 1.5em'
-            }}
+            onValueChange={(value) => setSortBy(value as typeof sortBy)}
           >
-            <option value="status" className="py-2">
-              🔴 Prima i down
-            </option>
-            <option value="alpha" className="py-2">
-              🔤 Ordine alfabetico
-            </option>
-            <option value="responseTime" className="py-2">
-              ⚡ Tempo di risposta
-            </option>
-            <option value="uptimePercentage" className="py-2">
-              📈 Uptime %
-            </option>
-          </select>
+            <SelectTrigger className="w-[180px] h-9">
+              <SelectValue placeholder="Ordina per..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="status">
+                <div className="flex items-center gap-2">
+                  <ArrowDownWideNarrow className="w-4 h-4" />
+                  <span>Prima i down</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="alpha">
+                <div className="flex items-center gap-2">
+                  <ArrowUpAZ className="w-4 h-4" />
+                  <span>Ordine alfabetico</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="responseTime">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>Tempo di risposta</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="uptimePercentage">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>Uptime %</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -101,12 +119,13 @@ const CategorySection: React.FC<CategorySectionProps> = ({
         <>
           <div className="w-full overflow-x-auto">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {sortedServices.map((service: Service) => (
-                <ServiceCard 
-                  key={service.id} 
-                  service={service} 
-                  onClick={() => onServiceClick(service)}
-                />
+              {sortedServices.map(service => (
+                <div
+                  key={service.id}
+                  className={`mb-3 ${service.name === 'Fascicolo Sanitario' ? 'ml-2' : ''}`}
+                >
+                  <ServiceCard service={service} />
+                </div>
               ))}
             </div>
           </div>

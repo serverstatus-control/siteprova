@@ -362,12 +362,23 @@ export class MemStorage implements IStorage {
       { name: 'TIM', logo: 'fas fa-wifi', categoryId: 4, status: StatusType.UP, responseTime: 82, slug: 'tim' },
       
       // Streaming
-      { name: 'Netflix', logo: 'fas fa-film', categoryId: 6, status: StatusType.UP, responseTime: 97, slug: 'netflix' },
+      { name: 'Prime Video', logo: 'fab fa-amazon', categoryId: 6, status: StatusType.UP, responseTime: 97, slug: 'prime-video' },
       { name: 'YouTube', logo: 'fab fa-youtube', categoryId: 6, status: StatusType.UP, responseTime: 88, slug: 'youtube' },
       { name: 'Twitch', logo: 'fab fa-twitch', categoryId: 6, status: StatusType.DOWN, responseTime: 0, slug: 'twitch' }
     ];
 
+    // Add bank services (updated names)
+    const moreServices: InsertService[] = [
+      { name: 'Banca MPS', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 120, slug: 'mps' },
+      { name: 'Mediolanum', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 110, slug: 'mediolanum' },
+      { name: 'Fascicolo Sanitario', logo: 'fas fa-notes-medical', categoryId: 9, status: StatusType.UP, responseTime: 150, slug: 'fascicolo-sanitario' }
+    ];
+
     servicesData.forEach(service => {
+      this.createService(service);
+    });
+
+    moreServices.forEach(service => {
       this.createService(service);
     });
 
@@ -651,5 +662,7 @@ export class DatabaseStorage implements IStorage {
 // Uncomment to use memory storage for development
 // export const storage = new MemStorage(); 
 
-// Use database storage
-export const storage = new DatabaseStorage();
+// Choose storage implementation based on DATABASE_URL presence
+// If DATABASE_URL is not set, use in-memory storage (good for local dev and for rendering UI changes
+// without a DB). When DATABASE_URL is present, use the real DatabaseStorage.
+export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();

@@ -1,5 +1,7 @@
-import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema";
-import { db } from "./db";
+// Import schema con path assoluto per evitare problemi di risoluzione
+import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema.ts";
+import { db } from "./db.ts";
+import { inArray } from "drizzle-orm";
 
 async function seed() {
   console.log("🌱 Seeding database...");
@@ -33,7 +35,6 @@ async function seed() {
       { name: 'Steam', logo: 'fab fa-steam', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 118, slug: 'steam' },
       { name: 'Roblox', logo: 'fas fa-cube', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 342, slug: 'roblox' },
       { name: 'Epic Games', logo: 'fas fa-gamepad', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 98, slug: 'epic-games' },
-      { name: 'Rockstar', logo: 'fas fa-star', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 125, slug: 'rockstar' },
       { name: 'Mojang', logo: 'fas fa-cube', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 125, slug: 'mojang' },
       { name: 'Xbox', logo: 'fab fa-xbox', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 104, slug: 'xbox' },
       { name: 'PlayStation', logo: 'fab fa-playstation', categoryId: categoryMap.get('games') || 1, status: StatusType.UP, responseTime: 112, slug: 'playstation' },
@@ -62,13 +63,24 @@ async function seed() {
       { name: 'TIM', logo: 'fas fa-wifi', categoryId: categoryMap.get('connection') || 4, status: StatusType.UP, responseTime: 82, slug: 'tim' },
       
       // Streaming
-      { name: 'Netflix', logo: 'fas fa-film', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 97, slug: 'netflix' },
+      { name: 'Prime Video', logo: 'fab fa-amazon', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 97, slug: 'prime-video' },
       { name: 'YouTube', logo: 'fab fa-youtube', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 88, slug: 'youtube' },
-      { name: 'Twitch', logo: 'fab fa-twitch', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 105, slug: 'twitch' }
+      { name: 'Twitch', logo: 'fab fa-twitch', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 105, slug: 'twitch' },
+      
+      // Bank
+      { name: 'Banca MPS', logo: 'fas fa-university', categoryId: categoryMap.get('bank') || 1, status: StatusType.UP, responseTime: 120, slug: 'mps' },
+      { name: 'Mediolanum', logo: 'fas fa-university', categoryId: categoryMap.get('bank') || 1, status: StatusType.UP, responseTime: 110, slug: 'mediolanum' },
+      
+      // Health
+  { name: 'Fascicolo Sanitario', logo: 'fas fa-notes-medical', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 150, slug: 'fascicolo-sanitario' }
     ];
 
-    console.log("Inserting services...");
-    await db.insert(services).values(servicesData).onConflictDoNothing();
+  console.log("Deleting existing services with same slugs (if any)...");
+  const slugs = servicesData.map(s => s.slug);
+  await db.delete(services).where(inArray(services.slug, slugs));
+
+  console.log("Inserting services...");
+  await db.insert(services).values(servicesData).onConflictDoNothing();
 
     console.log("✅ Database seeded successfully!");
   } catch (error) {

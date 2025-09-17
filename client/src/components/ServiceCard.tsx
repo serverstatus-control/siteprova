@@ -149,11 +149,11 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
       <div className="relative flex flex-col h-full pb-16">
         <div className="flex items-start justify-between p-4 mb-2">
           <div className="flex items-start flex-1 min-w-0 mr-4">
-            <div className="flex items-center justify-center w-10 h-10 mr-3 transition-transform duration-300 rounded-lg bg-background group-hover:scale-110 group-hover:shadow-md shrink-0">
-              <i className={`${logo || getServiceIcon(name)} text-xl transition-all duration-300 group-hover:text-primary`} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-medium leading-tight transition-colors duration-300 group-hover:text-primary">{name}</h3>
+            <div className="flex items-center gap-2">
+              <span className="flex items-center justify-center w-7 h-7 transition-transform duration-300 rounded-lg bg-background group-hover:scale-110 group-hover:shadow-md shrink-0">
+                <i className={`${logo || getServiceIcon(name)} text-xl transition-all duration-300 group-hover:text-primary`} />
+              </span>
+              <h3 className="text-lg font-medium leading-tight transition-colors duration-300 group-hover:text-primary whitespace-nowrap">{name}</h3>
             </div>
           </div>
           <StatusBadge status={status} className="transition-transform duration-300 group-hover:scale-105 shrink-0" />
