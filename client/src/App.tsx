@@ -1,20 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import { Switch, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
-import ServiceDetail from "@/pages/service-detail";
-import AdminPage from "@/pages/admin-page";
-import AuthPage from "@/pages/auth-page";
-import InfoPage from "@/pages/info-page";
-import UpdatesPage from "@/pages/updates-page";
-import AccountDashboard from "@/pages/account-dashboard";
-import ResetRequest from "@/pages/reset-password";
-import ResetConfirm from "@/pages/reset-confirm";
-import ForgotPassword from "@/pages/forgot-password";
-import ResetSuccess from "@/pages/reset-success";
+import Home from "@/pages/home"; // Manteniamo Home caricato subito per il First Paint
 import { ProtectedRoute } from "@/lib/protected-route";
 import CustomCursor from "@/components/CustomCursor";
+
+// Lazy loading per le pagine non critiche
+const ServiceDetail = lazy(() => import("@/pages/service-detail"));
+const AdminPage = lazy(() => import("@/pages/admin-page"));
+const AuthPage = lazy(() => import("@/pages/auth-page"));
+const InfoPage = lazy(() => import("@/pages/info-page"));
+const UpdatesPage = lazy(() => import("@/pages/updates-page"));
+const AccountDashboard = lazy(() => import("@/pages/account-dashboard"));
+const ResetRequest = lazy(() => import("@/pages/reset-password"));
+const ResetConfirm = lazy(() => import("@/pages/reset-confirm"));
+const ForgotPassword = lazy(() => import("@/pages/forgot-password"));
+const ResetSuccess = lazy(() => import("@/pages/reset-success"));
+
+// Componente di loading riutilizzabile
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-[60vh]">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
 
 function ScrollProgressBar() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -70,16 +79,60 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-  <Route path="/reset-password" component={ResetRequest} />
-  <Route path="/reset" component={ResetConfirm} />
-  <Route path="/forgot-password" component={ForgotPassword} />
-  <Route path="/reset-success" component={ResetSuccess} />
-      <Route path="/services/:slug" component={ServiceDetail} />
-      <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
-      <ProtectedRoute path="/account-dashboard" component={AccountDashboard} />
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/info" component={InfoPage} />
-      <Route path="/updates" component={UpdatesPage} />
+      <Route path="/reset-password">
+        <Suspense fallback={<PageLoader />}>
+          <ResetRequest />
+        </Suspense>
+      </Route>
+      <Route path="/reset">
+        <Suspense fallback={<PageLoader />}>
+          <ResetConfirm />
+        </Suspense>
+      </Route>
+      <Route path="/forgot-password">
+        <Suspense fallback={<PageLoader />}>
+          <ForgotPassword />
+        </Suspense>
+      </Route>
+      <Route path="/reset-success">
+        <Suspense fallback={<PageLoader />}>
+          <ResetSuccess />
+        </Suspense>
+      </Route>
+      <Route path="/services/:slug">
+        <Suspense fallback={<PageLoader />}>
+          <ServiceDetail />
+        </Suspense>
+      </Route>
+      <Route path="/admin">
+        <ProtectedRoute adminOnly={true}>
+          <Suspense fallback={<PageLoader />}>
+            <AdminPage />
+          </Suspense>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/account-dashboard">
+        <ProtectedRoute>
+          <Suspense fallback={<PageLoader />}>
+            <AccountDashboard />
+          </Suspense>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/auth">
+        <Suspense fallback={<PageLoader />}>
+          <AuthPage />
+        </Suspense>
+      </Route>
+      <Route path="/info">
+        <Suspense fallback={<PageLoader />}>
+          <InfoPage />
+        </Suspense>
+      </Route>
+      <Route path="/updates">
+        <Suspense fallback={<PageLoader />}>
+          <UpdatesPage />
+        </Suspense>
+      </Route>
       <Route path="/:rest*" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

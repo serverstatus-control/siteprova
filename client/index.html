@@ -4,12 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>SERVER STATUS</title>
+    
+    <!-- Favicon e icone -->
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" href="./favicon.png" />
-    <!-- Preconnect to font providers to reduce layout flash -->
+    
+    <!-- Preconnect per font providers per ridurre il layout flash -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Inline script: apply saved theme and inline bg/text styles early to avoid white flash -->
+    
+    <!-- Preload delle risorse critiche -->
+    <link rel="modulepreload" href="/src/main.tsx" />
+    <link rel="modulepreload" href="/src/App.tsx" />
+    <link rel="modulepreload" href="/src/pages/home.tsx" />
+    
+    <!-- DNS prefetch per API -->
+    <link rel="dns-prefetch" href="//localhost" />
+    
+    <!-- Meta tags per SEO e performance -->
+    <meta name="description" content="Server Status Dashboard - Monitora lo stato dei tuoi servizi in tempo reale" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Inline script: applica il tema salvato e gli stili inline per evitare il flash bianco -->
     <script>
       (function(){
         try {

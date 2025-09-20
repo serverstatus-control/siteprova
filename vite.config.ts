@@ -4,6 +4,7 @@ import themePlugin from '@replit/vite-plugin-shadcn-theme-json';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -18,7 +19,20 @@ export default defineConfig(({ mode }) => {
 
   return {
     base: '/siteprova/',
-    plugins: [react(), runtimeErrorOverlay(), themePlugin()],
+    plugins: [
+      react(), 
+      runtimeErrorOverlay(), 
+      themePlugin(),
+      // Analisi del bundle solo in produzione
+      ...(process.env.ANALYZE === 'true' ? [
+        visualizer({
+          filename: 'bundle-analysis.html',
+          open: true,
+          gzipSize: true,
+          brotliSize: true,
+        })
+      ] : [])
+    ],
     server: {
   port: 3000,
       strictPort: true,
@@ -58,20 +72,68 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       emptyOutDir: true,
-      sourcemap: true,
+      sourcemap: process.env.NODE_ENV === 'development',
       rollupOptions: {
         output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom'],
-            ui: ['@radix-ui/react-accordion', '@radix-ui/react-alert-dialog', '@radix-ui/react-dialog'],
+          manualChunks: (id) => {
+            // Vendor chunks più granulari
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@radix-ui')) {
+              return 'radix-ui';
+            }
+            if (id.includes('@tanstack/react-query')) {
+              return 'react-query';
+            }
+            if (id.includes('wouter')) {
+              return 'router';
+            }
+            if (id.includes('framer-motion')) {
+              return 'framer-motion';
+            }
+            if (id.includes('lucide-react') || id.includes('react-icons')) {
+              return 'icons';
+            }
+            if (id.includes('zod') || id.includes('react-hook-form')) {
+              return 'forms';
+            }
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
           },
+          // Ottimizzazione per file specifici
+          chunkFileNames: 'assets/js/[name]-[hash].js',
+          entryFileNames: 'assets/js/[name]-[hash].js',
+          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
         },
       },
       minify: 'terser',
-      terserOptions: { compress: { drop_console: true, drop_debugger: true } },
-      chunkSizeWarningLimit: 1000,
+      terserOptions: { 
+        compress: { 
+          drop_console: process.env.NODE_ENV === 'production',
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug']
+        } 
+      },
+      chunkSizeWarningLimit: 500,
       assetsDir: 'assets',
+      target: 'esnext',
+      reportCompressedSize: false,
     },
-    optimizeDeps: { include: ['react', 'react-dom'] },
+    optimizeDeps: { 
+      include: [
+        'react', 
+        'react-dom', 
+        'react/jsx-runtime',
+        '@tanstack/react-query',
+        'wouter',
+        'lucide-react',
+        'framer-motion',
+        'zod',
+        'react-hook-form'
+      ],
+      exclude: ['@fortawesome/fontawesome-free']
+    },
   };
 });

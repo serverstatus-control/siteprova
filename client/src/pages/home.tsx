@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { queryClient } from '../lib/queryClient';
 import { Category, Service, ServiceWithDetails, UptimeHistory, Incident } from '../types';
@@ -6,10 +6,12 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import MobileMenu from '../components/MobileMenu';
 import CategorySection from '../components/CategorySection';
-import ServiceDetailModal from '../components/ServiceDetailModal';
 import StatusSummary from '../components/StatusSummary';
 import Footer from '../components/Footer';
 import { apiRequest } from '../lib/queryClient';
+
+// Lazy loading per componenti non critici
+const ServiceDetailModal = lazy(() => import('../components/ServiceDetailModal'));
 
 const Home: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -178,13 +180,21 @@ const Home: React.FC = () => {
       
       <Footer />
       
-      <ServiceDetailModal 
-        service={selectedService}
-        history={serviceHistory}
-        incidents={serviceIncidents}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
+      {isModalOpen && (
+        <Suspense fallback={
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          </div>
+        }>
+          <ServiceDetailModal 
+            service={selectedService}
+            history={serviceHistory}
+            incidents={serviceIncidents}
+            isOpen={isModalOpen}
+            onClose={closeModal}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

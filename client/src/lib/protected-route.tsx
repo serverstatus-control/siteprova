@@ -8,46 +8,39 @@ export function ProtectedRoute({
   path,
   component: Component,
   adminOnly = false,
+  children,
 }: {
-  path: string;
-  component: React.ComponentType;
+  path?: string;
+  component?: React.ComponentType;
   adminOnly?: boolean;
+  children?: React.ReactNode;
 }) {
   const { user, isLoading } = useAuth();
 
   // Show loading spinner while checking authentication
   if (isLoading) {
-    return (
-      <Route path={path}>
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </Route>
+    const content = (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
     );
+    
+    return path ? <Route path={path}>{content}</Route> : content;
   }
 
   // Redirect to auth page if not authenticated
   if (!user) {
-    return (
-      <Route path={path}>
-    <Redirect to="/auth" />
-      </Route>
-    );
+    const content = <Redirect to="/auth" />;
+    return path ? <Route path={path}>{content}</Route> : content;
   }
 
   // Redirect to home if admin-only route and user is not admin
   if (adminOnly && user.role !== UserRole.ADMIN) {
-    return (
-      <Route path={path}>
-    <Redirect to="/" />
-      </Route>
-    );
+    const content = <Redirect to="/" />;
+    return path ? <Route path={path}>{content}</Route> : content;
   }
 
-  // Render the protected component
-  return (
-    <Route path={path}>
-      <Component />
-    </Route>
-  );
+  // Render the protected component or children
+  const content = children || (Component && <Component />);
+  return path ? <Route path={path}>{content}</Route> : <>{content}</>;
 }

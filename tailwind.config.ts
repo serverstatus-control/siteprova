@@ -2,7 +2,23 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./client/index.html", 
+    "./client/src/**/*.{js,jsx,ts,tsx}",
+    // Escludiamo i file di test e le storie per ridurre il tempo di scansione
+    "!./client/src/**/*.test.{js,jsx,ts,tsx}",
+    "!./client/src/**/*.stories.{js,jsx,ts,tsx}",
+    "!./node_modules/**/*"
+  ],
+  // Ottimizzazioni per la produzione
+  experimental: {
+    optimizeUniversalDefaults: true,
+  },
+  corePlugins: {
+    // Disabilitiamo le funzionalità non utilizzate per ridurre le dimensioni del CSS
+    preflight: true,
+    container: false, // Se non usi il container di Tailwind
+  },
   theme: {
     extend: {
       borderRadius: {
@@ -96,5 +112,10 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"), 
+    require("@tailwindcss/typography"),
+    // Plugin per ridurre le dimensioni CSS in produzione
+    ...(process.env.NODE_ENV === 'production' ? [] : [])
+  ],
 } satisfies Config;

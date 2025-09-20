@@ -165,8 +165,8 @@
 
   @media (hover: hover) {
     * {
-  @apply border-border;
-  cursor: none !important;
+      @apply border-border;
+      cursor: none !important;
     }
 
     html:has(#cursor) * {
@@ -187,10 +187,18 @@
       pointer-events: none;
       z-index: 9999;
       mix-blend-mode: difference;
-      transform: translate(-50%, -50%);
-      transition: all 0.15s ease;
-      transition-property: width, height, border, transform, opacity;
-      will-change: transform, opacity;
+      /* Ottimizzazioni performance */
+      will-change: transform;
+      transform-origin: center;
+      backface-visibility: hidden;
+      /* Transizioni più fluide */
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  height 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  border 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.15s ease-out;
+      /* Forza accelerazione hardware */
+      transform: translate3d(-50%, -50%, 0);
       opacity: 1;
     }
 
@@ -198,18 +206,39 @@
       width: 32px;
       height: 32px;
       border: 1.5px solid rgba(255, 255, 255, 1);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.08);
+      /* Aggiunta di box-shadow per migliore visibilità */
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
 
     #cursor.clicking {
-      transform: translate(-50%, -50%) scale(0.8);
+      transform: translate3d(-50%, -50%, 0) scale(0.85);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    #cursor.outside,
     #cursor.hidden {
       opacity: 0;
       transition: opacity 0.15s ease-out;
       pointer-events: none;
+    }
+
+    /* Ottimizzazione per ridurre il layout shift */
+    #cursor::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.2s ease;
+      opacity: 0;
+    }
+
+    #cursor.hover::before {
+      opacity: 1;
     }
 
     /* Hide native vertical scrollbar on desktop; prefer top progress bar as indicator */
