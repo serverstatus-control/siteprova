@@ -68,6 +68,7 @@ export type Translation = {
   error: string;
   lastCheck: string;
   responseTime: string;
+  overview: string;
   viewDetails: string;
   backToDashboard: string;
   siteUpdates: string;
@@ -217,6 +218,7 @@ export const translations: Record<string, Translation> = {
     error: 'Error',
     lastCheck: 'Last check',
     responseTime: 'Response time',
+    overview: 'Overview',
     viewDetails: 'View details',
     backToDashboard: 'Back to Dashboard',
     siteUpdates: 'Site Updates',
@@ -364,6 +366,7 @@ export const translations: Record<string, Translation> = {
     error: 'Errore',
     lastCheck: 'Ultimo controllo',
     responseTime: 'Tempo di risposta',
+    overview: 'Panoramica',
     viewDetails: 'Vedi dettagli',
     backToDashboard: 'Torna alla Dashboard',
     siteUpdates: 'Aggiornamenti Sito',

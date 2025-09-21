@@ -51,6 +51,8 @@ const Header: React.FC<HeaderProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { user, logoutMutation } = useAuth();
   const { t, favorites, isFavorite } = useSettings();
   const [_, navigate] = useLocation();
@@ -83,6 +85,20 @@ const Header: React.FC<HeaderProps> = ({
     const term = e.target.value;
     setSearchTerm(term);
     onSearch(term);
+  };
+
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+  };
+
+  const handleSearchHover = () => {
+    if (!hasAnimated) {
+      setHasAnimated(true);
+    }
   };
 
   const handleLogout = () => {
@@ -120,18 +136,32 @@ const Header: React.FC<HeaderProps> = ({
         {/* Colonna centrale: search sempre visibile e centrata, responsive */}
         <div className="flex justify-center flex-1">
           {/* Desktop/tablet: search visibile */}
-          <div className="relative items-center hidden w-full max-w-xs mx-auto transition-all duration-300 ease-in-out sm:max-w-sm md:max-w-md lg:max-w-lg md:flex">
+          <div 
+            className={`relative items-center hidden mx-auto transition-all duration-300 ease-in-out md:flex group ${
+              isSearchFocused || searchTerm ? 'w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl' : 'w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg'
+            }`}
+            onMouseEnter={handleSearchHover}
+          >
             <span className="absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 pointer-events-none select-none left-3 top-1/2">
               <Search className="w-4 h-4 transition-colors duration-200 text-muted-foreground" />
             </span>
             <input
               ref={searchInputRef}
               type="text"
-              placeholder={t.searchServices}
-              className="w-full py-1.5 pl-10 pr-10 text-sm border rounded-lg bg-background border-input focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all duration-200"
+              placeholder=""
+              className="w-full py-1.5 pl-10 pr-10 text-sm border-0 rounded-lg bg-background placeholder:text-muted-foreground transition-all duration-300"
               value={searchTerm}
               onChange={handleSearch}
+              onFocus={handleSearchFocus}
+              onBlur={handleSearchBlur}
             />
+            {!searchTerm && !isSearchFocused && (
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="flex items-center h-full pl-10">
+                  <span className={`typing-animation text-muted-foreground text-sm ${hasAnimated ? 'animate' : ''}`}></span>
+                </div>
+              </div>
+            )}
             {favorites.length > 0 && (
               <TooltipProvider>
                 <Tooltip>
@@ -206,10 +236,10 @@ const Header: React.FC<HeaderProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="hidden transition-colors duration-200 lg:flex text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            className="hidden transition-colors duration-200 lg:flex text-muted-foreground hover:text-foreground hover:bg-muted/50 group"
             onClick={() => setSettingsOpen(true)}
           >
-            <Settings className="w-5 h-5 transition-transform duration-200" />
+            <Settings className="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:rotate-90 settings-button-icon" />
           </Button>
           {/* Account solo desktop */}
           <Button
@@ -234,19 +264,31 @@ const Header: React.FC<HeaderProps> = ({
             >
               ×
             </button>
-            <div className="relative flex items-center w-full">
+            <div 
+              className="relative flex items-center w-full group"
+              onMouseEnter={handleSearchHover}
+            >
               <span className="absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 pointer-events-none select-none left-3 top-1/2">
                 <Search className="w-4 h-4 transition-colors duration-200 text-muted-foreground" />
               </span>
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder={t.searchServices}
-                className="w-full py-2 pl-10 pr-10 text-sm transition-all duration-200 border rounded-lg bg-background border-input focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                placeholder=""
+                className="w-full py-2 pl-10 pr-10 text-sm border-0 rounded-lg bg-background placeholder:text-muted-foreground"
                 value={searchTerm}
                 onChange={handleSearch}
+                onFocus={handleSearchFocus}
+                onBlur={handleSearchBlur}
                 autoFocus
               />
+              {!searchTerm && !isSearchFocused && (
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="flex items-center h-full pl-10">
+                    <span className={`typing-animation text-muted-foreground text-sm ${hasAnimated ? 'animate' : ''}`}></span>
+                  </div>
+                </div>
+              )}
               {favorites.length > 0 && (
                 <TooltipProvider>
                   <Tooltip>

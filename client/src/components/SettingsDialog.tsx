@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, memo, useCallback } from "react";
 import { Service } from "@shared/schema";
 import { useSettings, Theme, Language } from "@/hooks/use-settings";
 import {
@@ -24,12 +24,21 @@ interface SettingsDialogProps {
   services: Service[];
 }
 
-export default function SettingsDialog({
+const SettingsDialog = memo(function SettingsDialog({
   open,
   onOpenChange,
   services,
 }: SettingsDialogProps) {
   const { theme, setTheme, language, setLanguage, t } = useSettings();
+
+  // Memoize delle callback per evitare re-render
+  const handleThemeChange = useCallback((value: string) => {
+    setTheme(value as Theme);
+  }, [setTheme]);
+
+  const handleLanguageChange = useCallback((value: string) => {
+    setLanguage(value as Language);
+  }, [setLanguage]);
 
   // Applica il tema quando cambia
   useEffect(() => {
@@ -70,7 +79,7 @@ export default function SettingsDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="theme" className="text-base font-medium">{t.theme}</Label>
-              <Select value={theme} onValueChange={(value) => setTheme(value as Theme)}>
+              <Select value={theme} onValueChange={handleThemeChange}>
                 <SelectTrigger id="theme" className="w-full">
                   <SelectValue placeholder={t.selectTheme} />
                 </SelectTrigger>
@@ -99,7 +108,7 @@ export default function SettingsDialog({
 
             <div className="space-y-2">
               <Label htmlFor="language" className="text-base font-medium">{t.language}</Label>
-              <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
+              <Select value={language} onValueChange={handleLanguageChange}>
                 <SelectTrigger id="language" className="w-full">
                   <SelectValue placeholder={t.selectLanguage} />
                 </SelectTrigger>
@@ -121,4 +130,6 @@ export default function SettingsDialog({
       </DialogContent>
     </Dialog>
   );
-}
+});
+
+export default SettingsDialog;

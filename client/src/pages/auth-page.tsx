@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { insertUserSchema, loginUserSchema } from "@shared/schema";
+import { Translation } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -99,7 +100,7 @@ export default function AuthPage() {
               <LoginForm
                 isLoading={loginMutation?.isPending ?? false}
                 onSubmit={(d) => loginMutation.mutate(d)}
-                t={t || {}}
+                t={t as any || {}}
                 onNavigateToReset={() => navigate("/forgot-password")}
               />
             </TabsContent>
@@ -107,7 +108,7 @@ export default function AuthPage() {
               <RegisterForm
                 isLoading={registerMutation?.isPending ?? false}
                 onSubmit={(d) => registerMutation.mutate(d)}
-                t={t || {}}
+                t={t as any || {}}
               />
             </TabsContent>
           </Tabs>

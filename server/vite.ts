@@ -91,15 +91,15 @@ export function serveStatic(app: Express) {
     );
   }
 
-  // Serve i file statici per /siteprova/assets/*
-  app.use("/siteprova/assets", express.static(path.join(distPath, "assets")));
+  // Serve i file statici per /assets/*
+  app.use("/assets", express.static(path.join(distPath, "assets")));
 
   // Serve favicon e altri asset statici
-  app.use("/siteprova/favicon.svg", express.static(path.join(distPath, "favicon.svg")));
-  app.use("/siteprova/favicon.png", express.static(path.join(distPath, "favicon.png")));
+  app.use("/favicon.svg", express.static(path.join(distPath, "favicon.svg")));
+  app.use("/favicon.png", express.static(path.join(distPath, "favicon.png")));
 
   // Serve index.html solo per richieste SPA
-  app.get("/siteprova/*", (_req, res) => {
+  app.get("/*", (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }

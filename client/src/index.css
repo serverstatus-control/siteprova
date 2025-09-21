@@ -163,9 +163,56 @@
     }
   }
 
+  /* Nasconde sempre il cursore personalizzato sui dispositivi touch */
+  @media (hover: none) and (pointer: coarse) {
+    * {
+      cursor: auto !important;
+    }
+    
+    html:has(#cursor) * {
+      cursor: auto !important;
+    }
+
+    a, button, [role="button"], input[type="submit"], select {
+      cursor: pointer !important;
+    }
+
+    button, a, [role="button"], select, input[type="submit"] {
+      cursor: pointer !important;
+    }
+    
+    #cursor {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+  }
+
+  /* Fallback per schermi piccoli (dispositivi mobili) */
+  @media (max-width: 768px) {
+    * {
+      cursor: auto !important;
+    }
+    
+    html:has(#cursor) * {
+      cursor: auto !important;
+    }
+
+    a, button, [role="button"], input[type="submit"], select {
+      cursor: pointer !important;
+    }
+
+    button, a, [role="button"], select, input[type="submit"] {
+      cursor: pointer !important;
+    }
+    
+    #cursor {
+      display: none !important;
+    }
+  }
+
   @media (hover: hover) {
     * {
-      @apply border-border;
       cursor: none !important;
     }
 
@@ -187,19 +234,46 @@
       pointer-events: none;
       z-index: 9999;
       mix-blend-mode: difference;
-      /* Ottimizzazioni performance */
+      
+      /* Ultra-ottimizzazioni performance per rendering GPU-accelerato */
       will-change: transform;
       transform-origin: center;
       backface-visibility: hidden;
-      /* Transizioni più fluide */
-      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                  height 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                  border 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                  background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                  opacity 0.15s ease-out;
-      /* Forza accelerazione hardware */
+      contain: layout style paint;
+      isolation: isolate;
+      
+      /* Transizioni ultra-rapide per responsività Windows-like */
+      transition: width 0.05s ease-out,
+                  height 0.05s ease-out,
+                  border 0.05s ease-out,
+                  background 0.05s ease-out;
+      
+      /* Force compositing layer per eliminare repaints */
       transform: translate3d(-50%, -50%, 0);
       opacity: 1;
+      
+      /* Performance boost per layer management */
+      content-visibility: auto;
+      contain-intrinsic-size: 20px 20px;
+    }
+
+    /* Durante la selezione di testo, mantieni visibilità ma riduci opacità */
+    #cursor.selecting {
+      opacity: 0.6 !important;
+      transition: opacity 0.05s ease-out;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1.5px solid rgba(255, 255, 255, 0.6);
+      /* Performance optimization per selection state */
+      contain: layout style paint;
+      will-change: opacity;
+    }
+
+    /* Quando l'utente sta selezionando testo */
+    ::-moz-selection {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    ::selection {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     #cursor.hover {
@@ -207,22 +281,42 @@
       height: 32px;
       border: 1.5px solid rgba(255, 255, 255, 1);
       background: rgba(255, 255, 255, 0.08);
-      /* Aggiunta di box-shadow per migliore visibilità */
+      
+      /* Ultra-fast hover transition per responsività Windows-like */
+      transition: width 0.05s ease-out, 
+                  height 0.05s ease-out, 
+                  border 0.05s ease-out, 
+                  background 0.05s ease-out,
+                  box-shadow 0.05s ease-out;
+      
+      /* Enhanced visibility con performance optimization */
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      
+      /* Performance boost per hover state */
+      contain: layout style paint;
+      will-change: width, height, border, background, box-shadow;
+      contain-intrinsic-size: 32px 32px;
     }
 
     #cursor.clicking {
-      transform: translate3d(-50%, -50%, 0) scale(0.85);
-      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translate3d(-50%, -50%, 0) scale(0.9);
+      transition: transform 0.05s ease-out;
+      /* Performance optimization per click state */
+      contain: layout style paint;
+      will-change: transform;
     }
 
     #cursor.hidden {
       opacity: 0;
-      transition: opacity 0.15s ease-out;
+      transition: opacity 0.05s ease-out;
       pointer-events: none;
+      /* Performance optimization per hidden state */
+      contain: layout style paint;
+      will-change: opacity;
+      visibility: hidden;
     }
 
-    /* Ottimizzazione per ridurre il layout shift */
+    /* Ottimizzazione per ridurre il layout shift e migliorare performance */
     #cursor::before {
       content: '';
       position: absolute;
@@ -235,10 +329,63 @@
       transform: translate(-50%, -50%);
       transition: opacity 0.2s ease;
       opacity: 0;
+      /* Performance optimization per pseudo-element */
+      contain: layout style paint;
+      will-change: opacity;
     }
 
     #cursor.hover::before {
       opacity: 1;
+      transition: opacity 0.05s ease-out;
+      /* Performance boost per hover pseudo-element */
+      contain: layout style paint;
+      will-change: opacity;
+    }
+
+    /* Animazione per il bottone impostazioni */
+    .settings-button-icon {
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    /* Animazione typing per la ricerca - esegue solo una volta */
+    .typing-animation::after {
+      content: '';
+      animation: none;
+    }
+
+    @keyframes typing {
+      0% { content: ''; }
+      5% { content: 'S'; }
+      10% { content: 'Se'; }
+      15% { content: 'Sea'; }
+      20% { content: 'Sear'; }
+      25% { content: 'Searc'; }
+      30% { content: 'Search'; }
+      35% { content: 'Search '; }
+      40% { content: 'Search s'; }
+      45% { content: 'Search se'; }
+      50% { content: 'Search ser'; }
+      55% { content: 'Search serv'; }
+      60% { content: 'Search servi'; }
+      65% { content: 'Search servic'; }
+      70% { content: 'Search service'; }
+      75% { content: 'Search services'; }
+      80% { content: 'Search services'; }
+      85% { content: 'Search services'; }
+      90% { content: 'Search services'; }
+      100% { content: 'Search services'; }
+    }
+
+    /* Classe per attivare l'animazione */
+    .typing-animation.animate::after {
+      animation: typing 2s steps(40) forwards;
+    }
+
+    /* Reset dell'animazione */
+    .typing-animation.reset::after {
+      content: '';
+      animation: none;
     }
 
     /* Hide native vertical scrollbar on desktop; prefer top progress bar as indicator */

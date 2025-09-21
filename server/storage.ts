@@ -63,6 +63,11 @@ export interface IStorage {
   deletePasswordResetById(id: number): Promise<void>;
   updateUserPassword(userId: number, newHashedPassword: string): Promise<void>;
 
+  // Favorites
+  getFavorites(userId: number): Promise<number[]>;
+  addFavorite(userId: number, serviceId: number): Promise<void>;
+  removeFavorite(userId: number, serviceId: number): Promise<void>;
+
   // Stats
   getStatusSummary(): Promise<{
     operational: number;
@@ -315,6 +320,26 @@ export class MemStorage implements IStorage {
     this.users.set(user.id, user);
   }
 
+  // Favorites
+  async getFavorites(userId: number): Promise<number[]> {
+    const userFavorites = this.favorites.get(userId);
+    return userFavorites ? Array.from(userFavorites) : [];
+  }
+
+  async addFavorite(userId: number, serviceId: number): Promise<void> {
+    if (!this.favorites.has(userId)) {
+      this.favorites.set(userId, new Set<number>());
+    }
+    this.favorites.get(userId)!.add(serviceId);
+  }
+
+  async removeFavorite(userId: number, serviceId: number): Promise<void> {
+    const userFavorites = this.favorites.get(userId);
+    if (userFavorites) {
+      userFavorites.delete(serviceId);
+    }
+  }
+
   // Helper method to seed initial data
   private initializeData() {
     // Initialize categories
@@ -350,6 +375,7 @@ export class MemStorage implements IStorage {
       { name: 'Open AI', logo: 'fas fa-robot', categoryId: 2, status: StatusType.DEGRADED, responseTime: 487, slug: 'openai' },
       { name: 'Microsoft', logo: 'fab fa-microsoft', categoryId: 2, status: StatusType.UP, responseTime: 78, slug: 'microsoft' },
       { name: 'Chrome', logo: 'fab fa-chrome', categoryId: 2, status: StatusType.UP, responseTime: 64, slug: 'chrome' },
+      { name: 'Brave', logo: 'fas fa-shield-alt', categoryId: 2, status: StatusType.UP, responseTime: 72, slug: 'brave' },
       
       // Social
       { name: 'Twitter (X)', logo: 'fab fa-twitter', categoryId: 3, status: StatusType.UP, responseTime: 124, slug: 'twitter' },

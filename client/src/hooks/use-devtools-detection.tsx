@@ -67,9 +67,16 @@ export const useDevToolsDetection = () => {
   }, []);
 
   useEffect(() => {
-    // Rileva dispositivi touch
+    // Rileva dispositivi touch in modo più completo
     const checkTouchDevice = () => {
-      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      // Controlla multiple condizioni per rilevare dispositivi touch/mobile
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const hasPointerCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      const isSmallScreen = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      
+      // È un dispositivo touch se una qualsiasi di queste condizioni è vera
+      setIsTouchDevice(hasTouch || isMobile || hasPointerCoarse || isSmallScreen);
     };
     
     checkTouchDevice();
@@ -89,6 +96,13 @@ export const useDevToolsDetection = () => {
     document.addEventListener('mousemove', handleMouseActivity, { passive: true });
     document.addEventListener('mouseover', handleMouseActivity, { passive: true });
 
+    // Ricontrolla il tipo di dispositivo su resize/orientamento
+    window.addEventListener('orientationchange', checkTouchDevice);
+    window.addEventListener('resize', () => {
+      detectDevTools();
+      checkTouchDevice(); // Ricontrolla anche il touch device
+    });
+
     // Controlla immediatamente
     detectDevTools();
     checkTouchDevice();
@@ -98,6 +112,7 @@ export const useDevToolsDetection = () => {
       window.removeEventListener('focus', handleWindowFocus);
       window.removeEventListener('blur', handleWindowBlur);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('orientationchange', checkTouchDevice);
       window.removeEventListener('resize', detectDevTools);
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);

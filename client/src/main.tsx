@@ -11,7 +11,7 @@ createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <SettingsProvider>
-        <Router base="/siteprova">
+        <Router>
           <App />
         </Router>
       </SettingsProvider>

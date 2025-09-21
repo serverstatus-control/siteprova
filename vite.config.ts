@@ -1,9 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import themePlugin from '@replit/vite-plugin-shadcn-theme-json';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
@@ -18,11 +16,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: '/siteprova/',
+    base: '/',
     plugins: [
       react(), 
-      runtimeErrorOverlay(), 
-      themePlugin(),
       // Analisi del bundle solo in produzione
       ...(process.env.ANALYZE === 'true' ? [
         visualizer({
@@ -34,7 +30,7 @@ export default defineConfig(({ mode }) => {
       ] : [])
     ],
     server: {
-  port: 3000,
+      port: 3000,
       strictPort: true,
       fs: {
         allow: ['.']
@@ -45,13 +41,8 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
       },
-  // proxy rimosso, non serve più
-      // Gestisce correttamente il routing SPA
-      historyApiFallback: {
-        rewrites: [
-          { from: /^\/siteprova\/.*$/, to: '/index.html' }
-        ]
-      },
+      // Gestisce correttamente il routing SPA 
+      historyApiFallback: true,
       hmr: { overlay: false },
       watch: { usePolling: true, ignored: ['**/node_modules/**', '**/dist/**', '**/.git/**'] },
       cors: true,
@@ -69,6 +60,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     root: projectRoot,
+    publicDir: path.resolve(projectRoot, 'public'),
     build: {
       outDir: 'dist',
       emptyOutDir: true,
