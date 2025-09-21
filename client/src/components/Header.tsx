@@ -96,9 +96,9 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleSearchHover = () => {
-    if (!hasAnimated) {
-      setHasAnimated(true);
-    }
+    // Reset e riavvia l'animazione ogni volta
+    setHasAnimated(false);
+    setTimeout(() => setHasAnimated(true), 50);
   };
 
   const handleLogout = () => {
@@ -137,13 +137,15 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex justify-center flex-1">
           {/* Desktop/tablet: search visibile */}
           <div 
-            className={`relative items-center hidden mx-auto transition-all duration-300 ease-in-out md:flex group ${
-              isSearchFocused || searchTerm ? 'w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl' : 'w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg'
+            className={`relative items-center hidden mx-auto md:flex group ${
+              isSearchFocused || searchTerm ? 'w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl' : 
+              'w-64 max-w-xs'
             }`}
             onMouseEnter={handleSearchHover}
           >
-            <span className="absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 pointer-events-none select-none left-3 top-1/2">
-              <Search className="w-4 h-4 transition-colors duration-200 text-muted-foreground" />
+            <span className="absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 select-none left-3 top-1/2"
+                  onMouseEnter={handleSearchHover}>
+              <Search className="w-4 h-4 text-muted-foreground" />
             </span>
             <input
               ref={searchInputRef}
@@ -156,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({
               onBlur={handleSearchBlur}
             />
             {!searchTerm && !isSearchFocused && (
-              <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute inset-0 transition-opacity duration-200 opacity-0 pointer-events-none group-hover:opacity-100">
                 <div className="flex items-center h-full pl-10">
                   <span className={`typing-animation text-muted-foreground text-sm ${hasAnimated ? 'animate' : ''}`}></span>
                 </div>
