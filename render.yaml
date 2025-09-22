@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: server-status-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build:client:render && mkdir -p client/dist && cp -r dist/* client/dist/
+    staticPublishPath: ./client/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: server-status-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build:server
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000

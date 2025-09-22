@@ -14,9 +14,13 @@ export default defineConfig(({ mode }) => {
       : path.resolve(__dirname, 'client');
 
   const env = loadEnv(mode, process.cwd(), '');
+  
+  // Configurazione base per GitHub Pages
+  const isGithubPages = process.env.GITHUB_PAGES === 'true';
+  const base = isGithubPages ? '/siteprova/' : '/';
 
   return {
-    base: '/',
+    base,
     plugins: [
       react(), 
       // Analisi del bundle solo in produzione
