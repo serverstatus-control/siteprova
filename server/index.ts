@@ -13,15 +13,29 @@ app.use(express.urlencoded({ extended: false }));
 const allowedOriginsRaw = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || "";
 const allowedOrigins = allowedOriginsRaw.split(",").map(s => s.trim()).filter(Boolean);
 
+// Add default allowed origins for deployment
+const defaultAllowedOrigins = [
+  "http://localhost:3000",
+  "https://serverstatus-control.github.io",
+  "https://siteprova.onrender.com"
+];
+
+const finalAllowedOrigins = allowedOrigins.length > 0 ? allowedOrigins : defaultAllowedOrigins;
+
 app.use(cors({
   origin: (origin: string | undefined | null, callback: (err: Error | null, allow?: boolean) => void) => {
     // allow requests with no origin like curl/postman
     if (!origin) return callback(null, true);
-    if (allowedOrigins.length === 0) {
-      // if no origins configured, allow all (not recommended for production)
+    
+    console.log('CORS check for origin:', origin);
+    console.log('Allowed origins:', finalAllowedOrigins);
+    
+    if (finalAllowedOrigins.some(allowed => origin.startsWith(allowed))) {
+      console.log('CORS allowed for:', origin);
       return callback(null, true);
     }
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    
+    console.log('CORS rejected for:', origin);
     callback(new Error("CORS not allowed by server"));
   },
   credentials: true
