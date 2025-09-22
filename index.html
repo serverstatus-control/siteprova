@@ -1,60 +1,56 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <style data-vite-theme="" data-inject-first="">:root {
-      --background: 240 10% 3.9%;
---foreground: 0 0% 98%;
---muted: 240 3.7% 15.9%;
---muted-foreground: 240 5% 64.9%;
---popover: 240 10% 3.9%;
---popover-foreground: 0 0% 98%;
---card: 240 10% 3.9%;
---card-foreground: 0 0% 98%;
---border: 240 3.7% 15.9%;
---input: 240 3.7% 15.9%;
---primary: 217 91% 60%;
---primary-foreground: 217 100% 99%;
---secondary: 240 3.7% 15.9%;
---secondary-foreground: 0 0% 98%;
---accent: 240 3.7% 15.9%;
---accent-foreground: 0 0% 98%;
---destructive: 0 62.8% 30.6%;
---destructive-foreground: 0 0% 98%;
---ring: 240 4.9% 83.9%;
---radius: 0.75rem;
-  }
-  .light {
-      --background: 0 0% 100%;
---foreground: 20 14.3% 4.1%;
---muted: 60 4.8% 95.9%;
---muted-foreground: 25 5.3% 44.7%;
---popover: 0 0% 100%;
---popover-foreground: 20 14.3% 4.1%;
---card: 0 0% 100%;
---card-foreground: 20 14.3% 4.1%;
---border: 20 5.9% 90%;
---input: 20 5.9% 90%;
---primary: 217 91% 60%;
---primary-foreground: 217 100% 99%;
---secondary: 60 4.8% 95.9%;
---secondary-foreground: 24 9.8% 10%;
---accent: 60 4.8% 95.9%;
---accent-foreground: 24 9.8% 10%;
---destructive: 0 84.2% 60.2%;
---destructive-foreground: 60 9.1% 97.8%;
---ring: 20 14.3% 4.1%;
---radius: 0.75rem;
-  }</style>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>SERVER STATUS</title>
+    
+    <!-- Single Page Apps for GitHub Pages -->
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // MIT License
+      // https://github.com/rafgraph/spa-github-pages
+      // This script checks to see if a redirect is present in the query string,
+      // converts it back into the correct url and adds it to the
+      // browser's history using window.history.replaceState(...),
+      // which won't cause the browser to attempt to load the new url.
+      // When the single page app is loaded further down in this file,
+      // the correct url will be waiting in the browser's history for
+      // the single page app to route accordingly.
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    
+    <!-- Favicon e icone -->
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" href="./favicon.png" />
-    <!-- Preconnect to font providers to reduce layout flash -->
+    
+    <!-- Preconnect per font providers per ridurre il layout flash -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Inline script: apply saved theme and inline bg/text styles early to avoid white flash -->
+    
+    <!-- Preload delle risorse critiche -->
+    <link rel="modulepreload" href="data:application/octet-stream;base64,aW1wb3J0IHsgY3JlYXRlUm9vdCB9IGZyb20gInJlYWN0LWRvbS9jbGllbnQiOw0KaW1wb3J0IEFwcCBmcm9tICIuL0FwcCI7DQppbXBvcnQgIi4vaW5kZXguY3NzIjsNCmltcG9ydCB7IFF1ZXJ5Q2xpZW50UHJvdmlkZXIgfSBmcm9tICJAdGFuc3RhY2svcmVhY3QtcXVlcnkiOw0KaW1wb3J0IHsgcXVlcnlDbGllbnQgfSBmcm9tICIuL2xpYi9xdWVyeUNsaWVudCI7DQppbXBvcnQgeyBTZXR0aW5nc1Byb3ZpZGVyIH0gZnJvbSAiLi9ob29rcy91c2Utc2V0dGluZ3MiOw0KaW1wb3J0IHsgQXV0aFByb3ZpZGVyIH0gZnJvbSAiLi9ob29rcy91c2UtYXV0aCI7DQppbXBvcnQgeyBSb3V0ZXIgfSBmcm9tICJ3b3V0ZXIiOw0KDQovLyBDb25maWd1cmF6aW9uZSBiYXNlIHBhdGggcGVyIEdpdEh1YiBQYWdlcw0KY29uc3QgYmFzZVBhdGggPSBpbXBvcnQubWV0YS5lbnYuTU9ERSA9PT0gJ3Byb2R1Y3Rpb24nICYmIA0KICAgICAgICAgICAgICAgICB3aW5kb3cubG9jYXRpb24uaG9zdG5hbWUgPT09ICdzZXJ2ZXJzdGF0dXMtY29udHJvbC5naXRodWIuaW8nIA0KICAgICAgICAgICAgICAgICA/ICcvc2l0ZXByb3ZhJyA6ICcnOw0KDQpjcmVhdGVSb290KGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJyb290IikhKS5yZW5kZXIoDQogIDxRdWVyeUNsaWVudFByb3ZpZGVyIGNsaWVudD17cXVlcnlDbGllbnR9Pg0KICAgIDxBdXRoUHJvdmlkZXI+DQogICAgICA8U2V0dGluZ3NQcm92aWRlcj4NCiAgICAgICAgPFJvdXRlciBiYXNlPXtiYXNlUGF0aH0+DQogICAgICAgICAgPEFwcCAvPg0KICAgICAgICA8L1JvdXRlcj4NCiAgICAgIDwvU2V0dGluZ3NQcm92aWRlcj4NCiAgICA8L0F1dGhQcm92aWRlcj4NCiAgPC9RdWVyeUNsaWVudFByb3ZpZGVyPg0KKTsNCg==" />
+    <link rel="modulepreload" href="/siteprova/assets/tsx/App-CDBy5yQo.tsx" />
+    <link rel="modulepreload" href="/siteprova/assets/tsx/home-eIk5-Z4s.tsx" />
+    
+    <!-- DNS prefetch per API -->
+    <link rel="dns-prefetch" href="//localhost" />
+    
+    <!-- Meta tags per SEO e performance -->
+    <meta name="description" content="Server Status Dashboard - Monitora lo stato dei tuoi servizi in tempo reale" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Inline script: applica il tema salvato e gli stili inline per evitare il flash bianco -->
     <script>
       (function(){
         try {
@@ -82,10 +78,13 @@
         } catch (e) { /* ignore */ }
       })();
     </script>
-    <script type="module" crossorigin src="/siteprova/assets/index-BDID_XkA.js"></script>
-    <link rel="modulepreload" crossorigin href="/siteprova/assets/vendor-Ber6wfih.js">
-    <link rel="modulepreload" crossorigin href="/siteprova/assets/ui-u8_bLOQR.js">
-    <link rel="stylesheet" crossorigin href="/siteprova/assets/index-D2eJKlpq.css">
+    <script type="module" crossorigin src="/siteprova/assets/js/index-CMUSJd9-.js"></script>
+    <link rel="modulepreload" crossorigin href="/siteprova/assets/js/vendor-BQl0nyRy.js">
+    <link rel="modulepreload" crossorigin href="/siteprova/assets/js/radix-ui-ByoYm48K.js">
+    <link rel="modulepreload" crossorigin href="/siteprova/assets/js/react-vendor-BC-NryIe.js">
+    <link rel="modulepreload" crossorigin href="/siteprova/assets/js/router-MOUxwqPK.js">
+    <link rel="modulepreload" crossorigin href="/siteprova/assets/js/forms-Cf6uUqBP.js">
+    <link rel="stylesheet" crossorigin href="/siteprova/assets/css/index-C8OTH9bj.css">
   </head>
   <body>
     <div id="root"></div>
