@@ -37,10 +37,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
-    <!-- Preload delle risorse critiche -->
-    <link rel="modulepreload" href="/src/main.tsx" />
-    <link rel="modulepreload" href="/src/App.tsx" />
-    <link rel="modulepreload" href="/src/pages/home.tsx" />
+  <!-- Preload rimosso: Vite gestisce automaticamente i preloads in build -->
     
     <!-- DNS prefetch per API -->
     <link rel="dns-prefetch" href="//localhost" />
@@ -81,6 +78,7 @@
   </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="./src/main.tsx"></script>
+    <!-- Entry script per Vite: necessario per la build -->
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
