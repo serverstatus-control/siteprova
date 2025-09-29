@@ -39,8 +39,6 @@ jobs:
       - name: Build
         # Run the GitHub Pages build (vite config is set up to build the client folder)
         env:
-          # Set this secret in the repo settings to point to your live API (e.g. https://api.example.com)
-          VITE_API_BASE: ${{ secrets.API_BASE_URL }}
           GITHUB_PAGES: true
         run: npm run build:client:gh
       - name: Setup Pages

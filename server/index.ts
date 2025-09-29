@@ -30,7 +30,17 @@ app.use(cors({
     console.log('CORS check for origin:', origin);
     console.log('Allowed origins:', finalAllowedOrigins);
     
-    if (finalAllowedOrigins.some(allowed => origin.startsWith(allowed))) {
+    // More flexible matching for GitHub Pages subpaths
+    const isAllowed = finalAllowedOrigins.some(allowed => {
+      // Exact match
+      if (origin === allowed) return true;
+      // GitHub Pages allows subpaths
+      if (allowed === "https://serverstatus-control.github.io" && origin.startsWith("https://serverstatus-control.github.io")) return true;
+      // Other origins must match exactly
+      return origin.startsWith(allowed);
+    });
+    
+    if (isAllowed) {
       console.log('CORS allowed for:', origin);
       return callback(null, true);
     }

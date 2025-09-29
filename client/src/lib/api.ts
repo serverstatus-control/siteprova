@@ -10,12 +10,12 @@ const getApiBaseUrl = () => {
   
   if (hostname === 'serverstatus-control.github.io') {
     // GitHub Pages punta al backend Render
-    return 'https://server-status-backend.onrender.com';
+    return 'https://siteprova.onrender.com';
   }
   
   if (hostname === 'siteprova.onrender.com') {
     // Frontend Render punta al backend Render
-    return 'https://server-status-backend.onrender.com';
+    return 'https://siteprova.onrender.com';
   }
   
   // Fallback per altri domini
