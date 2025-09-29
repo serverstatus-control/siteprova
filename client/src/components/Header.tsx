@@ -52,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [animationCompleted, setAnimationCompleted] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { user, logoutMutation } = useAuth();
   const { t, favorites, isFavorite } = useSettings();
@@ -98,7 +99,19 @@ const Header: React.FC<HeaderProps> = ({
   const handleSearchHover = () => {
     // Reset e riavvia l'animazione ogni volta
     setHasAnimated(false);
-    setTimeout(() => setHasAnimated(true), 50);
+    setAnimationCompleted(false);
+    setTimeout(() => {
+      setHasAnimated(true);
+      // L'animazione dura 2 secondi, quindi la segniamo come completata dopo 2100ms
+      setTimeout(() => setAnimationCompleted(true), 2100);
+    }, 50);
+  };
+
+  const handleSearchIconClick = () => {
+    // Permetti il click solo se l'animazione è completata
+    if (animationCompleted && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
   };
 
   const handleLogout = () => {
@@ -137,14 +150,14 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex justify-center flex-1">
           {/* Desktop/tablet: search visibile */}
           <div 
-            className={`relative items-center hidden mx-auto md:flex group ${
-              isSearchFocused || searchTerm ? 'w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl' : 
-              'w-64 max-w-xs'
-            }`}
+            className={`relative items-center hidden mx-auto md:flex group w-64 max-w-xs`}
             onMouseEnter={handleSearchHover}
           >
-            <span className="absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 select-none left-3 top-1/2"
-                  onMouseEnter={handleSearchHover}>
+            <span className={`absolute flex items-center justify-center w-5 h-5 -translate-y-1/2 select-none left-3 top-1/2 ${
+                animationCompleted ? 'cursor-pointer' : 'cursor-default'
+              }`}
+                  onMouseEnter={handleSearchHover}
+                  onClick={handleSearchIconClick}>
               <Search className="w-4 h-4 text-muted-foreground" />
             </span>
             <input

@@ -393,10 +393,21 @@ export class MemStorage implements IStorage {
       { name: 'Twitch', logo: 'fab fa-twitch', categoryId: 6, status: StatusType.DOWN, responseTime: 0, slug: 'twitch' }
     ];
 
-    // Add bank services (updated names)
+    // Servizi bancari e pagamenti completi
     const moreServices: InsertService[] = [
-      { name: 'Banca MPS', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 120, slug: 'mps' },
+      // Bank
+      { name: 'Banca Monte dei Paschi di Siena', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 120, slug: 'mps' },
+      { name: 'UniCredit', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 115, slug: 'unicredit' },
+      { name: 'Banco BPM', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 110, slug: 'bpm' },
+      { name: 'Intesa Sanpaolo', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 105, slug: 'intesa-sanpaolo' },
+      { name: 'Apple Pay', logo: 'fab fa-apple-pay', categoryId: 5, status: StatusType.UP, responseTime: 100, slug: 'apple-pay' },
+      { name: 'BNL', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 100, slug: 'bnl' },
+      { name: 'Revolut', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 100, slug: 'revolut' },
+      { name: 'Mastercard', logo: 'fab fa-cc-mastercard', categoryId: 5, status: StatusType.UP, responseTime: 100, slug: 'mastercard' },
+      { name: 'Fineco', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 100, slug: 'fineco' },
+      { name: 'Visa', logo: 'fab fa-cc-visa', categoryId: 5, status: StatusType.UP, responseTime: 100, slug: 'visa' },
       { name: 'Mediolanum', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 110, slug: 'mediolanum' },
+      // Altri servizi vari
       { name: 'Fascicolo Sanitario', logo: 'fas fa-notes-medical', categoryId: 9, status: StatusType.UP, responseTime: 150, slug: 'fascicolo-sanitario' }
     ];
 

@@ -1,6 +1,7 @@
 // Import schema con path assoluto per evitare problemi di risoluzione
-import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema.ts";
-import { db } from "./db.ts";
+import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema";
+import { storage } from "./storage";
+import { db } from "./db";
 import { inArray } from "drizzle-orm";
 
 async function seed() {
@@ -68,7 +69,7 @@ async function seed() {
       { name: 'Twitch', logo: 'fab fa-twitch', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 105, slug: 'twitch' },
       
       // Bank
-      { name: 'Banca MPS', logo: 'fas fa-university', categoryId: categoryMap.get('bank') || 1, status: StatusType.UP, responseTime: 120, slug: 'mps' },
+  { name: 'Banca Monte dei Paschi di Siena', logo: 'fas fa-university', categoryId: categoryMap.get('bank') || 1, status: StatusType.UP, responseTime: 120, slug: 'mps' },
       { name: 'Mediolanum', logo: 'fas fa-university', categoryId: categoryMap.get('bank') || 1, status: StatusType.UP, responseTime: 110, slug: 'mediolanum' },
       
       // Health

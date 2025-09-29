@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { usePointerDetection } from './use-pointer-detection';
 
 export const useDevToolsDetection = () => {
   const [isDevToolsOpen, setIsDevToolsOpen] = useState(false);
@@ -6,6 +7,9 @@ export const useDevToolsDetection = () => {
   const [isMouseInside, setIsMouseInside] = useState(true);
   const [isMouseActive, setIsMouseActive] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  
+  // Usa il nuovo hook per rilevare capacità mouse
+  const { hasMouseLike } = usePointerDetection();
   
   const mouseActivityTimeoutRef = useRef<NodeJS.Timeout>();
   const lastMouseMoveRef = useRef<number>(Date.now());
@@ -67,7 +71,7 @@ export const useDevToolsDetection = () => {
   }, []);
 
   useEffect(() => {
-    // Rileva dispositivi touch in modo più completo
+    // Rileva dispositivi touch in modo più completo ma considerando mouse esterni
     const checkTouchDevice = () => {
       // Controlla multiple condizioni per rilevare dispositivi touch/mobile
       const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -75,8 +79,11 @@ export const useDevToolsDetection = () => {
       const hasPointerCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
       const isSmallScreen = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
       
-      // È un dispositivo touch se una qualsiasi di queste condizioni è vera
-      setIsTouchDevice(hasTouch || isMobile || hasPointerCoarse || isSmallScreen);
+      // È un dispositivo touch se tutte queste condizioni sono vere E non ha mouse-like capabilities
+      const isBasicallyTouchDevice = hasTouch || isMobile || hasPointerCoarse || isSmallScreen;
+      
+      // Ma se ha capacità mouse (mouse esterno su tablet/phone), non è più solo touch
+      setIsTouchDevice(isBasicallyTouchDevice && !hasMouseLike);
     };
     
     checkTouchDevice();
@@ -123,7 +130,7 @@ export const useDevToolsDetection = () => {
         clearTimeout(mouseActivityTimeoutRef.current);
       }
     };
-  }, [detectDevTools, handleWindowFocus, handleWindowBlur, handleVisibilityChange, handleMouseEnter, handleMouseLeave, handleMouseActivity]);
+  }, [detectDevTools, handleWindowFocus, handleWindowBlur, handleVisibilityChange, handleMouseEnter, handleMouseLeave, handleMouseActivity, hasMouseLike]);
 
   return {
     isDevToolsOpen,
@@ -131,12 +138,13 @@ export const useDevToolsDetection = () => {
     isMouseInside,
     isMouseActive,
     isTouchDevice,
+    hasMouseLike,
     // Cursore dovrebbe essere visibile se:
-    // - Non è touch device
-    // - Documento è visibile
+    // - Ha capacità mouse-like (anche su mobile con mouse esterno)
+    // - Documento è visibile  
     // - Mouse dentro l'area
     // - (Finestra ha focus O mouse è attivo O DevTools non aperti)
-    shouldShowCursor: !isTouchDevice && 
+    shouldShowCursor: hasMouseLike && 
                      document.visibilityState === 'visible' && 
                      isMouseInside && 
                      (isWindowFocused || isMouseActive || !isDevToolsOpen)

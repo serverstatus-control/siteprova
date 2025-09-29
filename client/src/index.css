@@ -103,6 +103,31 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 
+  /* Autofill fix per input scuri (login/register) */
+  input.auth-input:-webkit-autofill,
+  input.auth-input:-webkit-autofill:hover,
+  input.auth-input:-webkit-autofill:focus,
+  textarea.auth-input:-webkit-autofill,
+  select.auth-input:-webkit-autofill {
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 9999s ease-in-out 0s !important; /* rimuove lo sfondo giallino di Chrome */
+    caret-color: #fff !important;
+  }
+
+  /* Forza font-color su Firefox e altri */
+  input.auth-input, textarea.auth-input, select.auth-input {
+    color: #fff !important;
+    background-color: transparent !important;
+  }
+
+  /* Etichette floating: se il browser compila automaticamente, considera valid per far salire la label */
+  .auth-input:-webkit-autofill ~ label {
+    top: -5px !important;
+    transform: translateY(0) !important;
+    font-size: 0.875rem !important; /* text-sm */
+    color: rgb(234 88 12) !important; /* orange-600 */
+  }
+
   /* Keep default browser scrollbars visible; use .scrollbar-hide on elements that must hide them */
 
   *:focus {

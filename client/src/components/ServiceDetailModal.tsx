@@ -74,7 +74,7 @@ const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
         <div className="flex-1 p-6 overflow-y-auto scrollbar-hide">
           <div className="mb-4">
-            <h4 className="text-base font-semibold text-muted-foreground">{t.overview || 'Overview'}</h4>
+            <h4 className="text-base font-semibold text-muted-foreground">{'Overview'}</h4>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-6 sm:grid-cols-3">

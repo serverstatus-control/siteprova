@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
-import { registerRoutes } from "./routes.ts";
+import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { checkAllServices } from './service-checker';
 
@@ -110,8 +110,9 @@ async function runCheck() {
   try {
     if (process.env.NODE_ENV === 'development') {
       // import lazily to avoid circular deps at module load time
-      const { ensureFavoritesTable } = await import('./db');
+      const { ensureFavoritesTable, ensurePasswordResetsTable } = await import('./db');
       await ensureFavoritesTable();
+      await ensurePasswordResetsTable();
     }
   } catch (err) {
     console.error('Error while ensuring dev DB schema:', err);

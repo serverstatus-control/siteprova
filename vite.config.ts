@@ -16,8 +16,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
   // Configurazione base per GitHub Pages
-  const isGithubPages = process.env.GITHUB_PAGES === 'true';
-  const base = isGithubPages ? '/siteprova/' : '/';
+  const isGithubPages = process.env.GITHUB_PAGES === 'true' || process.env.NODE_ENV === 'github-pages';
+  const isProduction = mode === 'production';
+  const base = (isGithubPages) ? '/siteprova/' : '/';
 
   return {
     base,

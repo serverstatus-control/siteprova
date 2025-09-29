@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: `Welcome back, ${user.username}!`,
       });
     },
-    onError: (error: unknown) => {
+  onError: (error: unknown) => {
       // Normalize error message: apiRequest throws Error like "401: {\"message\":\"...\"}"
       let userMessage = "Login failed. Please check your credentials and try again.";
       let devDetails: string | null = null;
@@ -118,14 +118,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       toast({
-        title: "Login non riuscito",
-        description: userMessage,
-        variant: "destructive",
-            action: (
+        title: "Accesso non riuscito",
+        description: userMessage || 'Email o password non corretti. Riprova oppure recupera la password.',
+        // Usa lo stile coerente con la pagina login (scuro con accenti arancioni)
+        variant: "default",
+        className: "bg-gray-900 text-white border-orange-600/60 shadow-orange-500/30",
+        action: (
           <ToastAction asChild altText="Recupera password">
-            <button onClick={() => navigate('/reset')}>Recupera password</button>
+            <button
+              onClick={() => navigate('/forgot-password')}
+              className="border-orange-600 text-orange-300 hover:bg-orange-600/20"
+            >
+              Recupera password
+            </button>
           </ToastAction>
         ),
+        duration: 9000,
         // show technical details only in development for debugging (appended to description)
         ...(process.env.NODE_ENV === 'development' && devDetails
           ? { description: `${userMessage}\n\n[DEBUG] ${devDetails}` }

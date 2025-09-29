@@ -9,7 +9,7 @@ const CustomCursor = () => {
   const [isSelecting, setIsSelecting] = useState(false);
   
   // Hook per rilevamento DevTools e focus
-  const { shouldShowCursor, isTouchDevice } = useDevToolsDetection();
+  const { shouldShowCursor, isTouchDevice, hasMouseLike } = useDevToolsDetection();
   
   // Refs per ottimizzazioni performance ultra-avanzate
   const rafRef = useRef<number | null>(null);
@@ -20,9 +20,9 @@ const CustomCursor = () => {
   const frameCountRef = useRef(0);
   const throttleTimeRef = useRef(0);
   
-  // Performance budget: 60fps = 16.67ms per frame
-  const FRAME_BUDGET = 16.67;
-  const THROTTLE_MS = 8; // 120fps throttling for ultra-smooth movement
+  // Performance budget: 144fps per fluidità massima come Windows
+  const FRAME_BUDGET = 6.94; // 144fps
+  const THROTTLE_MS = 2; // Ridotto per massima reattività (500fps throttling)
   const VIEWPORT_BUFFER = 50; // Buffer per viewport detection
 
   // Viewport detection intelligente
@@ -67,55 +67,22 @@ const CustomCursor = () => {
   }, []);
 
   // Funzione ultra-ottimizzata per aggiornare la posizione del cursore
+  // Aggiornamento ultra-fluido come Windows - no throttling, update diretto
   const updateCursorPosition = useCallback((x: number, y: number) => {
-    const now = performance.now();
-    
-    // Adaptive throttling basato su performance mode
-    const adaptiveThrottle = performanceMode === 'eco' ? 16 : 
-                           performanceMode === 'balanced' ? 12 : THROTTLE_MS;
-    
-    if (now - throttleTimeRef.current < adaptiveThrottle) {
-      return;
-    }
-    
-    // Viewport check intelligente
-    if (!isInViewport(x, y)) {
-      return;
-    }
-    
-    throttleTimeRef.current = now;
-    lastPositionRef.current = { x, y };
-    
+    // No throttling per massima reattività come Windows
     if (cursorRef.current) {
-      // Utilizzando compositing layer dedicato per massime performance
-      const transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
-      cursorRef.current.style.transform = transform;
-      
-      // Adaptive will-change management
-      if (performanceMode === 'high') {
-        cursorRef.current.style.willChange = 'transform';
-      } else {
-        cursorRef.current.style.willChange = 'auto';
-      }
+      // Update diretto DOM per fluidità immediata
+      cursorRef.current.style.transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
     }
     
-    // Batch state update per ridurre re-renders
+    // State update senza controlli per velocità massima
     setPosition({ x, y });
-  }, [performanceMode, isInViewport]);
+  }, []);
 
-  // Mouse move handler con throttling avanzato
+  // Mouse move handler ultra-semplificato per massima fluidità
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    // Aggiornamento diretto con throttling intelligente
+    // Update immediato senza controlli per fluidità Windows-like
     updateCursorPosition(e.clientX, e.clientY);
-    
-    // Batch viewport check per performance
-    const isInside = 
-      e.clientX >= 0 && 
-      e.clientX <= window.innerWidth &&
-      e.clientY >= 0 && 
-      e.clientY <= window.innerHeight;
-    
-    isMouseInsideRef.current = isInside;
   }, [updateCursorPosition]);
 
   // Ottimizzato hover detection con caching
@@ -268,15 +235,11 @@ const CustomCursor = () => {
 
   // Memoized device detection per ridurre re-computazioni
   const shouldHideCursor = useMemo(() => {
-    return isTouchDevice || 
-           window.innerWidth <= 768 ||
-           'ontouchstart' in window ||
-           navigator.maxTouchPoints > 0 ||
-           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-           (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-  }, [isTouchDevice]);
+    // Nascondi solo se non ha capacità mouse-like
+    return !hasMouseLike;
+  }, [hasMouseLike]);
 
-  // Memoized inline styles per performance critiche
+  // Stili ottimizzati per fluidità massima come Windows
   const cursorStyles = useMemo(() => ({
     position: 'fixed' as const,
     left: 0,
@@ -284,10 +247,13 @@ const CustomCursor = () => {
     pointerEvents: 'none' as const,
     zIndex: 9999,
     transform: `translate3d(${position.x - 10}px, ${position.y - 10}px, 0)`,
-    willChange: 'transform',
-    contain: 'layout style paint' as any,
-    isolation: 'isolate' as any
-  }), [position.x, position.y]);
+    willChange: 'transform' as const,
+    contain: 'layout style paint' as const,
+    isolation: 'isolate' as const,
+    backfaceVisibility: 'hidden' as const,
+    perspective: 1000,
+    transformStyle: 'preserve-3d' as const
+  } as React.CSSProperties), [position.x, position.y]);
 
   // Memoized class composition per ridurre string concatenation
   const cursorClasses = useMemo(() => {

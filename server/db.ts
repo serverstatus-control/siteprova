@@ -1,7 +1,7 @@
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
-import * as schema from "../shared/schema.ts";
+import * as schema from "../shared/schema";
 import 'dotenv/config';
 
 neonConfig.webSocketConstructor = ws;
@@ -36,5 +36,27 @@ export async function ensureFavoritesTable() {
   } catch (err) {
     console.error('Failed to ensure favorites table exists:', err);
     // don't throw here; we don't want to crash dev server because of this helper
+  }
+}
+
+// Utility: in development, ensure the `password_resets` table exists 
+export async function ensurePasswordResetsTable() {
+  if (process.env.NODE_ENV !== 'development') return;
+
+  const sql = `
+    CREATE TABLE IF NOT EXISTS password_resets (
+      id serial PRIMARY KEY,
+      user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      token text NOT NULL UNIQUE,
+      expires_at timestamp NOT NULL,
+      created_at timestamp DEFAULT now()
+    );
+  `;
+
+  try {
+    await pool.query(sql);
+    console.log('✅ ensurePasswordResetsTable: password_resets table exists or was created');
+  } catch (err) {
+    console.error('Failed to ensure password_resets table exists:', err);
   }
 }

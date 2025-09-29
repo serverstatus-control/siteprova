@@ -17,7 +17,7 @@ const resetSchema = z.object({
 });
 
 export default function ResetPasswordPage() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const params = new URLSearchParams(location.split('?')[1] || '');
   const tokenParam = params.get('token') || '';
   const [message, setMessage] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export default function ResetPasswordPage() {
       const payload = await res.json().catch(() => ({}));
       if (res.ok) {
         setMessage('Password aggiornata con successo. Verrai reindirizzato alla schermata di login.');
-        setTimeout(() => window.location.href = '/siteprova/auth', 2000);
+        setTimeout(() => navigate('/auth'), 1500);
       } else {
         setMessage(payload?.message || 'Errore durante il reset della password');
       }
@@ -80,6 +80,14 @@ export default function ResetPasswordPage() {
                 <div className="text-sm text-red-400">{form.formState.errors.confirmPassword?.message as any}</div>
               </div>
               {message && <div className="text-sm text-gray-300">{message}</div>}
+              {!tokenParam && (
+                <div className="text-sm text-muted-foreground">
+                  Non hai un token valido?{' '}
+                  <button type="button" className="text-orange-500 hover:underline" onClick={() => navigate('/forgot-password')}>
+                    Richiedi un nuovo link di reset
+                  </button>
+                </div>
+              )}
             </CardContent>
             <CardFooter>
               <Button type="submit" className="w-full" disabled={isLoading}>{isLoading ? 'Invio...' : 'Aggiorna Password'}</Button>
