@@ -53,6 +53,8 @@ const Header: React.FC<HeaderProps> = ({
   const [searchVisible, setSearchVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animationCompleted, setAnimationCompleted] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const typingTimer = useRef<number | null>(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { user, logoutMutation } = useAuth();
   const { t, favorites, isFavorite } = useSettings();
@@ -96,15 +98,32 @@ const Header: React.FC<HeaderProps> = ({
     setIsSearchFocused(false);
   };
 
-  const handleSearchHover = () => {
-    // Reset e riavvia l'animazione ogni volta
-    setHasAnimated(false);
+  const startTyping = () => {
+    // Cancella eventuale animazione precedente
+    if (typingTimer.current) {
+      window.clearInterval(typingTimer.current);
+      typingTimer.current = null;
+    }
+    setHasAnimated(true);
     setAnimationCompleted(false);
-    setTimeout(() => {
-      setHasAnimated(true);
-      // L'animazione dura 2 secondi, quindi la segniamo come completata dopo 2100ms
-      setTimeout(() => setAnimationCompleted(true), 2100);
-    }, 50);
+    setTypedText("");
+    const text = t.searchServices || "";
+    let i = 0;
+    typingTimer.current = window.setInterval(() => {
+      i += 1;
+      setTypedText(text.slice(0, i));
+      if (i >= text.length) {
+        if (typingTimer.current) {
+          window.clearInterval(typingTimer.current);
+          typingTimer.current = null;
+        }
+        setAnimationCompleted(true);
+      }
+    }, 40);
+  };
+
+  const handleSearchHover = () => {
+    startTyping();
   };
 
   const handleSearchIconClick = () => {
@@ -113,6 +132,26 @@ const Header: React.FC<HeaderProps> = ({
       searchInputRef.current.focus();
     }
   };
+
+  // Riavvia la digitazione quando cambia la lingua (testo placeholder diverso)
+  useEffect(() => {
+    setHasAnimated(false);
+    setAnimationCompleted(false);
+    setTypedText("");
+    if (typingTimer.current) {
+      window.clearInterval(typingTimer.current);
+      typingTimer.current = null;
+    }
+  }, [t.searchServices]);
+
+  // Pulisci timer on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimer.current) {
+        window.clearInterval(typingTimer.current);
+      }
+    };
+  }, []);
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -173,7 +212,9 @@ const Header: React.FC<HeaderProps> = ({
             {!searchTerm && !isSearchFocused && (
               <div className="absolute inset-0 transition-opacity duration-200 opacity-0 pointer-events-none group-hover:opacity-100">
                 <div className="flex items-center h-full pl-10">
-                  <span className={`typing-animation text-muted-foreground text-sm ${hasAnimated ? 'animate' : ''}`}></span>
+                  <span className="text-sm text-muted-foreground select-none">
+                    {hasAnimated ? typedText : t.searchServices}
+                  </span>
                 </div>
               </div>
             )}
@@ -300,7 +341,9 @@ const Header: React.FC<HeaderProps> = ({
               {!searchTerm && !isSearchFocused && (
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="flex items-center h-full pl-10">
-                    <span className={`typing-animation text-muted-foreground text-sm ${hasAnimated ? 'animate' : ''}`}></span>
+                    <span className="text-sm text-muted-foreground select-none">
+                      {hasAnimated ? typedText : t.searchServices}
+                    </span>
                   </div>
                 </div>
               )}

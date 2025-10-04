@@ -8,6 +8,7 @@ import MobileMenu from '../components/MobileMenu';
 import Footer from '../components/Footer';
 import StatusBadge from '../components/StatusBadge';
 import UptimeHistoryDisplay from '../components/UptimeHistory';
+import UptimeChart from '../components/UptimeChart';
 import { formatDistanceToNow, format } from 'date-fns';
 import { getServiceIcon } from '../lib/icons';
 import { formatTimeAgo, localeMap } from '@/lib/utils';
@@ -92,7 +93,7 @@ const ServiceDetail: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="text-white text-xl">Loading service details...</div>
+        <div className="text-white text-xl">{t.loadingServices}</div>
       </div>
     );
   }
@@ -185,12 +186,21 @@ const ServiceDetail: React.FC = () => {
                   
                   <div>
                     <h2 className="text-lg font-semibold mb-4">{t.uptimeHistory || 'Uptime History'}</h2>
-                    <div className="bg-dark-lighter rounded-lg p-4">
-                      {history.length > 0 ? (
-                        <UptimeHistoryDisplay history={history} />
-                      ) : (
-                        <p className="text-sm text-gray-400">{t.noHistoryAvailable || 'No history available'}</p>
-                      )}
+                    <div className="space-y-4">
+                      {/* Nuovo grafico a linee per le ultime 24 ore */}
+                      <div className="bg-dark-lighter rounded-lg p-4">
+                        <UptimeChart history={history} />
+                      </div>
+                      
+                      {/* Storia dettagliata esistente */}
+                      <div className="bg-dark-lighter rounded-lg p-4">
+                        <h3 className="text-sm font-medium mb-3 text-gray-400">Cronologia Dettagliata</h3>
+                        {history.length > 0 ? (
+                          <UptimeHistoryDisplay history={history} />
+                        ) : (
+                          <p className="text-sm text-gray-400">{t.noHistoryAvailable || 'No history available'}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

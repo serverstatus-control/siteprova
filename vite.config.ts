@@ -17,8 +17,10 @@ export default defineConfig(({ mode }) => {
   
   // Configurazione base per GitHub Pages
   const isGithubPages = process.env.GITHUB_PAGES === 'true' || process.env.NODE_ENV === 'github-pages';
+  // Rileva ambiente Render (Render setta queste variabili)
+  const isRender = process.env.RENDER === 'true' || !!process.env.RENDER_EXTERNAL_HOSTNAME;
   const isProduction = mode === 'production';
-  const base = (isGithubPages) ? '/siteprova/' : '/';
+  const base = (isGithubPages || isRender) ? '/siteprova/' : '/';
 
   return {
     base,
@@ -63,11 +65,14 @@ export default defineConfig(({ mode }) => {
         '@lib': path.resolve(projectRoot, 'src', 'lib'),
         '@hooks': path.resolve(projectRoot, 'src', 'hooks'),
       },
+      // Evita duplicati di React che possono causare errori HMR e optimize deps
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     },
     root: projectRoot,
     publicDir: path.resolve(projectRoot, 'public'),
     build: {
-      outDir: 'dist',
+      // Su Render pubblichiamo sotto /siteprova: mettiamo l'output in una sottocartella
+      outDir: isRender ? path.join('dist', 'siteprova') : 'dist',
       emptyOutDir: true,
       sourcemap: process.env.NODE_ENV === 'development',
       rollupOptions: {
@@ -123,6 +128,7 @@ export default defineConfig(({ mode }) => {
         'react', 
         'react-dom', 
         'react/jsx-runtime',
+        'react/jsx-dev-runtime',
         '@tanstack/react-query',
         'wouter',
         'lucide-react',
@@ -132,5 +138,6 @@ export default defineConfig(({ mode }) => {
       ],
       exclude: ['@fortawesome/fontawesome-free']
     },
+    cacheDir: 'node_modules/.vite',
   };
 });

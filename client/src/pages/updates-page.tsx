@@ -46,29 +46,8 @@ const UpdatesPage: React.FC = () => {
     // Search functionality can be implemented here
   };
 
-  // Lista degli aggiornamenti del sito
-  const updates = [
-    {
-      version: "0.3.00",
-      date: "20/12/2025",
-      changes: [
-        "Possibilità di recupero password",
-        "Nuovo sito con grafica completamente nuova",
-        "Controllo automatico",
-        "Molti nuovi server",
-        "Aggiunta box MUSICA",
-        "Molte piu informazioni sullo stato dei server"
-      ]
-    },
-    {
-      version: "APP MOBILE",
-      date: "??/??/2027",
-      changes: [
-        
-      ]
-    }
-    // Aggiungi qui altri aggiornamenti quando necessario
-  ];
+  // Lista degli aggiornamenti del sito (localizzata)
+  const updates = t.updatesList ?? [];
 
   return (
     <div className="min-h-screen font-sans bg-background text-foreground">
@@ -95,16 +74,16 @@ const UpdatesPage: React.FC = () => {
               </Link>
             </div>
 
-            <Card className="w-full max-w-3xl px-2 mx-auto sm:px-6">
+            <Card className="w-full max-w-3xl px-2 mx-auto sm:px-6 border-2 border-white">
               <CardHeader className="text-center">
                 <CardTitle className="text-xl md:text-3xl">{t.siteUpdates}</CardTitle>
-                <CardDescription className="text-sm md:text-base">Cronologia degli aggiornamenti e delle novità</CardDescription>
+                <CardDescription className="text-sm md:text-base">{t.updatesSubtitle}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {updates.map((update, index) => (
                   <div key={index} className="p-3 rounded-lg sm:p-4 bg-muted/50">
                     <div className="flex items-baseline justify-between mb-2">
-                      <h3 className="text-lg font-medium">Versione {update.version}</h3>
+                      <h3 className="text-lg font-medium">{t.versionLabel} {update.version}</h3>
                       <span className="text-sm text-muted-foreground">{update.date}</span>
                     </div>
                     <ul className="ml-4 space-y-1 list-disc">
@@ -117,11 +96,7 @@ const UpdatesPage: React.FC = () => {
                   </div>
                 ))}
               </CardContent>
-              <CardFooter className="flex justify-center pt-6 border-t">
-                <p className="text-sm text-muted-foreground">
-                  &copy; 2025 Server Status. All rights reserved.
-                </p>
-              </CardFooter>
+              {/* Footer rimosso su richiesta: niente disclaimer/copyright */}
             </Card>
           </div>
         </main>

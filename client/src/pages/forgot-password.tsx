@@ -8,6 +8,7 @@ export default function ForgotPasswordPage() {
   const [_, navigate] = useLocation();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState<string | null>(null);
+  const [devResetUrl, setDevResetUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -23,13 +24,12 @@ export default function ForgotPasswordPage() {
       });
       const json = await res.json().catch(() => ({}));
       setMessage(json?.message || 'Se l\'email è registrata, riceverai istruzioni per il reset.');
-      // In development, the server may return the token for easy testing
-      if (json?.token) {
+      // In development, the server may return the token and a resetUrl per testare senza email
+      if (json?.resetUrl && import.meta.env.DEV) {
+        setDevResetUrl(json.resetUrl);
+      }
+      if (json?.token && import.meta.env.DEV) {
         setMessage((prev) => `${prev}\nToken di test: ${json.token}`);
-        // opzionale: mostra link cliccabile
-        setTimeout(() => {
-          // no-op
-        }, 0);
       }
     } catch (err) {
       setMessage('Errore di rete');
@@ -67,7 +67,21 @@ export default function ForgotPasswordPage() {
                     'bg-destructive/10 text-destructive border border-destructive/20' : 
                     'bg-muted/50 text-muted-foreground border border-border/50'
                 }`}>
-                  {message}
+                  <pre className="whitespace-pre-wrap break-words">{message}</pre>
+                  {devResetUrl && (
+                    <div className="mt-2 flex items-center gap-2 text-xs">
+                      <a href={devResetUrl} className="text-primary hover:underline" target="_blank" rel="noreferrer">
+                        Apri link di reset (dev)
+                      </a>
+                      <button
+                        type="button"
+                        className="px-2 py-1 border border-border/50 rounded hover:bg-muted/70"
+                        onClick={() => navigator.clipboard.writeText(devResetUrl)}
+                      >
+                        Copia link
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

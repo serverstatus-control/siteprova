@@ -8,20 +8,18 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { User, Lock, Mail, ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { useSettings } from '../hooks/use-settings';
 
-const loginSchema = z.object({
-  username: z.string().min(1, 'Username è richiesto'),
-  password: z.string().min(6, 'Password deve essere almeno 6 caratteri')
-});
+type LoginForm = {
+  username: string;
+  password: string;
+};
 
-const registerSchema = z.object({
-  username: z.string().min(3, 'Username deve essere almeno 3 caratteri'),
-  email: z.string().email('Email non valida'),
-  password: z.string().min(6, 'Password deve essere almeno 6 caratteri')
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
-type RegisterForm = z.infer<typeof registerSchema>;
+type RegisterForm = {
+  username: string;
+  email: string;
+  password: string;
+};
 
 export default function AuthPage() {
   const [isActive, setIsActive] = useState(false);
@@ -29,14 +27,21 @@ export default function AuthPage() {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const { loginMutation, registerMutation } = useAuth();
   const [, navigate] = useLocation();
+  const { t } = useSettings();
+
+  const loginSchema = z.object({
+    username: z.string().min(1, t.usernameRequired),
+    password: z.string().min(6, t.passwordMinLength)
+  });
+
+  const registerSchema = z.object({
+    username: z.string().min(3, t.usernameMinLength),
+    email: z.string().email(t.emailInvalid),
+    password: z.string().min(6, t.passwordMinLength)
+  });
 
   const goBack = () => {
-    // Usa la funzione nativa di Windows per tornare indietro
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
 
   const loginForm = useForm<LoginForm>({
@@ -153,7 +158,7 @@ export default function AuthPage() {
               }}
               transition={{ duration: 0.5, delay: isActive ? 0 : 0.2 }}
             >
-              Login
+              {t.login}
             </motion.h2>
 
             <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-6">
@@ -182,7 +187,7 @@ export default function AuthPage() {
                       : 'top-1/2 -translate-y-1/2 text-white text-base'
                   }`}
                 >
-                  Username
+                  {t.username}
                 </label>
                 <User 
                   className={`absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 xl:w-6 xl:h-6 transition-colors duration-500 peer-focus:text-orange-600 peer-valid:text-orange-600 ${
@@ -221,7 +226,7 @@ export default function AuthPage() {
                       : 'top-1/2 -translate-y-1/2 text-white text-base'
                   }`}
                 >
-                  Password
+                  {t.password}
                 </label>
                 <div className="absolute right-0 flex items-center space-x-1 -translate-y-1/2 top-1/2">
                   <button
@@ -262,7 +267,7 @@ export default function AuthPage() {
                   className="relative w-full h-12 xl:h-14 bg-transparent border-2 border-orange-600 text-white font-semibold text-lg xl:text-xl rounded-full cursor-pointer overflow-hidden z-10 hover:before:top-0 before:content-[''] before:absolute before:h-[300%] before:w-full before:bg-gradient-to-b before:from-gray-900 before:via-orange-600 before:to-gray-900 before:top-[-100%] before:left-0 before:-z-10 before:transition-all before:duration-500"
                   disabled={loginForm.formState.isSubmitting}
                 >
-                  {loginForm.formState.isSubmitting ? 'Logging in...' : 'Login'}
+                  {loginForm.formState.isSubmitting ? t.loggingIn : t.login}
                 </Button>
               </motion.div>
 
@@ -276,22 +281,22 @@ export default function AuthPage() {
                 transition={{ duration: 0.5, delay: isActive ? 0.4 : 0.6 }}
               >
                 <p>
-                  Don't have an account?{' '}
+                  {t.dontHaveAccount}{' '}
                   <button
                     type="button"
                     onClick={() => setIsActive(true)}
                     className="font-semibold text-orange-600 hover:underline"
                   >
-                    Sign Up
+                    {t.signUp}
                   </button>
                   <br />
-                  <span className="text-white/70">or</span>{' '}
+                  <span className="text-white/70">{t.or}</span>{' '}
                   <button
                     type="button"
                     onClick={() => navigate('/forgot-password')}
                     className="text-orange-400 hover:text-orange-300 hover:underline"
                   >
-                    Recupera password
+                    {t.forgotPassword}
                   </button>
                 </p>
               </motion.div>
@@ -324,7 +329,7 @@ export default function AuthPage() {
               }}
               transition={{ duration: 0.5, delay: isActive ? 0 : 0.3 }}
             >
-              WELCOME BACK!
+              {t.welcomeBack}
             </motion.h2>
             <motion.p 
               className="text-lg leading-relaxed xl:text-xl text-white/90"
@@ -335,7 +340,7 @@ export default function AuthPage() {
               }}
               transition={{ duration: 0.5, delay: isActive ? 0.1 : 0.4 }}
             >
-              We are happy to have you with us again. If you need anything, we are here to help.
+              {t.welcomeBackDescription}
             </motion.p>
           </motion.div>
         </div>
@@ -366,7 +371,7 @@ export default function AuthPage() {
               }}
               transition={{ duration: 0.5, delay: isActive ? 0.25 : 0 }}
             >
-              Register
+              {t.register}
             </motion.h2>
 
             <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-5">
@@ -396,7 +401,7 @@ export default function AuthPage() {
                       : 'top-1/2 -translate-y-1/2 text-white text-base'
                   }`}
                 >
-                  Username
+                  {t.username}
                 </label>
                 <User 
                   className={`absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 xl:w-6 xl:h-6 transition-colors duration-500 peer-focus:text-orange-600 peer-valid:text-orange-600 ${
@@ -436,7 +441,7 @@ export default function AuthPage() {
                       : 'top-1/2 -translate-y-1/2 text-white text-base'
                   }`}
                 >
-                  Email
+                  {t.email}
                 </label>
                 <Mail 
                   className={`absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 xl:w-6 xl:h-6 transition-colors duration-500 peer-focus:text-orange-600 peer-valid:text-orange-600 ${
@@ -476,7 +481,7 @@ export default function AuthPage() {
                       : 'top-1/2 -translate-y-1/2 text-white text-base'
                   }`}
                 >
-                  Password
+                  {t.password}
                 </label>
                 <div className="absolute right-0 flex items-center space-x-1 -translate-y-1/2 top-1/2">
                   <button
@@ -518,7 +523,7 @@ export default function AuthPage() {
                   className="relative w-full h-12 xl:h-14 bg-transparent border-2 border-orange-600 text-white font-semibold text-lg xl:text-xl rounded-full cursor-pointer overflow-hidden z-10 hover:before:top-0 before:content-[''] before:absolute before:h-[300%] before:w-full before:bg-gradient-to-b before:from-gray-900 before:via-orange-600 before:to-gray-900 before:top-[-100%] before:left-0 before:-z-10 before:transition-all before:duration-500"
                   disabled={registerForm.formState.isSubmitting}
                 >
-                  {registerForm.formState.isSubmitting ? 'Creating Account...' : 'Register'}
+                  {registerForm.formState.isSubmitting ? t.creatingAccount : t.register}
                 </Button>
               </motion.div>
 
@@ -533,13 +538,13 @@ export default function AuthPage() {
                 transition={{ duration: 0.5, delay: isActive ? 0.75 : 0.35 }}
               >
                 <p>
-                  Already have an account? <br />
+                  {t.alreadyHaveAccount} <br />
                   <button
                     type="button"
                     onClick={() => setIsActive(false)}
                     className="font-semibold text-orange-600 hover:underline"
                   >
-                    Sign In
+                    {t.signIn}
                   </button>
                 </p>
               </motion.div>
@@ -572,7 +577,7 @@ export default function AuthPage() {
               }}
               transition={{ duration: 0.5, delay: isActive ? 0.35 : 0 }}
             >
-              WELCOME!
+              {t.welcomeNew}
             </motion.h2>
             <motion.p 
               className="text-lg leading-relaxed xl:text-xl text-white/90"
@@ -583,7 +588,7 @@ export default function AuthPage() {
               }}
               transition={{ duration: 0.5, delay: isActive ? 0.45 : 0.1 }}
             >
-              We're delighted to have you here. If you need any assistance, feel free to reach out.
+              {t.welcomeNewDescription}
             </motion.p>
           </motion.div>
         </div>

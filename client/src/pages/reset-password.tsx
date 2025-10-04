@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Eye, EyeOff } from 'lucide-react';
+import { useSettings } from '@/hooks/use-settings';
 
 const resetSchema = z.object({
   token: z.string().min(1),
@@ -18,10 +20,13 @@ const resetSchema = z.object({
 
 export default function ResetPasswordPage() {
   const [location, navigate] = useLocation();
-  const params = new URLSearchParams(location.split('?')[1] || '');
-  const tokenParam = params.get('token') || '';
+  // Leggiamo il token direttamente dalla URL reale per evitare edge con wouter
+  const tokenParam = useMemo(() => new URLSearchParams(window.location.search).get('token') || '', []);
+  const { t } = useSettings();
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const form = useForm<z.infer<typeof resetSchema>>({
     resolver: zodResolver(resetSchema),
@@ -46,51 +51,72 @@ export default function ResetPasswordPage() {
       });
       const payload = await res.json().catch(() => ({}));
       if (res.ok) {
-        setMessage('Password aggiornata con successo. Verrai reindirizzato alla schermata di login.');
+        setMessage(t?.success || 'Password aggiornata con successo. Verrai reindirizzato alla schermata di login.');
         setTimeout(() => navigate('/auth'), 1500);
       } else {
-        setMessage(payload?.message || 'Errore durante il reset della password');
+        setMessage(payload?.message || t?.error || 'Errore durante il reset della password');
       }
     } catch (err) {
-      setMessage('Errore di rete');
+      setMessage(t?.error || 'Errore di rete');
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle>Reset Password</CardTitle>
-            <CardDescription>Inserisci la nuova password</CardDescription>
+            <CardTitle>{t?.resetPasswordTitle || 'Reset Password'}</CardTitle>
+            <CardDescription>{t?.resetPasswordSubtitle || 'Inserisci la nuova password'}</CardDescription>
           </CardHeader>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
               <Input type="hidden" {...form.register('token')} />
               <div>
-                <label className="block mb-1 text-sm">Nuova password</label>
-                <Input type="password" {...form.register('password')} />
+                <label className="block mb-1 text-sm">{t?.newPassword || 'Nuova password'}</label>
+                <div className="relative">
+                  <Input type={showPwd ? 'text' : 'password'} {...form.register('password')} />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPwd((v) => !v)}
+                    aria-label={showPwd ? (t?.hidePassword || 'Nascondi password') : (t?.showPassword || 'Mostra password')}
+                  >
+                    {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
                 <div className="text-sm text-red-400">{form.formState.errors.password?.message as any}</div>
               </div>
               <div>
-                <label className="block mb-1 text-sm">Conferma password</label>
-                <Input type="password" {...form.register('confirmPassword')} />
+                <label className="block mb-1 text-sm">{t?.confirmPassword || 'Conferma password'}</label>
+                <div className="relative">
+                  <Input type={showConfirm ? 'text' : 'password'} {...form.register('confirmPassword')} />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-2 flex items-center text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowConfirm((v) => !v)}
+                    aria-label={showConfirm ? (t?.hidePassword || 'Nascondi password') : (t?.showPassword || 'Mostra password')}
+                  >
+                    {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
                 <div className="text-sm text-red-400">{form.formState.errors.confirmPassword?.message as any}</div>
               </div>
-              {message && <div className="text-sm text-gray-300">{message}</div>}
               {!tokenParam && (
                 <div className="text-sm text-muted-foreground">
-                  Non hai un token valido?{' '}
+                  {t?.noValidToken || 'Non hai un token valido?'}{' '}
                   <button type="button" className="text-orange-500 hover:underline" onClick={() => navigate('/forgot-password')}>
-                    Richiedi un nuovo link di reset
+                    {t?.requestNewReset || 'Richiedi un nuovo link di reset'}
                   </button>
                 </div>
               )}
+              {message && <div className="text-sm text-gray-300 whitespace-pre-wrap break-words">{message}</div>}
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-full" disabled={isLoading}>{isLoading ? 'Invio...' : 'Aggiorna Password'}</Button>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (t?.sending || 'Invio...') : (t?.updatePassword || 'Aggiorna Password')}
+              </Button>
             </CardFooter>
           </form>
         </Card>

@@ -39,8 +39,9 @@ const CategorySection: React.FC<CategorySectionProps> = ({
   const getCategoryTranslation = (categoryName: string): string => {
     // Ottieni la chiave di traduzione dal nome della categoria
     const key = categoryName.toLowerCase().replace(/[^a-z]/g, '') as keyof Translation;
-    // Usa la traduzione se disponibile, altrimenti usa il nome originale
-    return t[key] || categoryName;
+    // Usa la traduzione se disponibile e se è una stringa, altrimenti usa il nome originale
+    const translation = t[key];
+    return (typeof translation === 'string' ? translation : categoryName);
   };
 
   // Ordina i servizi in base al criterio selezionato
@@ -77,42 +78,44 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <i className={`fas ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-down'} ml-2 text-sm opacity-60 group-hover:opacity-100`}></i>
         </button>
         
-        <div className="flex items-center gap-2">
-          <Select
-            value={sortBy}
-            onValueChange={(value) => setSortBy(value as typeof sortBy)}
-          >
-            <SelectTrigger className="w-[180px] h-9">
-              <SelectValue placeholder="Ordina per..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="status">
-                <div className="flex items-center gap-2">
-                  <ArrowDownWideNarrow className="w-4 h-4" />
-                  <span>Prima i down</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="alpha">
-                <div className="flex items-center gap-2">
-                  <ArrowUpAZ className="w-4 h-4" />
-                  <span>Ordine alfabetico</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="responseTime">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  <span>Tempo di risposta</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="uptimePercentage">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>Uptime %</span>
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        {!isCollapsed && (
+          <div className="flex items-center gap-2">
+            <Select
+              value={sortBy}
+              onValueChange={(value) => setSortBy(value as typeof sortBy)}
+            >
+              <SelectTrigger className="w-[180px] h-9">
+                <SelectValue placeholder={t.sortBy + "..."} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="status">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownWideNarrow className="w-4 h-4" />
+                    <span>{t.firstDown}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="alpha">
+                  <div className="flex items-center gap-2">
+                    <ArrowUpAZ className="w-4 h-4" />
+                    <span>{t.alphabetical}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="responseTime">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>{t.responseTime}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="uptimePercentage">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>{t.uptimePercentage}</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
       {!isCollapsed && (

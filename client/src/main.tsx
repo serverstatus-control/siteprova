@@ -7,10 +7,12 @@ import { SettingsProvider } from "./hooks/use-settings";
 import { AuthProvider } from "./hooks/use-auth";
 import { Router } from "wouter";
 
-// Configurazione base path per GitHub Pages
-const basePath = import.meta.env.MODE === 'production' && 
-                 window.location.hostname === 'serverstatus-control.github.io' 
-                 ? '/siteprova' : '';
+// Configurazione base path per GitHub Pages e Render
+const isProd = import.meta.env.MODE === 'production';
+const host = typeof window !== 'undefined' ? window.location.hostname : '';
+const basePath = isProd && (host === 'serverstatus-control.github.io' || host.endsWith('.onrender.com'))
+  ? '/siteprova'
+  : '';
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>

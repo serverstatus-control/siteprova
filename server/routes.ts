@@ -253,7 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           });
 
-          const resetUrl = `${process.env.BASE_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
+          const resetUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
           const info = await transporter.sendMail({
             from: process.env.SMTP_FROM || 'no-reply@example.com',
             to: user.email,
@@ -275,7 +275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const resp: any = { message: 'Se l\'email è registrata, riceverai istruzioni per il reset.' };
       if (process.env.NODE_ENV === 'development' || (process.env.BASE_URL || '').includes('localhost')) {
         resp.token = token;
-        resp.resetUrl = `${process.env.BASE_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
+        resp.resetUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
       }
 
       return res.json(resp);

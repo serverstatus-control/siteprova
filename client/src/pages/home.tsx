@@ -9,6 +9,7 @@ import CategorySection from '../components/CategorySection';
 import StatusSummary from '../components/StatusSummary';
 import Footer from '../components/Footer';
 import { apiRequest } from '../lib/queryClient';
+import { useSettings } from '../hooks/use-settings';
 
 // Lazy loading per componenti non critici
 const ServiceDetailModal = lazy(() => import('../components/ServiceDetailModal'));
@@ -20,6 +21,7 @@ const Home: React.FC = () => {
   const [serviceHistory, setServiceHistory] = useState<UptimeHistory[]>([]);
   const [serviceIncidents, setServiceIncidents] = useState<Incident[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useSettings();
 
   // Fetch categories
   const { 
@@ -121,7 +123,7 @@ const Home: React.FC = () => {
   if (isCategoriesLoading || isServicesLoading || isSummaryLoading) {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="text-white text-xl">Loading dashboard...</div>
+        <div className="text-white text-xl">{t.loadingData}</div>
       </div>
     );
   }

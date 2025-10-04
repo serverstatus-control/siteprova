@@ -4,1274 +4,179 @@ import { useAuth } from "./use-auth";
 import { apiRequest } from "../lib/api";
 import { useToast } from "./use-toast";
 import { toast } from "./use-toast";
+import { translations, type Translation } from "@/lib/translations";
 
 export type Theme = "light" | "dark" | "system";
 export type Language = "en" | "it" | "es" | "fr" | "de" | "zh" | "ja" | "pt" | "ru";
 
-export interface Translation {
-  settings: string;
-  settingsDescription: string;
-  updates: string;
-  theme: string;
-  language: string;
-  system: string;
-  light: string;
-  dark: string;
-  favorites: string;
-  noFavorites: string;
-  addToFavorites: string;
-  removeFromFavorites: string;
-  english: string;
-  italian: string;
-  spanish: string;
-  french: string;
-  german: string;
-  chinese: string;
-  japanese: string;
-  portuguese: string;
-  games: string;
-  streaming: string;
-  bank: string;
-  social: string;
-  mail: string;
-  shopping: string;
-  various: string;
-  connection: string;
-  browserai: string;
-  music: string;
-  gaming: string;
-  productivity: string;
-  education: string;
-  technology: string;
-  entertainment: string;
-  financial: string;
-  russian: string;
-  close: string;
-  register: string;
-  login: string;
-  logout: string;
-  admin: string;
-  search: string;
-  serverStatus: string;
-  selectTheme: string;
-  selectLanguage: string;
-  operational: string;
-  degraded: string;
-  down: string;
-  lastUpdated: string;
-  dashboard: string;
-  dashboardDescription: string;
-  checkingNow: string;
-  checkNow: string;
-  terms: string;
-  privacy: string;
-  siteUpdates: string;
-  footerText: string;
-  currentStatus: string;
-  categories: string;
-  responseTime: string;
-  lastCheck: string;
-  uptime30d: string;
-  lastOutage: string;
-  avgResponse: string;
-  uptimeHistory: string;
-  recentIncidents: string;
-  noHistoryAvailable: string;
-  noIncidentsReported: string;
-  infoAndContacts: string;
-  noRecentOutages: string;
-  expand: string;
-  overall: string;
-  collapse: string;
-  partialOutage: string;
-  searchServices: string;
-  links: string;
-  viewDetails: string;
-  viewFullHistory: string;
-  subscribeToUpdates: string;
-  serviceDetails: string;
-  // Messages and UI
-  success: string;
-  error: string;
-  unknown: string;
-  loggingOut: string;
-  loggingIn: string;
-  creatingAccount: string;
-  loginDescription: string;
-  registerDescription: string;
-  emailPlaceholder: string;
-  passwordPlaceholder: string;
-  usernamePlaceholder: string;
-  confirmPassword: string;
-  confirmPasswordPlaceholder: string;
-  passwordMismatch: string;
-  favoriteAdded: string;
-  favoriteRemoved: string;
-  accountTitle: string;
-  username: string;
-  email: string;
-  role: string;
-  registeredAt: string;
-  backToDashboard: string;
-  heroDescription: string;
-  to: string;
-  toPresent: string;
-};
-
-// Oggetto che contiene le traduzioni per ogni lingua
-export const translations: Record<Language, Translation> = {
-  en: {
-    // Categories
-    music: "Music",
-    gaming: "Gaming",
-    productivity: "Productivity",
-    education: "Education",
-    technology: "Technology",
-    entertainment: "Entertainment",
-    financial: "Financial",
-    
-    // Other translations
-    settings: "Settings",
-  updates: "Updates",
-    settingsDescription: "Customize your experience by changing theme and language",
-    theme: "Theme",
-    language: "Language",
-    system: "System",
-    light: "Light",
-    dark: "Dark",
-    favorites: "Favorites",
-    noFavorites: "No favorites added",
-    addToFavorites: "Add to favorites",
-    removeFromFavorites: "Remove from favorites",
-    english: "English",
-    italian: "Italian",
-    spanish: "Spanish",
-    french: "French",
-    german: "German",
-    chinese: "Chinese",
-    japanese: "Japanese",
-    portuguese: "Portuguese",
-    russian: "Russian",
-    close: "Close",
-  register: "Register",
-    login: "Login",
-    logout: "Logout",
-    admin: "Admin",
-    search: "Search services...",
-    serverStatus: "SERVER STATUS",
-    selectTheme: "Select theme",
-    selectLanguage: "Select language",
-    operational: "Operational",
-    degraded: "Degraded performance",
-    down: "Down",
-    lastUpdated: "Last updated",
-    dashboard: "Dashboard",
-    dashboardDescription: "Check the status of services in real time and get instant updates.",
-    checkingNow: "Checking...",
-    checkNow: "Check Now",
-    accountTitle: "Your Account",
-    username: "Username",
-    email: "Email",
-    role: "Role",
-    registeredAt: "Registered on",
-    backToDashboard: "Back to Dashboard",
-    loggingOut: "Logging out...",
-    heroDescription: "Monitor the operational status of various services and platforms in real time. Stay informed about outages and performance issues.",
-    loginDescription: "Enter your credentials to log in",
-    registerDescription: "Create a new account to access the dashboard",
-    emailPlaceholder: "Enter your email",
-    passwordPlaceholder: "Enter your password",
-    usernamePlaceholder: "Choose a username",
-    confirmPassword: "Confirm Password",
-    confirmPasswordPlaceholder: "Confirm your password",
-    passwordMismatch: "Passwords do not match",
-    loggingIn: "Logging in...",
-    creatingAccount: "Creating account...",
-    to: "to",
-    toPresent: "to present",
-    unknown: "Unknown",
-    currentStatus: "Current Status",
-    responseTime: "Response Time",
-    uptime30d: "Uptime (30 days)",
-    lastOutage: "Last Outage",
-    avgResponse: "Avg. Response",
-    uptimeHistory: "Uptime History",
-    recentIncidents: "Recent Incidents",
-    noHistoryAvailable: "No history available",
-    noIncidentsReported: "No incidents reported",
-    noRecentOutages: "No recent outages",
-    overall: "Overall Status",
-    partialOutage: "Partial Outage",
-    categories: "Categories",
-    lastCheck: "Last check",
-    games: "Games",
-    streaming: "Streaming",
-    bank: "Bank",
-    social: "Social",
-    mail: "Mail",
-    shopping: "Shopping",
-    various: "Various",
-    connection: "Connection",
-    browserai: "Browser & AI",
-    infoAndContacts: "Info & Contacts",
-    expand: "Expand",
-    collapse: "Collapse",
-    searchServices: "Search services",
-    links: "Links",
-    siteUpdates: "Site Updates",
-    viewDetails: "View Details",
-    viewFullHistory: "View Full History",
-    subscribeToUpdates: "Subscribe to Updates",
-    serviceDetails: "Service Details",
-    terms: "Terms of Service",
-    privacy: "Privacy Policy",
-    footerText: "© 2025 Server Status | Version",
-    success: "Success",
-    error: "Error",
-    favoriteAdded: "Service added to favorites",
-    favoriteRemoved: "Service removed from favorites",
-  },
-  it: {
-    settings: "Impostazioni",
-    updates: "Aggiornamenti",
-    settingsDescription: "Personalizza la tua esperienza cambiando tema e lingua",
-    theme: "Tema",
-    language: "Lingua",
-    system: "Sistema",
-    light: "Chiaro",
-    dark: "Scuro",
-    favorites: "Preferiti",
-    noFavorites: "Nessun preferito aggiunto",
-    addToFavorites: "Aggiungi ai preferiti",
-    removeFromFavorites: "Rimuovi dai preferiti",
-    english: "Inglese",
-    italian: "Italiano",
-    spanish: "Spagnolo",
-    french: "Francese",
-    german: "Tedesco",
-    chinese: "Cinese",
-    japanese: "Giapponese",
-    portuguese: "Portoghese",
-    russian: "Russo",
-    close: "Chiudi",
-  register: "Registrati",
-    login: "Accedi",
-    logout: "Esci",
-    admin: "Amministratore",
-    search: "Cerca servizi...",
-    serverStatus: "STATO DEI SERVER",
-    selectTheme: "Seleziona tema",
-    selectLanguage: "Seleziona lingua",
-    operational: "Operativo",
-    degraded: "Prestazioni degradate",
-    down: "Non disponibile",
-    lastUpdated: "Ultimo aggiornamento",
-    dashboard: "Dashboard",
-    dashboardDescription: "Controlla lo stato dei servizi in tempo reale e ricevi aggiornamenti immediati.",
-    checkingNow: "Controllo in corso...",
-    checkNow: "Controlla ora",
-    accountTitle: "Il tuo Account",
-    username: "Username",
-    email: "Email",
-    role: "Ruolo",
-    registeredAt: "Registrato il",
-    backToDashboard: "Torna alla Dashboard",
-    loggingOut: "Logout...",
-    heroDescription: "Monitora lo stato operativo dei vari servizi e piattaforme in tempo reale. Rimani informato su interruzioni e problemi di prestazione.",
-    loginDescription: "Inserisci le tue credenziali per accedere all'account",
-    registerDescription: "Crea un nuovo account per accedere alla dashboard",
-    emailPlaceholder: "Inserisci la tua email",
-    passwordPlaceholder: "Inserisci la tua password",
-    usernamePlaceholder: "Scegli un username",
-    confirmPassword: "Conferma Password",
-    confirmPasswordPlaceholder: "Conferma la tua password",
-    passwordMismatch: "Le password non corrispondono",
-    loggingIn: "Accesso in corso...",
-    creatingAccount: "Creazione account in corso...",
-    to: "alle",
-    toPresent: "ad ora",
-    unknown: "Sconosciuto",
-    currentStatus: "Stato Attuale",
-    responseTime: "Tempo di Risposta",
-    uptime30d: "Uptime (30 giorni)",
-    lastOutage: "Ultima Interruzione",
-    avgResponse: "Risposta Media",
-    uptimeHistory: "Storico Uptime",
-    recentIncidents: "Incidenti Recenti",
-    noHistoryAvailable: "Nessuno storico disponibile",
-    noIncidentsReported: "Nessun incidente segnalato",
-    noRecentOutages: "Nessuna interruzione recente",
-    overall: "Stato Generale",
-    partialOutage: "Interruzione Parziale",
-    categories: "Categorie",
-    lastCheck: "Ultimo controllo",
-    games: "Giochi",
-    streaming: "Streaming",
-    bank: "Banche",
-    social: "Social",
-    mail: "Mail",
-    shopping: "Shopping",
-    various: "Varie",
-    connection: "Connessione",
-    browserai: "Browser & IA",
-    infoAndContacts: "Info & Contatti",
-    expand: "Espandi",
-    collapse: "Comprimi",
-    searchServices: "Cerca servizi",
-    links: "Link",
-    siteUpdates: "Aggiornamenti",
-    viewDetails: "Dettagli",
-    viewFullHistory: "Vedi storico completo",
-    subscribeToUpdates: "Iscriviti agli aggiornamenti",
-    serviceDetails: "Dettagli Servizio",
-    terms: "Termini",
-    privacy: "Privacy",
-    success: "Successo",
-    error: "Errore",
-    favoriteAdded: "Servizio aggiunto ai preferiti",
-    favoriteRemoved: "Servizio rimosso dai preferiti",
-    footerText: "© 2025 Server Status | Versione",
-    music: "Musica",
-    gaming: "Giochi",
-    productivity: "Produttività",
-    education: "Educazione",
-    technology: "Tecnologia",
-    entertainment: "Intrattenimento",
-    financial: "Finanza",
-  },
-  es: {
-    settings: "Configuración",
-    updates: "Actualizaciones",
-    settingsDescription: "Personaliza tu experiencia cambiando el tema y el idioma",
-    theme: "Tema",
-    language: "Idioma",
-    system: "Sistema",
-    light: "Claro",
-    dark: "Oscuro",
-    favorites: "Favoritos",
-    noFavorites: "No hay favoritos añadidos",
-    addToFavorites: "Añadir a favoritos",
-    removeFromFavorites: "Eliminar de favoritos",
-    english: "Inglés",
-    italian: "Italiano",
-    spanish: "Español",
-    french: "Francés",
-    german: "Alemán",
-    chinese: "Chino",
-    japanese: "Japonés",
-    portuguese: "Portugués",
-    russian: "Ruso",
-    close: "Cerrar",
-  register: "Registrarse",
-    login: "Iniciar sesión",
-    logout: "Cerrar sesión",
-    admin: "Administrador",
-    search: "Buscar servicios...",
-    serverStatus: "ESTADO DEL SERVIDOR",
-    selectTheme: "Seleccionar tema",
-    selectLanguage: "Seleccionar idioma",
-    operational: "Operativo",
-    degraded: "Rendimiento degradado",
-    down: "Inactivo",
-    lastUpdated: "Última actualización",
-    dashboard: "Panel",
-    dashboardDescription: "Comprueba el estado de los servicios en tiempo real y recibe actualizaciones instantáneas.",
-    checkingNow: "Comprobando...",
-    checkNow: "Comprobar ahora",
-    accountTitle: "Tu Cuenta",
-    username: "Usuario",
-    email: "Correo electrónico",
-    role: "Rol",
-    registeredAt: "Registrado el",
-    backToDashboard: "Volver al Panel",
-    loggingOut: "Cerrando sesión...",
-    heroDescription: "Monitorea el estado operativo de varios servicios y plataformas en tiempo real. Mantente informado sobre interrupciones y problemas de rendimiento.",
-    loginDescription: "Introduce tus credenciales para iniciar sesión",
-    registerDescription: "Crea una nueva cuenta para acceder al panel",
-    emailPlaceholder: "Introduce tu correo electrónico",
-    passwordPlaceholder: "Introduce tu contraseña",
-    usernamePlaceholder: "Elige un nombre de usuario",
-    confirmPassword: "Confirmar Contraseña",
-    confirmPasswordPlaceholder: "Confirma tu contraseña",
-    passwordMismatch: "Las contraseñas no coinciden",
-    loggingIn: "Iniciando sesión...",
-    creatingAccount: "Creando cuenta...",
-    to: "hasta",
-    toPresent: "hasta ahora",
-    unknown: "Desconocido",
-    currentStatus: "Estado Actual",
-    responseTime: "Tiempo de Respuesta",
-    uptime30d: "Tiempo Activo (30 días)",
-    lastOutage: "Última Interrupción",
-    avgResponse: "Respuesta Media",
-    uptimeHistory: "Historial de Actividad",
-    recentIncidents: "Incidentes Recientes",
-    noHistoryAvailable: "No hay historial disponible",
-    noIncidentsReported: "No hay incidentes reportados",
-    noRecentOutages: "Sin interrupciones recientes",
-    overall: "Estado General",
-    partialOutage: "Interrupción Parcial",
-    categories: "Categorías",
-    lastCheck: "Última comprobación",
-    games: "Juegos",
-    streaming: "Streaming",
-    bank: "Banco",
-    social: "Social",
-    mail: "Correo",
-    shopping: "Compras",
-    various: "Varios",
-    connection: "Conexión",
-    browserai: "Navegador & IA",
-    infoAndContacts: "Info & Contactos",
-    expand: "Expandir",
-    collapse: "Contraer",
-    searchServices: "Buscar servicios",
-    links: "Enlaces",
-    siteUpdates: "Actualizaciones",
-    viewDetails: "Ver Detalles",
-    viewFullHistory: "Ver Historial Completo",
-    subscribeToUpdates: "Suscribirse a Actualizaciones",
-    serviceDetails: "Detalles del Servicio",
-    terms: "Términos de uso",
-    privacy: "Política de privacidad",
-    footerText: "© 2025 Server Status | Versión", 
-    success: "Éxito",
-    error: "Error",
-    favoriteAdded: "Servicio añadido a favoritos",
-    favoriteRemoved: "Servicio eliminado de favoritos",
-    music: "Música",
-    gaming: "Juegos",
-    productivity: "Productividad",
-    education: "Educación",
-    technology: "Tecnología",
-    entertainment: "Entretenimiento",
-    financial: "Finanzas",
-  },
-  fr: {
-    settings: "Paramètres",
-    updates: "Mises à jour",
-    settingsDescription: "Personnalisez votre expérience en changeant de thème et de langue",
-    theme: "Thème",
-    language: "Langue",
-    system: "Système",
-    light: "Clair",
-    dark: "Sombre",
-    favorites: "Favoris",
-    noFavorites: "Aucun favori ajouté",
-    addToFavorites: "Ajouter aux favoris",
-    removeFromFavorites: "Retirer des favoris",
-    english: "Anglais",
-    italian: "Italien",
-    spanish: "Espagnol",
-    french: "Français",
-    german: "Allemand",
-    chinese: "Chinois",
-    japanese: "Japonais",
-    portuguese: "Portugais",
-    russian: "Russe",
-    close: "Fermer",
-  register: "S'inscrire",
-    login: "Connexion",
-    logout: "Déconnexion",
-    admin: "Admin",
-    search: "Rechercher des services...",
-    serverStatus: "ÉTAT DU SERVEUR",
-    selectTheme: "Sélectionner un thème",
-    selectLanguage: "Sélectionner une langue",
-    operational: "Opérationnel",
-    degraded: "Performances dégradées",
-    down: "Indisponible",
-    lastUpdated: "Dernière mise à jour",
-    dashboard: "Tableau de bord",
-    dashboardDescription: "Vérifiez l'état des services en temps réel et recevez des mises à jour instantanées.",
-    checkingNow: "Vérification...",
-    checkNow: "Vérifier maintenant",
-    accountTitle: "Votre Compte",
-    username: "Nom d'utilisateur",
-    email: "E-mail",
-    role: "Rôle",
-    registeredAt: "Enregistré le",
-    backToDashboard: "Retour au tableau de bord",
-    loggingOut: "Déconnexion...",
-    heroDescription: "Surveillez l'état opérationnel de divers services et plateformes en temps réel. Restez informé des pannes et des problèmes de performance.",
-    loginDescription: "Entrez vos identifiants pour vous connecter",
-    registerDescription: "Créez un nouveau compte pour accéder au tableau de bord",
-    emailPlaceholder: "Entrez votre e-mail",
-    passwordPlaceholder: "Entrez votre mot de passe",
-    usernamePlaceholder: "Choisissez un nom d'utilisateur",
-    confirmPassword: "Confirmer le mot de passe",
-    confirmPasswordPlaceholder: "Confirmez votre mot de passe",
-    passwordMismatch: "Les mots de passe ne correspondent pas",
-    loggingIn: "Connexion...",
-    creatingAccount: "Création du compte...",
-    to: "à",
-    toPresent: "à présent",
-    unknown: "Inconnu",
-    currentStatus: "État Actuel",
-    responseTime: "Temps de Réponse",
-    uptime30d: "Disponibilité (30 jours)",
-    lastOutage: "Dernière Panne",
-    avgResponse: "Réponse Moyenne",
-    uptimeHistory: "Historique de Disponibilité",
-    recentIncidents: "Incidents Récents",
-    noHistoryAvailable: "Aucun historique disponible",
-    noIncidentsReported: "Aucun incident signalé",
-    noRecentOutages: "Aucune panne récente",
-    overall: "État Général",
-    partialOutage: "Panne Partielle",
-    categories: "Catégories",
-    lastCheck: "Dernier contrôle",
-    games: "Jeux",
-    streaming: "Streaming",
-    bank: "Banque",
-    social: "Social",
-    mail: "Mail",
-    shopping: "Shopping",
-    various: "Divers",
-    connection: "Connexion",
-    browserai: "Navigateur & IA",
-    infoAndContacts: "Infos & Contacts",
-    expand: "Développer",
-    collapse: "Réduire",
-    searchServices: "Rechercher des services",
-    links: "Liens",
-    siteUpdates: "Mises à jour du site",
-    viewDetails: "Voir les Détails",
-    viewFullHistory: "Voir l'historique complet",
-    subscribeToUpdates: "S'abonner aux mises à jour",
-    serviceDetails: "Détails du Service",
-    terms: "Conditions",
-    privacy: "Confidentialité",
-    success: "Succès",
-    error: "Erreur",
-    favoriteAdded: "Service ajouté aux favoris",
-    favoriteRemoved: "Service retiré des favoris",
-    footerText: "© 2025 Server Status | Version",
-    music: "Musique",
-    gaming: "Jeux",
-    productivity: "Productivité",
-    education: "Éducation",
-    technology: "Technologie",
-    entertainment: "Divertissement",
-    financial: "Finance",
-  },
-  de: {
-    settings: "Einstellungen",
-    updates: "Website-Updates",
-    theme: "Thema",
-    language: "Sprache",
-    system: "System",
-    light: "Hell",
-    dark: "Dunkel",
-    favorites: "Favoriten",
-    noFavorites: "Keine Favoriten hinzugefügt",
-    addToFavorites: "Zu Favoriten hinzufügen",
-    removeFromFavorites: "Aus Favoriten entfernen",
-    english: "Englisch",
-    italian: "Italienisch",
-    spanish: "Spanisch",
-    french: "Französisch",
-    german: "Deutsch",
-    chinese: "Chinesisch",
-    japanese: "Japanisch",
-    portuguese: "Portugiesisch",
-    russian: "Russisch",
-    close: "Schließen",
-  register: "Registrieren",
-    login: "Anmelden",
-    logout: "Abmelden",
-    admin: "Administrator",
-    search: "Dienste suchen...",
-    serverStatus: "SERVER-STATUS",
-    accountTitle: "Dein Konto",
-    username: "Benutzername",
-    email: "E-Mail",
-    role: "Rolle",
-    registeredAt: "Registriert am",
-    backToDashboard: "Zurück zum Dashboard",
-    loggingOut: "Abmelden...",
-    heroDescription: "Überwache den Betriebsstatus verschiedener Dienste und Plattformen in Echtzeit. Bleibe über Ausfälle und Leistungsprobleme informiert.",
-    loginDescription: "Gib deine Zugangsdaten ein, um dich anzumelden",
-    registerDescription: "Erstelle ein neues Konto, um auf das Dashboard zuzugreifen",
-    emailPlaceholder: "Gib deine E-Mail ein",
-    passwordPlaceholder: "Gib dein Passwort ein",
-    usernamePlaceholder: "Wähle einen Benutzernamen",
-    confirmPassword: "Passwort bestätigen",
-    confirmPasswordPlaceholder: "Bestätige dein Passwort",
-    passwordMismatch: "Passwörter stimmen nicht überein",
-    loggingIn: "Anmeldung...",
-    creatingAccount: "Konto wird erstellt...",
-    to: "bis",
-    toPresent: "bis jetzt",
-    unknown: "Unbekannt",
-    categories: "Kategorien",
-    lastCheck: "Letzte Prüfung",
-    games: "Spiele",
-    streaming: "Streaming",
-    bank: "Bank",
-    social: "Soziales",
-    mail: "Mail",
-    shopping: "Einkaufen",
-    various: "Verschiedenes",
-    connection: "Verbindung",
-    browserai: "Browser & KI",
-    infoAndContacts: "Info & Kontakte",
-    expand: "Erweitern",
-    collapse: "Einklappen",
-    searchServices: "Dienste suchen",
-    links: "Links",
-    siteUpdates: "Website-Updates",
-    viewDetails: "Details anzeigen",
-    viewFullHistory: "Gesamte Historie anzeigen",
-    subscribeToUpdates: "Für Updates abonnieren",
-    serviceDetails: "Servicedetails",
-    terms: "Bedingungen",
-    privacy: "Datenschutz",
-    settingsDescription: "Personalisiere deine Erfahrung durch Ändern von Thema und Sprache",
-    selectTheme: "Thema auswählen",
-    selectLanguage: "Sprache auswählen",
-    operational: "Betriebsbereit",
-    degraded: "Eingeschränkte Leistung",
-    down: "Nicht verfügbar",
-    dashboard: "Dashboard",
-    dashboardDescription: "Überprüfen Sie den Status der Dienste in Echtzeit und erhalten Sie sofortige Updates.",
-    checkingNow: "Überprüfung...",
-    checkNow: "Jetzt überprüfen",
-    currentStatus: "Aktueller Status",
-    responseTime: "Antwortzeit",
-    uptime30d: "Verfügbarkeit (30 Tage)",
-    lastOutage: "Letzter Ausfall",
-    avgResponse: "Durchschn. Antwortzeit",
-    uptimeHistory: "Verfügbarkeitsverlauf",
-    recentIncidents: "Aktuelle Vorfälle",
-    noHistoryAvailable: "Kein Verlauf verfügbar",
-    noIncidentsReported: "Keine Vorfälle gemeldet",
-    noRecentOutages: "Keine kürzlichen Ausfälle",
-    overall: "Gesamtstatus",
-    partialOutage: "Teilweiser Ausfall",
-    success: "Erfolg",
-    error: "Fehler",
-    favoriteAdded: "Dienst zu Favoriten hinzugefügt",
-    favoriteRemoved: "Dienst aus Favoriten entfernt",
-    lastUpdated: "Zuletzt aktualisiert",
-    footerText: "© 2025 Server Status | Version",
-    music: "Musik",
-    gaming: "Gaming",
-    productivity: "Produktivität",
-    education: "Bildung",
-    technology: "Technologie",
-    entertainment: "Unterhaltung",
-    financial: "Finanzen",
-  },
-  zh: {
-    settings: "设置",
-    updates: "网站更新",
-    settingsDescription: "通过更改主题和语言自定义您的体验",
-    theme: "主题",
-    language: "语言",
-    system: "系统",
-    light: "明亮",
-    dark: "暗黑",
-    favorites: "收藏夹",
-    noFavorites: "未添加收藏",
-    addToFavorites: "添加到收藏夹",
-    removeFromFavorites: "从收藏夹中移除",
-    english: "英语",
-    italian: "意大利语",
-    spanish: "西班牙语",
-    french: "法语",
-    german: "德语",
-    chinese: "中文",
-    japanese: "日语",
-    portuguese: "葡萄牙语",
-    russian: "俄语",
-    close: "关闭",
-  register: "注册",
-    login: "登录",
-    logout: "登出",
-    admin: "管理员",
-    search: "搜索服务...",
-    serverStatus: "服务器状态",
-    accountTitle: "你的账户",
-    username: "用户名",
-    email: "电子邮件",
-    role: "角色",
-    registeredAt: "注册于",
-    backToDashboard: "返回仪表板",
-    loggingOut: "正在登出...",
-    heroDescription: "实时监控各种服务和平台的运行状态。随时了解中断和性能问题。",
-    loginDescription: "输入您的凭据登录",
-    registerDescription: "创建新账户以访问仪表板",
-    emailPlaceholder: "输入您的电子邮件",
-    passwordPlaceholder: "输入您的密码",
-    usernamePlaceholder: "选择用户名",
-    confirmPassword: "确认密码",
-    confirmPasswordPlaceholder: "确认您的密码",
-    passwordMismatch: "密码不匹配",
-    loggingIn: "正在登录...",
-    creatingAccount: "正在创建账户...",
-    to: "至",
-    toPresent: "至今",
-    unknown: "未知",
-    categories: "类别",
-    lastCheck: "上次检查",
-    games: "游戏",
-    streaming: "流媒体",
-    bank: "银行",
-    social: "社交",
-    mail: "邮件",
-    shopping: "购物",
-    various: "其他",
-    connection: "连接",
-    browserai: "浏览器与AI",
-    infoAndContacts: "信息和联系方式",
-    expand: "展开",
-    collapse: "收起",
-    searchServices: "搜索服务",
-    links: "链接",
-    siteUpdates: "网站更新",
-    viewDetails: "查看详情",
-    viewFullHistory: "查看完整历史",
-    subscribeToUpdates: "订阅更新",
-    serviceDetails: "服务详情",
-    terms: "条款",
-    privacy: "隐私",
-    selectTheme: "选择主题",
-    selectLanguage: "选择语言",
-    operational: "正常运行",
-    degraded: "性能下降",
-    down: "服务中断",
-    currentStatus: "当前状态",
-    responseTime: "响应时间",
-    uptime30d: "运行时间（30天）",
-    lastOutage: "上次中断",
-    avgResponse: "平均响应",
-    uptimeHistory: "运行历史",
-    recentIncidents: "最近事件",
-    noHistoryAvailable: "无历史记录",
-    noIncidentsReported: "无事件报告",
-    noRecentOutages: "最近无中断",
-    overall: "总体状态",
-    partialOutage: "部分中断",
-    lastUpdated: "最后更新",
-    dashboard: "仪表板",
-    dashboardDescription: "实时检查服务状态并获取即时更新",
-    checkingNow: "检查中...",
-    checkNow: "立即检查",
-    entertainment: "娱乐",
-    financial: "金融",
-    footerText: "© 2025 Server Status | 版本",
-    music: "音乐",
-    gaming: "游戏",
-    productivity: "生产力",
-    education: "教育",
-    technology: "技术",
-    success: "成功",
-    error: "错误",
-    favoriteAdded: "服务已添加到收藏",
-    favoriteRemoved: "服务已从收藏中移除",
-  },
-  ja: {
-    settings: "設定",
-    updates: "アップデート",
-    settingsDescription: "テーマと言語を変更してカスタマイズ",
-    theme: "テーマ",
-    language: "言語",
-    system: "システム",
-    light: "ライト",
-    dark: "ダーク",
-    favorites: "お気に入り",
-    noFavorites: "お気に入りがありません",
-    addToFavorites: "お気に入りに追加",
-    removeFromFavorites: "お気に入りから削除",
-    english: "英語",
-    italian: "イタリア語",
-    spanish: "スペイン語",
-    french: "フランス語",
-    german: "ドイツ語",
-    chinese: "中国語",
-    japanese: "日本語",
-    portuguese: "ポルトガル語",
-    russian: "ロシア語",
-    close: "閉じる",
-  register: "登録",
-    login: "ログイン",
-    logout: "ログアウト",
-    admin: "管理者",
-    search: "サービスを検索...",
-    serverStatus: "サーバーステータス",
-    accountTitle: "あなたのアカウント",
-    username: "ユーザー名",
-    email: "メールアドレス",
-    role: "役割",
-    registeredAt: "登録日",
-    backToDashboard: "ダッシュボードに戻る",
-    loggingOut: "ログアウト中...",
-    heroDescription: "さまざまなサービスやプラットフォームの稼働状況をリアルタイムで監視します。障害やパフォーマンス問題を常に把握しましょう。",
-    loginDescription: "ログインするには認証情報を入力してください",
-    registerDescription: "ダッシュボードにアクセスするために新しいアカウントを作成してください",
-    emailPlaceholder: "メールアドレスを入力してください",
-    passwordPlaceholder: "パスワードを入力してください",
-    usernamePlaceholder: "ユーザー名を選択してください",
-    confirmPassword: "パスワードの確認",
-    confirmPasswordPlaceholder: "パスワードを確認してください",
-    passwordMismatch: "パスワードが一致しません",
-    loggingIn: "ログイン中...",
-    creatingAccount: "アカウント作成中...",
-    to: "まで",
-    toPresent: "現在まで",
-    unknown: "不明",
-    categories: "カテゴリー",
-    lastCheck: "最終チェック",
-    games: "ゲーム",
-    streaming: "ストリーミング",
-    bank: "銀行",
-    social: "ソーシャル",
-    mail: "メール",
-    shopping: "ショッピング",
-    various: "その他",
-    connection: "接続",
-    browserai: "ブラウザとAI",
-    infoAndContacts: "情報と連絡先",
-    expand: "展開",
-    collapse: "折りたたむ",
-    searchServices: "サービスを検索",
-    links: "リンク",
-    siteUpdates: "サイトの更新",
-    viewDetails: "詳細を見る",
-    viewFullHistory: "完全な履歴を見る",
-    subscribeToUpdates: "更新を購読する",
-    serviceDetails: "サービスの詳細",
-    terms: "利用規約",
-    privacy: "プライバシー",
-    selectTheme: "テーマを選択",
-    selectLanguage: "言語を選択",
-    operational: "正常稼働",
-    degraded: "性能低下",
-    down: "停止中",
-    currentStatus: "現在の状態",
-    responseTime: "応答時間",
-    uptime30d: "稼働率（30日間）",
-    lastOutage: "最終停止",
-    avgResponse: "平均応答",
-    uptimeHistory: "稼働履歴",
-    recentIncidents: "最近のインシデント",
-    noHistoryAvailable: "履歴なし",
-    noIncidentsReported: "インシデントなし",
-    noRecentOutages: "最近の停止なし",
-    overall: "全体状態",
-    partialOutage: "一部停止",
-    lastUpdated: "最終更新",
-    dashboard: "ダッシュボード",
-    dashboardDescription: "サービスの状態をリアルタイムで確認し、即時更新を受け取ります",
-    checkingNow: "確認中...",
-    checkNow: "今すぐ確認",
-    success: "成功",
-    error: "エラー",
-    favoriteAdded: "サービスをお気に入りに追加しました",
-    favoriteRemoved: "サービスをお気に入りから削除しました",
-    footerText: "© 2025 Server Status | バージョン",
-    music: "音楽",
-    gaming: "ゲーム",
-    productivity: "生産性",
-    education: "教育",
-    technology: "技術",
-    entertainment: "エンターテイメント",
-    financial: "金融",
-  },
-  pt: {
-    settings: "Configurações",
-    updates: "Atualizações",
-    settingsDescription: "Personalize sua experiência alterando o tema e o idioma",
-    theme: "Tema",
-    language: "Idioma",
-    system: "Sistema",
-    light: "Claro",
-    dark: "Escuro",
-    favorites: "Favoritos",
-    noFavorites: "Nenhum favorito adicionado",
-    addToFavorites: "Adicionar aos favoritos",
-    removeFromFavorites: "Remover dos favoritos",
-    english: "Inglês",
-    italian: "Italiano",
-    spanish: "Espanhol",
-    french: "Francês",
-    german: "Alemão",
-    chinese: "Chinês",
-    japanese: "Japonês",
-    portuguese: "Português",
-    russian: "Russo",
-    close: "Fechar",
-  register: "Registrar",
-    login: "Entrar",
-    logout: "Sair",
-    admin: "Administrador",
-    search: "Buscar serviços...",
-    serverStatus: "STATUS DO SERVIDOR",
-    accountTitle: "Sua Conta",
-    username: "Nome de usuário",
-    email: "E-mail",
-    role: "Função",
-    registeredAt: "Registrado em",
-    backToDashboard: "Voltar ao Painel",
-    loggingOut: "Saindo...",
-    heroDescription: "Monitore o status operacional de vários serviços e plataformas em tempo real. Fique informado sobre interrupções e problemas de desempenho.",
-    loginDescription: "Digite suas credenciais para entrar",
-    registerDescription: "Crie uma nova conta para acessar o painel",
-    emailPlaceholder: "Digite seu e-mail",
-    passwordPlaceholder: "Digite sua senha",
-    usernamePlaceholder: "Escolha um nome de usuário",
-    confirmPassword: "Confirmar Senha",
-    confirmPasswordPlaceholder: "Confirme sua senha",
-    passwordMismatch: "As senhas não coincidem",
-    loggingIn: "Entrando...",
-    creatingAccount: "Criando conta...",
-    to: "até",
-    toPresent: "até agora",
-    unknown: "Desconhecido",
-    categories: "Categorias",
-    lastCheck: "Última verificação",
-    games: "Jogos",
-    streaming: "Streaming",
-    bank: "Banco",
-    social: "Social",
-    mail: "Mail",
-    shopping: "Compras",
-    various: "Diversos",
-    connection: "Conexão",
-    browserai: "Navegador & IA",
-    infoAndContacts: "Info & Contactos",
-    expand: "Expandir",
-    collapse: "Recolher",
-    searchServices: "Buscar serviços",
-    links: "Links",
-    siteUpdates: "Atualizações do site",
-    viewDetails: "Ver Detalhes",
-    viewFullHistory: "Ver Histórico Completo",
-    subscribeToUpdates: "Inscrever-se para Atualizações",
-    serviceDetails: "Detalhes do Serviço",
-    terms: "Termos",
-    privacy: "Privacidade",
-    success: "Sucesso",
-    error: "Erro",
-    favoriteAdded: "Serviço adicionado aos favoritos",
-    favoriteRemoved: "Serviço removido dos favoritos",
-    selectTheme: "Selecionar tema",
-    selectLanguage: "Selecionar idioma",
-    operational: "Operacional",
-    degraded: "Desempenho degradado",
-    down: "Inativo",
-    lastUpdated: "Última atualização",
-    dashboard: "Painel",
-    dashboardDescription: "Verifique o status dos serviços em tempo real e receba atualizações instantâneas.",
-    checkingNow: "Verificando...",
-    checkNow: "Verificar agora",
-    currentStatus: "Estado Atual",
-    responseTime: "Tempo de Resposta",
-    uptime30d: "Tempo de Atividade (30 dias)",
-    lastOutage: "Última Interrupção",
-    avgResponse: "Resposta Média",
-    uptimeHistory: "Histórico de Disponibilidade",
-    recentIncidents: "Incidentes Recentes",
-    noHistoryAvailable: "Nenhum histórico disponível",
-    noIncidentsReported: "Nenhum incidente reportado",
-    noRecentOutages: "Sem interrupções recentes",
-    overall: "Estado Geral",
-    partialOutage: "Interrupção Parcial",
-    footerText: "© 2025 Server Status | Versão",
-    music: "Música",
-    gaming: "Jogos",
-    productivity: "Produtividade",
-    education: "Educação",
-    technology: "Tecnologia",
-    entertainment: "Entretenimento",
-    financial: "Financeiro",
-  },
-  ru: {
-    settings: "Настройки",
-    updates: "Обновления",
-    settingsDescription: "Настройте внешний вид, изменив тему и язык",
-    theme: "Тема",
-    language: "Язык",
-    system: "Система",
-    light: "Светлая",
-    dark: "Темная",
-    favorites: "Избранное",
-    noFavorites: "Нет добавленных в избранное",
-    addToFavorites: "Добавить в избранное",
-    removeFromFavorites: "Удалить из избранного",
-    english: "Английский",
-    italian: "Итальянский",
-    spanish: "Испанский",
-    french: "Французский",
-    german: "Немецкий",
-    chinese: "Китайский",
-    japanese: "Японский",
-    portuguese: "Португальский",
-    russian: "Русский",
-    close: "Закрыть",
-    register: "Зарегистрироваться",
-    login: "Войти",
-    logout: "Выйти",
-    admin: "Администратор",
-    search: "Поиск сервисов...",
-    serverStatus: "СТАТУС СЕРВЕРА",
-    accountTitle: "Ваш аккаунт",
-    username: "Имя пользователя",
-    email: "Электронная почта",
-    role: "Роль",
-    registeredAt: "Зарегистрирован",
-    backToDashboard: "Назад к панели",
-    loggingOut: "Выход...",
-    heroDescription: "Следите за состоянием различных сервисов и платформ в реальном времени. Будьте в курсе сбоев и проблем с производительностью.",
-    loginDescription: "Введите свои данные для входа",
-    registerDescription: "Создайте новый аккаунт для доступа к панели",
-    emailPlaceholder: "Введите вашу почту",
-    passwordPlaceholder: "Введите ваш пароль",
-    usernamePlaceholder: "Выберите имя пользователя",
-    confirmPassword: "Подтвердите пароль",
-    confirmPasswordPlaceholder: "Подтвердите ваш пароль",
-    passwordMismatch: "Пароли не совпадают",
-    loggingIn: "Вход...",
-    creatingAccount: "Создание аккаунта...",
-    to: "до",
-    toPresent: "по настоящее время",
-    unknown: "Неизвестно",
-    categories: "Категории",
-    lastCheck: "Последняя проверка",
-    games: "Игры",
-    streaming: "Стриминг",
-    bank: "Банк",
-    social: "Социальные",
-    mail: "Почта",
-    shopping: "Покупки",
-    various: "Разное",
-    connection: "Связь",
-    browserai: "Браузер и ИИ",
-    infoAndContacts: "Информация и контакты",
-    expand: "Развернуть",
-    collapse: "Свернуть",
-    searchServices: "Поиск сервисов",
-    links: "Ссылки",
-    siteUpdates: "Обновления сайта",
-    viewDetails: "Подробнее",
-    viewFullHistory: "Посмотреть всю историю",
-    subscribeToUpdates: "Подписаться на обновления",
-    serviceDetails: "Детали сервиса",
-    terms: "Условия",
-    privacy: "Конфиденциальность",
-    success: "Успех",
-    error: "Ошибка",
-    favoriteAdded: "Сервис добавлен в избранное",
-    favoriteRemoved: "Сервис удален из избранного",
-    lastUpdated: "Последнее обновление",
-    selectTheme: "Выберите тему",
-    selectLanguage: "Выберите язык",
-    operational: "Работает",
-    degraded: "Пониженная производительность",
-    down: "Не работает",
-    dashboard: "Панель управления",
-    dashboardDescription: "Проверяйте состояние сервисов в реальном времени и получайте мгновенные обновления",
-    checkingNow: "Проверка...",
-    checkNow: "Проверить сейчас",
-    footerText: "© 2025 Server Status | Версия",
-    music: "Музыка",
-    gaming: "Игры",
-    productivity: "Продуктивность",
-    education: "Образование",
-    technology: "Технологии",
-    entertainment: "Развлечения",
-    financial: "Финансы",
-    currentStatus: "Текущий статус",
-    responseTime: "Время отклика",
-    uptime30d: "Время работы (30 дней)",
-    lastOutage: "Последний сбой",
-    avgResponse: "Средний отклик",
-    uptimeHistory: "История доступности",
-    recentIncidents: "Недавние инциденты",
-    noHistoryAvailable: "История недоступна",
-    noIncidentsReported: "Инциденты не зарегистрированы",
-    noRecentOutages: "Недавних сбоев не было",
-    overall: "Общий статус",
-    partialOutage: "Частичный сбой",
-  }
-};
-
-// Tipo generico per le traduzioni (mappa chiave->stringa)
-
+// Re-export Translation type for components
+export { type Translation };
 
 interface SettingsContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   language: Language;
   setLanguage: (language: Language) => void;
-  favorites: number[];
-  addFavorite: (serviceId: number) => void;
-  removeFavorite: (serviceId: number) => void;
-  isFavorite: (serviceId: number) => boolean;
   t: Translation;
+  favorites: string[];
+  addToFavorites: (serviceId: string | number) => void;
+  removeFromFavorites: (serviceId: string | number) => void;
+  addFavorite: (serviceId: string | number) => void;
+  removeFavorite: (serviceId: string | number) => void;
+  isFavorite: (serviceId: string | number) => boolean;
 }
 
-export const SettingsContext = createContext<SettingsContextType | null>(null);
+const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>("system");
+  const [language, setLanguage] = useState<Language>("en");
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  
-  // Stato del tema
-  const [theme, setThemeState] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem("theme");
-    return (savedTheme as Theme) || "light";
-  });
 
-  // Stato della lingua
-  const [language, setLanguageState] = useState<Language>(() => {
-    const savedLanguage = localStorage.getItem("language");
-    return (savedLanguage as Language) || "en";
-  });
-  
-  // Query per ottenere i preferiti dall'API
-  const { data: favorites = [] } = useQuery({
-    queryKey: ['favorites'],
-    queryFn: async () => {
-      if (!user) return [];
-      const res = await apiRequest("GET", "/api/favorites");
-      return await res.json();
-    },
-    enabled: !!user
-  });
+  // Get translations for current language with safe fallback to English
+  const t = translations[language] ?? translations.en;
 
-  // Mutazioni per aggiungere/rimuovere preferiti
-  const addFavoriteMutation = useMutation({
-    mutationFn: async (serviceId: number) => {
-      console.log('Attempting to add favorite:', serviceId);
+  // Load settings from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    const savedLanguage = localStorage.getItem('language') as Language;
+    const savedFavorites = localStorage.getItem('favorites');
+
+    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+      setTheme(savedTheme);
+    }
+
+    if (savedLanguage && ['en', 'it', 'es', 'fr', 'de', 'zh', 'ja', 'pt', 'ru'].includes(savedLanguage)) {
+      setLanguage(savedLanguage);
+    }
+
+    if (savedFavorites) {
       try {
-        const response = await apiRequest("POST", `/api/favorites/${serviceId}`);
-        console.log('Add favorite response:', response);
-        return response;
+        setFavorites(JSON.parse(savedFavorites));
       } catch (error) {
-        console.error('Error adding favorite:', error);
-        throw error;
+        console.error('Error parsing favorites from localStorage:', error);
+      }
+    }
+  }, []);
+
+  // Query user settings from server
+  const { data: userSettings } = useQuery({
+    queryKey: ['userSettings'],
+    queryFn: async () => {
+      if (!user) return null;
+      return apiRequest('GET', '/api/user/settings');
+    },
+    enabled: !!user,
+  });
+
+  // Update theme mutation
+  const updateThemeMutation = useMutation({
+    mutationFn: async (newTheme: Theme) => {
+      localStorage.setItem('theme', newTheme);
+      if (user) {
+        return apiRequest('PATCH', '/api/user/settings', { theme: newTheme });
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
-      toast({
-        title: t.success || "Success",
-        description: t.favoriteAdded || "Service added to favorites",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: t.error || "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
     }
   });
 
-  const removeFavoriteMutation = useMutation({
-    mutationFn: async (serviceId: number) => {
-      await apiRequest("DELETE", `/api/favorites/${serviceId}`);
+  // Update language mutation
+  const updateLanguageMutation = useMutation({
+    mutationFn: async (newLanguage: Language) => {
+      localStorage.setItem('language', newLanguage);
+      if (user) {
+        return apiRequest('PATCH', '/api/user/settings', { language: newLanguage });
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
-      toast({
-        title: t.success || "Success",
-        description: t.favoriteRemoved || "Service removed from favorites",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: t.error || "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
     }
   });
 
-  // Gestisce il cambiamento del tema
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-    const root = window.document.documentElement;
-
-    const applyTheme = (applied: "light" | "dark") => {
-      // only update if changed to avoid layout thrashing
-      if (!root.classList.contains(applied)) {
-        root.classList.remove("light", "dark");
-        root.classList.add(applied);
+  // Update favorites mutation
+  const updateFavoritesMutation = useMutation({
+    mutationFn: async (newFavorites: string[]) => {
+      localStorage.setItem('favorites', JSON.stringify(newFavorites));
+      if (user) {
+        return apiRequest('PATCH', '/api/user/settings', { favorites: newFavorites });
       }
-      // set data attribute for CSS hooks
-      if (root.getAttribute('data-theme') !== applied) {
-        root.setAttribute('data-theme', applied);
-      }
-    };
-
-    if (theme === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      const systemTheme = mediaQuery.matches ? "dark" : "light";
-      applyTheme(systemTheme);
-
-      // debounce updates from media query changes
-      let timeout: number | null = null;
-      const handleChange = (e: MediaQueryListEvent) => {
-        if (timeout) window.clearTimeout(timeout);
-        timeout = window.setTimeout(() => {
-          applyTheme(e.matches ? "dark" : "light");
-          timeout = null;
-        }, 50);
-      };
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    } else {
-      applyTheme(theme as "light" | "dark");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
     }
-  }, [theme]);
+  });
 
-  // Gestisce il cambiamento della lingua
-  useEffect(() => {
-    localStorage.setItem("language", language);
-  }, [language]);
-
-  // Funzione per impostare il tema
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
+  // Handle theme changes
+  const handleSetTheme = (newTheme: Theme) => {
+    setTheme(newTheme);
+    updateThemeMutation.mutate(newTheme);
   };
 
-  // Funzione per impostare la lingua
-  const setLanguage = (newLanguage: Language) => {
-    setLanguageState(newLanguage);
+  // Handle language changes
+  const handleSetLanguage = (newLanguage: Language) => {
+    setLanguage(newLanguage);
+    updateLanguageMutation.mutate(newLanguage);
   };
 
-  // Funzioni per gestire i servizi preferiti
-  const addFavorite = (serviceId: number) => {
-    if (!user) return;
-    addFavoriteMutation.mutate(serviceId);
+  // Add to favorites
+  const addToFavorites = (serviceId: string | number) => {
+    const idStr = String(serviceId);
+    if (!favorites.includes(idStr)) {
+      const newFavorites = [...favorites, idStr];
+      setFavorites(newFavorites);
+      updateFavoritesMutation.mutate(newFavorites);
+      
+      toast({
+        title: t.success,
+        description: t.addToFavorites,
+      });
+    }
   };
 
-  const removeFavorite = (serviceId: number) => {
-    if (!user) return;
-    removeFavoriteMutation.mutate(serviceId);
+  // Remove from favorites
+  const removeFromFavorites = (serviceId: string | number) => {
+    const idStr = String(serviceId);
+    const newFavorites = favorites.filter(id => id !== idStr);
+    setFavorites(newFavorites);
+    updateFavoritesMutation.mutate(newFavorites);
+    
+    toast({
+      title: t.success,
+      description: t.removeFromFavorites,
+    });
+  };
+  
+  // Aliases for backwards compatibility
+  const addFavorite = addToFavorites;
+  const removeFavorite = removeFromFavorites;
+
+  // Check if service is favorite
+  const isFavorite = (serviceId: string | number) => {
+    return favorites.includes(String(serviceId));
   };
 
-  const isFavorite = (serviceId: number): boolean => {
-    return favorites.includes(serviceId);
-  };
+  // Apply user settings from server when available - disabled due to type issues
+  // Settings are handled via localStorage for now
 
-  // Ottiene le traduzioni correnti
-  const t = translations[language];
   return (
     <SettingsContext.Provider
       value={{
         theme,
-        setTheme,
+        setTheme: handleSetTheme,
         language,
-        setLanguage,
+        setLanguage: handleSetLanguage,
+        t,
         favorites,
+        addToFavorites,
+        removeFromFavorites,
         addFavorite,
         removeFavorite,
         isFavorite,
-        t,
       }}
     >
       {children}
@@ -1279,9 +184,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook helper per usare il contesto in modo semplice
-export function useSettings(): SettingsContextType {
-  const ctx = useContext(SettingsContext);
-  if (!ctx) throw new Error("useSettings must be used within SettingsProvider");
-  return ctx;
+export function useSettings() {
+  const context = useContext(SettingsContext);
+  if (context === undefined) {
+    throw new Error('useSettings must be used within a SettingsProvider');
+  }
+  return context;
 }

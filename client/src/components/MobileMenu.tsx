@@ -40,7 +40,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
   const getCategoryTranslation = (categoryName: string): string => {
     const key = categoryName.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof t;
-    return t[key] || categoryName;
+    const translation = t[key];
+    return typeof translation === 'string' ? translation : categoryName;
   };
 
   if (!isOpen) return null;

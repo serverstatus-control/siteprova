@@ -6,17 +6,18 @@ import Sidebar from "@/components/Sidebar";
 import MobileMenu from "@/components/MobileMenu";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/use-settings";
 import { 
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle 
 } from "@/components/ui/card";
 
 const InfoPage: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useSettings();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -65,21 +66,19 @@ const InfoPage: React.FC = () => {
                 className="inline-flex items-center px-3 py-2 mb-4 transition-all duration-200 rounded-md text-primary hover:text-primary/80 hover:bg-muted/50 hover:-translate-x-1 focus:outline-none focus:ring-1 focus:ring-primary/40"
               >
                 <i className="mr-2 transition-transform duration-200 fas fa-arrow-left group-hover:scale-110"></i>
-                Torna alla Dashboard
+                {t.backToDashboard}
               </Link>
             </div>
 
-            <Card className="w-full max-w-3xl px-2 mx-auto sm:px-6">
+            <Card className="w-full max-w-3xl px-2 mx-auto sm:px-6 border-2 border-white">
               <CardHeader className="text-center">
-                <CardTitle className="text-xl md:text-3xl">Info & Contatti</CardTitle>
-                <CardDescription className="text-sm md:text-base">Informazioni sul nostro servizio e come contattarci</CardDescription>
+                <CardTitle className="text-xl md:text-3xl">{t.infoAndContacts}</CardTitle>
+                <CardDescription className="text-sm md:text-base">{t.infoContactsSubtitle}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="p-3 rounded-lg sm:p-4 bg-muted/50">
-                  <h3 className="mb-2 text-lg font-medium">Supporto Tecnico</h3>
-                  <p className="mb-2 text-sm sm:text-base">
-                    Per informazioni e reclami scrivere al nostro team di supporto tecnico:
-                  </p>
+                  <h3 className="mb-2 text-lg font-medium">{t.supportTitle}</h3>
+                  <p className="mb-2 text-sm sm:text-base">{t.supportText}</p>
                   <a 
                     href="mailto:server.status2317@gmail.com" 
                     className="font-medium break-all text-primary hover:text-primary/80"
@@ -89,19 +88,16 @@ const InfoPage: React.FC = () => {
                 </div>
 
                 <div className="p-3 rounded-lg sm:p-4 bg-muted/50">
-                  <h3 className="mb-2 text-lg font-medium">Informazioni sul progetto</h3>
-                  <p className="mb-4 text-sm sm:text-base">
-                    Se avete problemi con qualche app o sito, in questo sistema potrete controllare 
-                    se effettivamente ci sono dei problemi.
-                  </p>
+                  <h3 className="mb-2 text-lg font-medium">{t.projectInfoTitle}</h3>
+                  <p className="mb-4 text-sm sm:text-base">{t.projectInfoText}</p>
                   <p className="font-medium">
-                    Versione: 0.3.00
+                    {t.versionLabel}: 0.3.00
                   </p>
                 </div>
 
                 <div className="p-3 rounded-lg sm:p-4 bg-muted/50">
-                  <h3 className="mb-2 text-lg font-medium">Team</h3>
-                  <p className="mb-2 text-sm sm:text-base">Creato da:</p>
+                  <h3 className="mb-2 text-lg font-medium">{t.teamTitle}</h3>
+                  <p className="mb-2 text-sm sm:text-base">{t.createdBy}</p>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                     <a 
                       href="https://www.instagram.com/_insubrico_/" 
@@ -125,11 +121,6 @@ const InfoPage: React.FC = () => {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-center pt-6 border-t">
-                <p className="text-sm text-muted-foreground">
-                  &copy; 2025 Server Status. All rights reserved.
-                </p>
-              </CardFooter>
             </Card>
           </div>
         </main>

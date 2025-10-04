@@ -17,6 +17,10 @@ const getApiBaseUrl = () => {
     // Frontend Render punta al backend Render
     return 'https://siteprova.onrender.com';
   }
+  // Se è un dominio onrender.com generico con sottocartella, manteniamo il backend principale
+  if (hostname.endsWith('.onrender.com')) {
+    return `https://siteprova.onrender.com`;
+  }
   
   // Fallback per altri domini
   return '';

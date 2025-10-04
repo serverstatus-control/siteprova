@@ -19,6 +19,21 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
     navigate(path);
   };
 
+  const handleCategoryClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
+    e.preventDefault();
+    const element = document.getElementById(slug);
+    if (element) {
+      const offset = 100; // Offset in pixel per mostrare meglio l'header
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // Ottieni i servizi per ogni categoria
   const { data: services = [] } = useQuery<Service[]>({
     queryKey: ['/api/services'],
@@ -40,7 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
   // Traduci il nome della categoria
   const getCategoryTranslation = (categoryName: string): string => {
     const key = categoryName.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof t;
-    return t[key] || categoryName;
+    const translation = t[key];
+    return typeof translation === 'string' ? translation : categoryName;
   };
 
   const isOperational = statusSummary?.operational ?? 0;
@@ -76,7 +92,11 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
           <ul>
             {categories.map(category => (
               <li key={category.id} className="mb-1">
-                <a href={`#${category.slug}`} className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md cursor-pointer hover:bg-dark-lighter">
+                <a 
+                  href={`#${category.slug}`}
+                  onClick={(e) => handleCategoryClick(e, category.slug)}
+                  className="flex items-center px-3 py-2 text-sm text-gray-300 rounded-md cursor-pointer hover:bg-dark-lighter"
+                >
                   <span className="flex items-center justify-center w-5 mr-2">{getCategoryIconComponent(category.name, 'w-5 h-5')}</span>
                   <span>{getCategoryTranslation(category.name)}</span>
                   <span className="ml-auto text-xs text-gray-500">{servicesByCategory[category.id]?.length || 0}</span>

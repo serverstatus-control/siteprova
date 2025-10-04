@@ -8,26 +8,26 @@
 
 @layer base {
   :root {
-    /* Tema chiaro (default) */
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
+    /* Tema chiaro (ammorbidito) */
+    --background: 220 17% 98%; /* molto chiaro, non bianco puro */
+    --foreground: 222 47.4% 11.2%; /* testo scuro ma non nero assoluto */
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: 222 47.4% 11.2%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 217.2 91.2% 59.8%;
+    --popover-foreground: 222 47.4% 11.2%;
+    --primary: 221 72% 55%; /* blu meno saturo e meno brillante */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 16% 93%;
-    --secondary-foreground: 224 71.4% 4.1%;
-    --muted: 210 16% 93%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 210 16% 93%;
-    --accent-foreground: 224 71.4% 4.1%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: 210 40% 96%; /* grigio chiarissimo per superfici secondarie */
+    --secondary-foreground: 222 47.4% 11.2%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%; /* testo attenuato più morbido */
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47.4% 11.2%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 20.2% 65.1%;
-    --input: 215 20.2% 65.1%;
-    --ring: 217.2 91.2% 59.8%;
+    --border: 214 32% 91%; /* bordi più chiari */
+    --input: 214 32% 91%;
+    --ring: 221 72% 65%; /* focus meno acceso */
     --radius: 0.75rem;
   }
 
@@ -373,45 +373,7 @@
       will-change: transform;
     }
 
-    /* Animazione typing per la ricerca - esegue solo una volta */
-    .typing-animation::after {
-      content: '';
-      animation: none;
-    }
-
-    @keyframes typing {
-      0% { content: ''; }
-      5% { content: 'S'; }
-      10% { content: 'Se'; }
-      15% { content: 'Sea'; }
-      20% { content: 'Sear'; }
-      25% { content: 'Searc'; }
-      30% { content: 'Search'; }
-      35% { content: 'Search '; }
-      40% { content: 'Search s'; }
-      45% { content: 'Search se'; }
-      50% { content: 'Search ser'; }
-      55% { content: 'Search serv'; }
-      60% { content: 'Search servi'; }
-      65% { content: 'Search servic'; }
-      70% { content: 'Search service'; }
-      75% { content: 'Search services'; }
-      80% { content: 'Search services'; }
-      85% { content: 'Search services'; }
-      90% { content: 'Search services'; }
-      100% { content: 'Search services'; }
-    }
-
-    /* Classe per attivare l'animazione */
-    .typing-animation.animate::after {
-      animation: typing 2s steps(40) forwards;
-    }
-
-    /* Reset dell'animazione */
-    .typing-animation.reset::after {
-      content: '';
-      animation: none;
-    }
+    /* (placeholder della ricerca ora gestito via React con typing effect localizzato) */
 
     /* Hide native vertical scrollbar on desktop; prefer top progress bar as indicator */
     html, body {
