@@ -4,23 +4,20 @@ const getApiBaseUrl = () => {
   if (import.meta.env.DEV) {
     return 'http://localhost:3001';
   }
+  // Permetti override via env di build (es. VITE_API_BASE)
+  if (import.meta.env.VITE_API_BASE) {
+    return import.meta.env.VITE_API_BASE as string;
+  }
   
   // In production, usa il backend appropriato
   const hostname = window.location.hostname;
   
+  // Su GitHub Pages serviamo solo statici; API via percorso relativo (passa da reverse proxy se presente)
   if (hostname === 'serverstatus-control.github.io') {
-    // GitHub Pages punta al backend Render
-    return 'https://siteprova.onrender.com';
+    return '';
   }
   
-  if (hostname === 'siteprova.onrender.com') {
-    // Frontend Render punta al backend Render
-    return 'https://siteprova.onrender.com';
-  }
-  // Se è un dominio onrender.com generico con sottocartella, manteniamo il backend principale
-  if (hostname.endsWith('.onrender.com')) {
-    return `https://siteprova.onrender.com`;
-  }
+  // Non forziamo più domini onrender.com in produzione, a meno che non sia definito VITE_API_BASE.
   
   // Fallback per altri domini
   return '';
