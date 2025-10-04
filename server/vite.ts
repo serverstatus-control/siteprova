@@ -83,12 +83,18 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "..", "client", "dist");
+  // Percorsi possibili della build client
+  const distRoot = path.resolve(import.meta.dirname, "..", "client", "dist");
+  const distSiteprova = path.join(distRoot, "siteprova");
+  const distPath = fs.existsSync(distSiteprova) ? distSiteprova : distRoot;
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+    // In alcuni ambienti (es. Render) lo statico è servito da un servizio separato.
+    // In quel caso, semplicemente non montiamo i file statici.
+    console.warn(
+      `[serveStatic] Static build directory not found: ${distPath}. Skipping static middleware.`,
     );
+    return;
   }
 
   // Serve i file statici per /assets/*
@@ -99,7 +105,7 @@ export function serveStatic(app: Express) {
   app.use("/favicon.png", express.static(path.join(distPath, "favicon.png")));
 
   // Serve index.html solo per richieste SPA
-  app.get("/*", (_req, res) => {
+  app.get(["/", "/*"], (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
