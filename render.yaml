@@ -3,7 +3,7 @@ services:
     name: server-status-frontend
     env: static
     plan: free
-    buildCommand: npm install && npm run build:client:render
+  buildCommand: npm ci && npm run build:client:render
     staticPublishPath: ./dist
     envVars:
       - key: NODE_ENV
@@ -23,7 +23,7 @@ services:
     name: server-status-backend
     env: node
     plan: free
-    buildCommand: npm install && npm run build:server
+  buildCommand: npm ci && npm run build:server
     startCommand: npm start
     envVars:
       - key: NODE_ENV
