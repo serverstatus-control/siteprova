@@ -78,63 +78,62 @@ function ScrollProgressBar() {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/reset-password">
+  <Route path="/">{() => <Home />}</Route>
+      <Route path="/reset-password">{() => (
         <Suspense fallback={<PageLoader />}>
           <ResetRequest />
         </Suspense>
-      </Route>
-      <Route path="/reset">
+      )}</Route>
+      <Route path="/reset">{() => (
         <Suspense fallback={<PageLoader />}>
           <ResetConfirm />
         </Suspense>
-      </Route>
-      <Route path="/forgot-password">
+      )}</Route>
+      <Route path="/forgot-password">{() => (
         <Suspense fallback={<PageLoader />}>
           <ForgotPassword />
         </Suspense>
-      </Route>
-      <Route path="/reset-success">
+      )}</Route>
+      <Route path="/reset-success">{() => (
         <Suspense fallback={<PageLoader />}>
           <ResetSuccess />
         </Suspense>
-      </Route>
-      <Route path="/services/:slug">
+      )}</Route>
+      <Route path="/services/:slug">{() => (
         <Suspense fallback={<PageLoader />}>
           <ServiceDetail />
         </Suspense>
-      </Route>
-      <Route path="/admin">
+      )}</Route>
+      <Route path="/admin">{() => (
         <ProtectedRoute adminOnly={true}>
           <Suspense fallback={<PageLoader />}>
             <AdminPage />
           </Suspense>
         </ProtectedRoute>
-      </Route>
-      <Route path="/account-dashboard">
+      )}</Route>
+      <Route path="/account-dashboard">{() => (
         <ProtectedRoute>
           <Suspense fallback={<PageLoader />}>
             <AccountDashboard />
           </Suspense>
         </ProtectedRoute>
-      </Route>
-      <Route path="/auth">
+      )}</Route>
+      <Route path="/auth">{() => (
         <Suspense fallback={<PageLoader />}>
           <AuthPage />
         </Suspense>
-      </Route>
-      <Route path="/info">
+      )}</Route>
+      <Route path="/info">{() => (
         <Suspense fallback={<PageLoader />}>
           <InfoPage />
         </Suspense>
-      </Route>
-      <Route path="/updates">
+      )}</Route>
+      <Route path="/updates">{() => (
         <Suspense fallback={<PageLoader />}>
           <UpdatesPage />
         </Suspense>
-      </Route>
-      <Route path="/:rest*" component={NotFound} />
-      <Route component={NotFound} />
+      )}</Route>
+  <Route path="/:rest*">{() => <NotFound />}</Route>
     </Switch>
   );
 }
