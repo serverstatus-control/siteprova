@@ -27,6 +27,9 @@ export async function comparePasswords(supplied: string, stored: string): Promis
 
 export function setupAuth(app: Express) {
   // Session configuration
+  // Cookie di sessione: in produzione servono cross-site (GH Pages -> Railway),
+  // quindi SameSite=None e Secure=true per permettere l'invio del cookie.
+  const isProd = process.env.NODE_ENV === "production";
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "dev-secret-key",
     resave: true,
@@ -34,8 +37,8 @@ export function setupAuth(app: Express) {
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: 'lax'
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
     },
     store: storage.sessionStore,
   };
