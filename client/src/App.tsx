@@ -5,6 +5,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home"; // Manteniamo Home caricato subito per il First Paint
 import { ProtectedRoute } from "@/lib/protected-route";
 import CustomCursor from "@/components/CustomCursor";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Lazy loading per le pagine non critiche
 const ServiceDetail = lazy(() => import("@/pages/service-detail"));
@@ -140,12 +141,12 @@ function Router() {
 
 function App() {
   return (
-    <>
+    <ErrorBoundary>
       <CustomCursor />
       <ScrollProgressBar />
       <Router />
       <Toaster />
-    </>
+    </ErrorBoundary>
   );
 }
 

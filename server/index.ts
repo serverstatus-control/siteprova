@@ -16,6 +16,7 @@ const allowedOrigins = allowedOriginsRaw.split(",").map(s => s.trim()).filter(Bo
 // Add default allowed origins for deployment
 const defaultAllowedOrigins = [
   "http://localhost:3000",
+  "http://127.0.0.1:3000",
   "https://serverstatus-control.github.io",
   "https://siteprova.onrender.com"
 ];
@@ -34,10 +35,9 @@ app.use(cors({
     const isAllowed = finalAllowedOrigins.some(allowed => {
       // Exact match
       if (origin === allowed) return true;
-      // GitHub Pages allows subpaths
+      // GitHub Pages allows subpaths (/siteprova)
       if (allowed === "https://serverstatus-control.github.io" && origin.startsWith("https://serverstatus-control.github.io")) return true;
-      // Other origins must match exactly
-      return origin.startsWith(allowed);
+      return false;
     });
     
     if (isAllowed) {

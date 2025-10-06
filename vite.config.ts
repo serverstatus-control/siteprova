@@ -7,7 +7,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 // https://vitejs.dev/config/
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const projectRoot =
     process.cwd().endsWith(path.sep + 'client') || process.cwd().endsWith('/client')
       ? process.cwd()
@@ -20,12 +20,32 @@ export default defineConfig(({ mode }) => {
   // Rileva ambiente Render (Render setta queste variabili)
   const isRender = process.env.RENDER === 'true' || !!process.env.RENDER_EXTERNAL_HOSTNAME;
   const isProduction = mode === 'production';
-  const base = (isGithubPages || isRender) ? '/siteprova/' : '/';
+
+  // Usa il base '/siteprova/' SOLO in build/preview. In dev manteniamo '/'
+  const cmd = String(command) as 'serve' | 'build' | 'preview';
+  const isBuildOrPreview = cmd === 'build' || cmd === 'preview';
+  const isServe = cmd === 'serve';
+  const base = isBuildOrPreview && (isGithubPages || isRender)
+    ? '/siteprova/'
+    : '/';
 
   return {
     base,
     plugins: [
-      react(), 
+      react(),
+      // In dev consenti di aprire l'app anche su /siteprova/* riscrivendo a /
+      {
+        name: 'dev-base-rewrite',
+        apply: 'serve',
+        configureServer(server) {
+          server.middlewares.use((req, _res, next) => {
+            if (req.url && req.url.startsWith('/siteprova/')) {
+              req.url = req.url.replace(/^\/siteprova/, '');
+            }
+            next();
+          });
+        },
+      },
       // Analisi del bundle solo in produzione
       ...(process.env.ANALYZE === 'true' ? [
         visualizer({
@@ -123,7 +143,9 @@ export default defineConfig(({ mode }) => {
       target: 'esnext',
       reportCompressedSize: false,
     },
-    optimizeDeps: { 
+    optimizeDeps: {
+      // In dev forza la (ri)ottimizzazione per evitare 504 Outdated Optimize Dep
+      force: isServe,
       include: [
         'react', 
         'react-dom', 
