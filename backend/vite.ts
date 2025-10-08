@@ -20,28 +20,28 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
-  const clientRoot = path.resolve(import.meta.dirname, "..", "client");
+  const frontendRoot = path.resolve(import.meta.dirname, "..", "frontend");
 
   const serverOptions: any = {
     middlewareMode: true,
     hmr: { server },
     allowedHosts: true,
-    root: clientRoot,
+    root: frontendRoot,
   };
 
   const vite = await createViteServer({
     ...viteConfig,
-    root: clientRoot,
+    root: frontendRoot,
     configFile: false,
     resolve: {
       alias: {
-        '@': path.resolve(clientRoot, 'src'),
-        '@shared': path.resolve(import.meta.dirname, '..', 'shared'),
-        '@components': path.resolve(clientRoot, 'src', 'components'),
-        '@hooks': path.resolve(clientRoot, 'src', 'hooks'),
-        '@pages': path.resolve(clientRoot, 'src', 'pages'),
-        '@lib': path.resolve(clientRoot, 'src', 'lib'),
-        '@assets': path.resolve(clientRoot, 'public')
+        '@': path.resolve(frontendRoot, 'src'),
+        '@shared': path.resolve(import.meta.dirname, 'shared'),
+        '@components': path.resolve(frontendRoot, 'src', 'components'),
+        '@hooks': path.resolve(frontendRoot, 'src', 'hooks'),
+        '@pages': path.resolve(frontendRoot, 'src', 'pages'),
+        '@lib': path.resolve(frontendRoot, 'src', 'lib'),
+        '@assets': path.resolve(frontendRoot, 'public')
       }
     },
     customLogger: {
@@ -60,10 +60,10 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      const clientTemplate = path.resolve(clientRoot, "index.html");
+      const frontendTemplate = path.resolve(frontendRoot, "index.html");
 
       // always reload the index.html file from disk incase it changes
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
+      let template = await fs.promises.readFile(frontendTemplate, "utf-8");
       // support both absolute and relative script src in index.html
       template = template.replace(
         `src="/src/main.tsx"`,
@@ -83,8 +83,8 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // Percorsi possibili della build client
-  const distRoot = path.resolve(import.meta.dirname, "..", "client", "dist");
+  // Percorsi possibili della build frontend
+  const distRoot = path.resolve(import.meta.dirname, "..", "frontend", "dist");
   const distSiteprova = path.join(distRoot, "siteprova");
   const distPath = fs.existsSync(distSiteprova) ? distSiteprova : distRoot;
 

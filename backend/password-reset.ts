@@ -2,7 +2,7 @@ import { db } from './db';
 import crypto from 'crypto';
 import { sendMail, generatePasswordResetEmail } from './email';
 import { eq } from 'drizzle-orm';
-import { users, passwordResets } from '../shared/schema';
+import { users, passwordResets } from './shared/schema';
 
 // Durata del token di reset (1 ora)
 const RESET_TOKEN_EXPIRY = 60 * 60 * 1000;

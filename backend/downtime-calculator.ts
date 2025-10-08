@@ -1,7 +1,7 @@
 import { db } from './db';
 import { eq, and, sql } from 'drizzle-orm';
-import { services, uptimeHistory } from '../shared/schema';
-import { type ServiceStatus } from '../client/src/types';
+import { services, uptimeHistory } from './shared/schema';
+import { type ServiceStatus } from '../frontend/src/types';
 
 // Funzione per calcolare il downtime giornaliero
 export async function calculateDailyDowntime(serviceId: number, date: Date) {

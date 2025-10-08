@@ -1,5 +1,5 @@
 // Import schema con path assoluto per evitare problemi di risoluzione
-import { StatusType, categories, services, type InsertCategory, type InsertService } from "../shared/schema";
+import { StatusType, categories, services, type InsertCategory, type InsertService } from "./shared/schema";
 import { storage } from "./storage";
 import { db } from "./db";
 import { inArray } from "drizzle-orm";

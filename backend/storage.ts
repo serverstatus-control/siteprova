@@ -20,7 +20,7 @@ import {
   StatusType,
   type UpdateServiceStatus,
   UserRole
-} from "../shared/schema";
+} from "./shared/schema";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { drizzle } from "drizzle-orm/node-postgres";
