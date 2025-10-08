@@ -16,7 +16,7 @@ export async function apiRequest(
   // When deployed to GitHub Pages the API will usually be hosted elsewhere,
   // so set VITE_API_BASE to the full backend URL (for example https://api.example.com)
   const isDev = import.meta.env.MODE === 'development';
-  const API_BASE = isDev ? '' : ((import.meta.env as any).VITE_API_BASE || '');
+  const API_BASE = ((import.meta.env as any).VITE_API_BASE || '');
   const resolvedUrl = url.startsWith('/api') && API_BASE ? `${API_BASE}${url}` : url;
 
   const res = await fetch(resolvedUrl, {
@@ -36,8 +36,7 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-  const isDev = import.meta.env.MODE === 'development';
-  const API_BASE = isDev ? '' : ((import.meta.env as any).VITE_API_BASE || '');
+  const API_BASE = ((import.meta.env as any).VITE_API_BASE || '');
   const raw = queryKey[0] as string;
   const finalUrl = raw.startsWith('/api') && API_BASE ? `${API_BASE}${raw}` : raw;
 
