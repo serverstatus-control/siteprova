@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Suspense, lazy } from "react";
 import { Switch, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home"; // Manteniamo Home caricato subito per il First Paint
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -143,12 +142,10 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <TooltipProvider>
-        <CustomCursor />
-        <ScrollProgressBar />
-        <Router />
-        <Toaster />
-      </TooltipProvider>
+      <CustomCursor />
+      <ScrollProgressBar />
+      <Router />
+      <Toaster />
     </ErrorBoundary>
   );
 }
