@@ -2,7 +2,7 @@ import React from 'react';
 import { UptimeHistory } from '../types';
 import { format } from 'date-fns';
 import { it, enUS, es, fr, de, pt, ru, zhCN, ja, Locale } from 'date-fns/locale';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSettings } from '@/hooks/use-settings';
 
 interface UptimeHistoryProps {
@@ -46,7 +46,6 @@ const UptimeHistoryDisplay: React.FC<UptimeHistoryProps> = ({ history }) => {
   }, []);
 
   return (
-    <TooltipProvider>
       <div className="space-y-3">
         {sortedHistory.map((item, index) => {
           const statusColor = getStatusColor(item.status, item.uptimePercentage);
@@ -78,7 +77,6 @@ const UptimeHistoryDisplay: React.FC<UptimeHistoryProps> = ({ history }) => {
           );
         })}
       </div>
-    </TooltipProvider>
   );
 };
 
