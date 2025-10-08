@@ -1,6 +1,6 @@
 {
-  "include": ["frontend/src/**/*", "backend/**/*", "types/**/*"],
-  "exclude": ["node_modules", "build", "frontend/dist", "**/*.test.ts"],
+  "include": ["client/src/**/*", "server/**/*", "types/**/*"],
+  "exclude": ["node_modules", "build", "client/dist", "**/*.test.ts"],
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
@@ -16,8 +16,8 @@
     "baseUrl": ".",
     "types": ["node", "vite/client"],
     "paths": {
-      "@/*": ["./frontend/src/*"],
-      "@shared/*": ["./backend/shared/*"]
+      "@/*": ["./client/src/*"],
+      "@shared/*": ["./server/shared/*"]
     }
   }
 }

@@ -9,10 +9,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode, command }) => {
   const projectRoot =
-    process.cwd().endsWith(path.sep + "frontend") ||
-    process.cwd().endsWith("/frontend")
+    process.cwd().endsWith(path.sep + "client") ||
+    process.cwd().endsWith("/client")
       ? process.cwd()
-      : path.resolve(__dirname, "frontend");
+      : path.resolve(__dirname, "client");
 
   const env = loadEnv(mode, process.cwd(), "");
 
@@ -85,7 +85,7 @@ export default defineConfig(({ mode, command }) => {
     resolve: {
       alias: {
         "@": path.resolve(projectRoot, "src"),
-        "@shared": path.resolve(__dirname, "backend", "shared"),
+        "@shared": path.resolve(__dirname, "server", "shared"),
         "@assets": path.resolve(projectRoot, "public"),
         "@components": path.resolve(projectRoot, "src", "components"),
         "@pages": path.resolve(projectRoot, "src", "pages"),
@@ -106,7 +106,7 @@ export default defineConfig(({ mode, command }) => {
     publicDir: path.resolve(projectRoot, "public"),
     build: {
       // Su Render pubblichiamo sotto /siteprova: mettiamo l'output in una sottocartella
-      outDir: isRender ? path.resolve(projectRoot, "dist", "siteprova") : path.resolve(projectRoot, "dist"),
+      outDir: isRender ? path.join("dist", "siteprova") : "dist",
       emptyOutDir: true,
       sourcemap: true, // Abilita sourcemap anche in prod per debug
       rollupOptions: {
