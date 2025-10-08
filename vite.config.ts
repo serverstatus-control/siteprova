@@ -107,7 +107,7 @@ export default defineConfig(({ mode, command }) => {
       // Su Render pubblichiamo sotto /siteprova: mettiamo l'output in una sottocartella
       outDir: isRender ? path.join("dist", "siteprova") : "dist",
       emptyOutDir: true,
-      sourcemap: process.env.NODE_ENV === "development",
+      sourcemap: true, // Abilita sourcemap anche in prod per debug
       rollupOptions: {
         output: {
           manualChunks: (id) => {
@@ -170,6 +170,7 @@ export default defineConfig(({ mode, command }) => {
         "framer-motion",
         "zod",
         "react-hook-form",
+        "@radix-ui/react-tooltip",
       ],
       exclude: ["@fortawesome/fontawesome-free"],
     },
