@@ -21,6 +21,7 @@ const defaultAllowedOrigins = [
   "https://siteprova.onrender.com"
 ];
 
+// Railway domains will be added via CORS_ORIGINS env variable
 const finalAllowedOrigins = allowedOrigins.length > 0 ? allowedOrigins : defaultAllowedOrigins;
 
 app.use(cors({

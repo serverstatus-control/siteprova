@@ -23,6 +23,9 @@ export default defineConfig(({ mode, command }) => {
   // Rileva ambiente Render (Render setta queste variabili)
   const isRender =
     process.env.RENDER === "true" || !!process.env.RENDER_EXTERNAL_HOSTNAME;
+  // Rileva ambiente Railway (Railway setta queste variabili)
+  const isRailway =
+    !!process.env.RAILWAY_ENVIRONMENT || !!process.env.RAILWAY_PROJECT_ID;
   const isProduction = mode === "production";
 
   // Usa il base '/siteprova/' SOLO in build/preview. In dev manteniamo '/'
@@ -105,7 +108,7 @@ export default defineConfig(({ mode, command }) => {
     root: projectRoot,
     publicDir: path.resolve(projectRoot, "public"),
     build: {
-      // Su Render pubblichiamo sotto /siteprova: mettiamo l'output in una sottocartella
+      // Su Render/Railway pubblichiamo: per Railway usa dist root
       outDir: isRender ? path.join("dist", "siteprova") : "dist",
       emptyOutDir: true,
       sourcemap: true, // Abilita sourcemap anche in prod per debug
