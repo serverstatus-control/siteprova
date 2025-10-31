@@ -19,7 +19,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.get("/categories", async (_req, res) => {
     try {
       const categories = await storage.getCategories();
-      res.json(categories);
+      // Richiesta: mostrare i gruppi Cloud, Betting e Music subito sopra "Various"
+      // Manteniamo gli ID invariati e modifichiamo solo l'ordine di ritorno.
+      const SPECIAL_SLUGS = new Set(['cloud', 'betting', 'music', 'various']);
+      const others = categories.filter(c => !SPECIAL_SLUGS.has(c.slug));
+      const cloud = categories.find(c => c.slug === 'cloud');
+      const betting = categories.find(c => c.slug === 'betting');
+      const music = categories.find(c => c.slug === 'music');
+      const various = categories.find(c => c.slug === 'various');
+
+      const ordered: typeof categories = [
+        ...others,
+        ...(cloud ? [cloud] : []),
+        ...(betting ? [betting] : []),
+        ...(music ? [music] : []),
+        ...(various ? [various] : []),
+      ];
+
+      res.json(ordered);
     } catch (error) {
       console.error("Error fetching categories:", error);
       res.status(500).json({ message: "Failed to fetch categories" });

@@ -5,6 +5,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home"; // Manteniamo Home caricato subito per il First Paint
 import { ProtectedRoute } from "@/lib/protected-route";
 import CustomCursor from "@/components/CustomCursor";
+import DevReload from "@/components/DevReload";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Lazy loading per le pagine non critiche
@@ -144,6 +145,7 @@ function App() {
     <ErrorBoundary>
       <CustomCursor />
       <ScrollProgressBar />
+      {import.meta.env.DEV && <DevReload />}
       <Router />
       <Toaster />
     </ErrorBoundary>

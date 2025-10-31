@@ -75,9 +75,12 @@ export default defineConfig(({ mode, command }) => {
       },
       // Gestisce correttamente il routing SPA
       historyApiFallback: true,
-      hmr: { overlay: false },
+      hmr: { 
+        overlay: true,
+        port: 3000
+      },
       watch: {
-        usePolling: true,
+        usePolling: false,
         ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"],
       },
       cors: true,
@@ -157,8 +160,8 @@ export default defineConfig(({ mode, command }) => {
       reportCompressedSize: false,
     },
     optimizeDeps: {
-      // In dev forza la (ri)ottimizzazione per evitare 504 Outdated Optimize Dep
-      force: isServe,
+      // Forza sempre la (ri)ottimizzazione in dev per evitare 504 Outdated Optimize Dep
+      force: true,
       include: [
         "react",
         "react-dom",
@@ -172,7 +175,11 @@ export default defineConfig(({ mode, command }) => {
         "react-hook-form",
       ],
       exclude: ["@fortawesome/fontawesome-free"],
+      esbuildOptions: {
+        target: 'esnext'
+      },
+      entries: ['client/src/main.tsx']
     },
-    cacheDir: "node_modules/.vite",
+    cacheDir: '.vite-cache',
   };
 });

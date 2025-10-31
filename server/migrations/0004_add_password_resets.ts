@@ -3,6 +3,10 @@ import { db } from '../db';
 
 export async function up() {
   console.log('Creating password_resets table...');
+  if (!db) {
+    console.log('⚠️  DB non configurato: migrazione saltata (modalità file-storage)');
+    return;
+  }
   
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS password_resets (
@@ -19,6 +23,10 @@ export async function up() {
 
 export async function down() {
   console.log('Dropping password_resets table...');
+  if (!db) {
+    console.log('⚠️  DB non configurato: migrazione saltata (modalità file-storage)');
+    return;
+  }
   
   await db.execute(sql`
     DROP TABLE IF EXISTS password_resets;

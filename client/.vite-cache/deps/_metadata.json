@@ -1,0 +1,79 @@
+{
+  "hash": "b4e91ea6",
+  "configHash": "31371222",
+  "lockfileHash": "10e17a94",
+  "browserHash": "aa9cb935",
+  "optimized": {
+    "react": {
+      "src": "../../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "a9fb9a70",
+      "needsInterop": true
+    },
+    "react-dom": {
+      "src": "../../../node_modules/react-dom/index.js",
+      "file": "react-dom.js",
+      "fileHash": "08ea27ad",
+      "needsInterop": true
+    },
+    "react/jsx-runtime": {
+      "src": "../../../node_modules/react/jsx-runtime.js",
+      "file": "react_jsx-runtime.js",
+      "fileHash": "82c09863",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "ed83d1f2",
+      "needsInterop": true
+    },
+    "@tanstack/react-query": {
+      "src": "../../../node_modules/@tanstack/react-query/build/modern/index.js",
+      "file": "@tanstack_react-query.js",
+      "fileHash": "e0c33327",
+      "needsInterop": false
+    },
+    "wouter": {
+      "src": "../../../node_modules/wouter/esm/index.js",
+      "file": "wouter.js",
+      "fileHash": "095e5eec",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../../node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "a67f0ca2",
+      "needsInterop": false
+    },
+    "framer-motion": {
+      "src": "../../../node_modules/framer-motion/dist/es/index.mjs",
+      "file": "framer-motion.js",
+      "fileHash": "78eda233",
+      "needsInterop": false
+    },
+    "zod": {
+      "src": "../../../node_modules/zod/index.js",
+      "file": "zod.js",
+      "fileHash": "fe4217cf",
+      "needsInterop": false
+    },
+    "react-hook-form": {
+      "src": "../../../node_modules/react-hook-form/dist/index.esm.mjs",
+      "file": "react-hook-form.js",
+      "fileHash": "75ab2792",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-N4HIAFIQ": {
+      "file": "chunk-N4HIAFIQ.js"
+    },
+    "chunk-VN6DB63A": {
+      "file": "chunk-VN6DB63A.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}

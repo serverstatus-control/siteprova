@@ -9,6 +9,10 @@ const RESET_TOKEN_EXPIRY = 60 * 60 * 1000;
 
 export async function handleForgotPassword(email: string, baseUrl: string) {
   try {
+    if (!db) {
+      // In assenza di DB non è possibile gestire i reset password
+      throw new Error('Database non configurato: reset password non disponibile in locale.');
+    }
     // Cerca l'utente nel database
     const [user] = await db.select().from(users).where(eq(users.email, email));
     

@@ -5,6 +5,10 @@ import { type ServiceStatus } from '../client/src/types';
 
 // Funzione per calcolare il downtime giornaliero
 export async function calculateDailyDowntime(serviceId: number, date: Date) {
+  if (!db) {
+    // In modalità senza DB, il downtime giornaliero non è calcolato via query
+    return 0;
+  }
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
   
@@ -49,6 +53,10 @@ export async function calculateDailyDowntime(serviceId: number, date: Date) {
 
 // Funzione per aggiornare il downtime nel database
 export async function updateDailyDowntime(serviceId: number, date: Date) {
+  if (!db) {
+    // Nessun DB configurato: non eseguire aggiornamenti
+    return 0;
+  }
   const downtimeMinutes = await calculateDailyDowntime(serviceId, date);
   
   await db

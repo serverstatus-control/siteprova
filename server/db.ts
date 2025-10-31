@@ -6,18 +6,22 @@ import 'dotenv/config';
 
 neonConfig.webSocketConstructor = ws;
 
-// Require DATABASE_URL to be provided via environment (do not use hardcoded credentials)
-if (!process.env.DATABASE_URL) {
-  throw new Error("Environment variable DATABASE_URL is required. Set it in your hosting provider (Render, Neon, etc.) and do NOT commit credentials to the repo.");
+// Permette di lavorare senza DB in dev locale (quando Neon ha quota esaurita)
+const DB_ENABLED = !!process.env.DATABASE_URL;
+
+if (DB_ENABLED) {
+  console.log('✅ Database connesso (Neon PostgreSQL)');
+} else {
+  console.log('⚠️  Database disabilitato - usando storage locale persistente (file) per dev');
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+export const pool = DB_ENABLED ? new Pool({ connectionString: process.env.DATABASE_URL }) : null;
+export const db = DB_ENABLED && pool ? drizzle({ client: pool, schema }) : null;
 
 // Utility: in development, ensure the `favorites` table exists so developers
 // don't hit runtime 42P01 errors when the database hasn't been migrated yet.
 export async function ensureFavoritesTable() {
-  if (process.env.NODE_ENV !== 'development') return;
+  if (process.env.NODE_ENV !== 'development' || !pool) return;
 
   const sql = `
     CREATE TABLE IF NOT EXISTS favorites (
@@ -41,7 +45,7 @@ export async function ensureFavoritesTable() {
 
 // Utility: in development, ensure the `password_resets` table exists 
 export async function ensurePasswordResetsTable() {
-  if (process.env.NODE_ENV !== 'development') return;
+  if (process.env.NODE_ENV !== 'development' || !pool) return;
 
   const sql = `
     CREATE TABLE IF NOT EXISTS password_resets (
