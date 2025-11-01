@@ -38,6 +38,8 @@ export type Translation = {
   various: string;
   connection: string;
   browserai: string;
+  cloud?: string;
+  betting?: string;
   music: string;
   gaming: string;
   productivity: string;
@@ -265,6 +267,8 @@ export const translations: Record<string, Translation> = {
     various: 'Various',
     connection: 'Connection',
     browserai: 'Browser AI',
+  cloud: 'Cloud',
+  betting: 'Betting',
     gaming: 'Gaming',
     productivity: 'Productivity',
     education: 'Education',
@@ -742,6 +746,8 @@ export const translations: Record<string, Translation> = {
     various: 'Vari',
     connection: 'Connessione',
     browserai: 'Browser AI',
+  cloud: 'Cloud',
+  betting: 'Scommesse',
     gaming: 'Giochi',
     productivity: 'Produttività',
     education: 'Educazione',

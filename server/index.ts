@@ -118,8 +118,8 @@ async function runCheck() {
   const server = await registerRoutes(app);
   // In development, ensure the favorites table exists to avoid 42P01 errors
   try {
-    if (process.env.NODE_ENV === 'development') {
-      // import lazily to avoid circular deps at module load time
+    // Esegui le ensure solo se esplicitamente abilitate: evita errori rumorosi con Neon in dev
+    if (process.env.NODE_ENV === 'development' && process.env.ENABLE_DEV_DB_ENSURE === 'true') {
       const { ensureFavoritesTable, ensurePasswordResetsTable } = await import('./db');
       await ensureFavoritesTable();
       await ensurePasswordResetsTable();

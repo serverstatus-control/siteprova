@@ -400,10 +400,9 @@ export class MemStorage implements IStorage {
       { name: 'TIM', logo: 'fas fa-wifi', categoryId: 4, status: StatusType.UP, responseTime: 82, slug: 'tim' },
       
       // Streaming
-      { name: 'Prime Video', logo: 'fab fa-amazon', categoryId: 6, status: StatusType.UP, responseTime: 97, slug: 'prime-video' },
-      { name: 'YouTube', logo: 'fab fa-youtube', categoryId: 6, status: StatusType.UP, responseTime: 88, slug: 'youtube' },
-  { name: 'Twitch', logo: 'fab fa-twitch', categoryId: 6, status: StatusType.DOWN, responseTime: 0, slug: 'twitch' },
-  { name: 'Spotify', logo: 'fab fa-spotify', categoryId: 6, status: StatusType.UP, responseTime: 95, slug: 'spotify' }
+    { name: 'Prime Video', logo: 'fab fa-amazon', categoryId: 6, status: StatusType.UP, responseTime: 97, slug: 'prime-video' },
+    { name: 'YouTube', logo: 'fab fa-youtube', categoryId: 6, status: StatusType.UP, responseTime: 88, slug: 'youtube' },
+  { name: 'Twitch', logo: 'fab fa-twitch', categoryId: 6, status: StatusType.DOWN, responseTime: 0, slug: 'twitch' }
     ];
 
     // Servizi bancari e pagamenti completi
@@ -492,9 +491,11 @@ export class MemStorage implements IStorage {
   { name: 'AWS', logo: 'fab fa-aws', categoryId: 10, status: StatusType.UP, responseTime: 120, slug: 'aws' },
   { name: 'Azure', logo: 'fab fa-microsoft', categoryId: 10, status: StatusType.UP, responseTime: 120, slug: 'azure' },
   { name: 'Google Cloud', logo: 'fab fa-google', categoryId: 10, status: StatusType.UP, responseTime: 120, slug: 'google-cloud' },
+  { name: 'Aruba', logo: 'fas fa-cloud', categoryId: 10, status: StatusType.UP, responseTime: 120, slug: 'aruba' },
   
     // Music (nuova categoria)
-    { name: 'Apple Music', logo: 'fab fa-apple', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'apple-music' },
+  { name: 'Apple Music', logo: 'fab fa-apple', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'apple-music' },
+  { name: 'Spotify', logo: 'fab fa-spotify', categoryId: 12, status: StatusType.UP, responseTime: 95, slug: 'spotify' },
     { name: 'YouTube Music', logo: 'fab fa-youtube', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'youtube-music' },
     { name: 'Amazon Music', logo: 'fab fa-amazon', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'amazon-music' },
     { name: 'Deezer', logo: 'fas fa-music', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'deezer' },
@@ -714,6 +715,25 @@ export class FileStorage extends MemStorage {
         }
       }
 
+      // Migration: sposta Spotify dalla categoria Streaming a Musica se necessario
+      try {
+        const cats: Category[] = Array.from((this as any).categories.values());
+        const musicCat = cats.find(c => c.slug === 'music');
+        const servicesMap: Map<number, Service> = (this as any).services;
+        const svcArr: [number, Service][] = Array.from(servicesMap.entries());
+        const spotifyEntry = svcArr.find(([_, s]) => (s as any).slug === 'spotify');
+        if (musicCat && spotifyEntry) {
+          const [id, svc] = spotifyEntry;
+          if ((svc as any).categoryId !== musicCat.id) {
+            (svc as any).categoryId = musicCat.id;
+            servicesMap.set(id, svc);
+            await this.saveToFile();
+          }
+        }
+      } catch (merr) {
+        console.warn('Spotify migration warning:', (merr as any)?.message || merr);
+      }
+
       // Rimuovi eventuali servizi esplicitamente deprecati
       const removedSlugs = new Set<string>(['gog', 'itch-io']);
       let anyRemoved = false;
@@ -778,8 +798,6 @@ export class FileStorage extends MemStorage {
           { name: 'YouTube', logo: 'fab fa-youtube', categoryId: 6, status: StatusType.UP, responseTime: 88, slug: 'youtube' },
           { name: 'Twitch', logo: 'fab fa-twitch', categoryId: 6, status: StatusType.DOWN, responseTime: 0, slug: 'twitch' },
           { name: 'Netflix', logo: 'fas fa-film', categoryId: 6, status: StatusType.UP, responseTime: 97, slug: 'netflix' }
-          ,
-          { name: 'Spotify', logo: 'fab fa-spotify', categoryId: 6, status: StatusType.UP, responseTime: 95, slug: 'spotify' }
         ];
         const baseBank: InsertService[] = [
           { name: 'Banca MPS', logo: 'fas fa-university', categoryId: 5, status: StatusType.UP, responseTime: 120, slug: 'mps' },
@@ -800,7 +818,17 @@ export class FileStorage extends MemStorage {
           { name: 'PayPal', logo: 'fab fa-paypal', categoryId: 5, status: StatusType.UP, responseTime: 100, slug: 'paypal' }
         ];
         const baseVarious: InsertService[] = [
-          { name: 'Fascicolo Sanitario', logo: 'fas fa-notes-medical', categoryId: 9, status: StatusType.UP, responseTime: 150, slug: 'fascicolo-sanitario' }
+          { name: 'Fascicolo Sanitario', logo: 'fas fa-notes-medical', categoryId: 9, status: StatusType.UP, responseTime: 150, slug: 'fascicolo-sanitario' },
+          // Various extras (richiesti)
+          { name: 'Binance', logo: 'fas fa-coins', categoryId: 9, status: StatusType.UP, responseTime: 140, slug: 'binance' },
+          { name: 'Siri', logo: 'fas fa-microphone', categoryId: 9, status: StatusType.UP, responseTime: 120, slug: 'siri' },
+          { name: 'Ryanair', logo: 'fas fa-plane', categoryId: 9, status: StatusType.UP, responseTime: 150, slug: 'ryanair' },
+          { name: 'Turkish Airlines', logo: 'fas fa-plane', categoryId: 9, status: StatusType.UP, responseTime: 150, slug: 'turkish-airlines' },
+          { name: 'Trustpilot', logo: 'fas fa-star', categoryId: 9, status: StatusType.UP, responseTime: 120, slug: 'trustpilot' },
+          { name: 'Allianz', logo: 'fas fa-shield-alt', categoryId: 9, status: StatusType.UP, responseTime: 120, slug: 'allianz' },
+          { name: 'Wikipedia', logo: 'fab fa-wikipedia-w', categoryId: 9, status: StatusType.UP, responseTime: 100, slug: 'wikipedia' },
+          { name: 'Booking', logo: 'fas fa-bed', categoryId: 9, status: StatusType.UP, responseTime: 120, slug: 'booking' },
+          { name: 'WeTransfer', logo: 'fas fa-paper-plane', categoryId: 9, status: StatusType.UP, responseTime: 120, slug: 'wetransfer' },
         ];
         // Estensione dei baseline con molti servizi aggiuntivi
         const baseMail: InsertService[] = [
@@ -824,7 +852,7 @@ export class FileStorage extends MemStorage {
           { name: 'Conad', logo: 'fas fa-shopping-basket', categoryId: 8, status: StatusType.UP, responseTime: 120, slug: 'conad' },
           { name: 'Carrefour', logo: 'fas fa-shopping-basket', categoryId: 8, status: StatusType.UP, responseTime: 120, slug: 'carrefour' },
           { name: 'Vinted', logo: 'fas fa-tshirt', categoryId: 8, status: StatusType.UP, responseTime: 120, slug: 'vinted' },
-          { name: 'IKEA', logo: 'fas fa-couch', categoryId: 8, status: StatusType.UP, responseTime: 120, slug: 'ikea' },
+      { name: 'IKEA', logo: 'fas fa-couch', categoryId: 8, status: StatusType.UP, responseTime: 120, slug: 'ikea' },
         ];
         const baseSocialMore: InsertService[] = [
           { name: 'Snapchat', logo: 'fab fa-snapchat', categoryId: 3, status: StatusType.UP, responseTime: 120, slug: 'snapchat' },
@@ -893,6 +921,7 @@ export class FileStorage extends MemStorage {
         ];
         const baseMusic: InsertService[] = [
           { name: 'Apple Music', logo: 'fab fa-apple', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'apple-music' },
+          { name: 'Spotify', logo: 'fab fa-spotify', categoryId: 12, status: StatusType.UP, responseTime: 95, slug: 'spotify' },
           { name: 'YouTube Music', logo: 'fab fa-youtube', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'youtube-music' },
           { name: 'Amazon Music', logo: 'fab fa-amazon', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'amazon-music' },
           { name: 'Deezer', logo: 'fas fa-music', categoryId: 12, status: StatusType.UP, responseTime: 100, slug: 'deezer' },

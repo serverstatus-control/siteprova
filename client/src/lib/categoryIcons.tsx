@@ -1,5 +1,5 @@
 import React from 'react';
-import { Server, Cloud, Globe, Users, Database, Shield, Monitor, Activity, Wifi, ShoppingCart, Music, Film, Gamepad, Mail, Bot, Star, Wrench, AlertTriangle, Tv, CreditCard, Layers } from 'lucide-react';
+import { Server, Cloud, Globe, Users, Database, Shield, Monitor, Activity, Wifi, ShoppingCart, Music, Film, Gamepad, Mail, Bot, Star, Wrench, AlertTriangle, Tv, CreditCard, Layers, Coins } from 'lucide-react';
 
 export const getCategoryIconComponent = (categoryName: string, className = 'w-5 h-5'): React.ReactNode => {
   const name = (categoryName || '').toLowerCase();
@@ -21,6 +21,7 @@ export const getCategoryIconComponent = (categoryName: string, className = 'w-5 
     game: <Gamepad className={className} />,
     mail: <Mail className={className} />,
   bank: <CreditCard className={className} />,
+    betting: <Coins className={className} />,
     ai: <Bot className={className} />,
     star: <Star className={className} />,
   various: <Layers className={className} />,

@@ -64,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, statusSummary }) => {
   const isDown = statusSummary?.down ?? 0;
 
   return (
-    <aside id="sidebar" className="hidden lg:block w-64 bg-dark-light border-r border-dark-lighter overflow-y-auto fixed top-[64px] h-[calc(100vh-64px)]">
+    <aside id="sidebar" className="hidden lg:block w-64 bg-dark-light border-r border-dark-lighter overflow-y-auto scrollbar-hide fixed top-[64px] h-[calc(100vh-64px)]">
       <nav className="p-4">
         <div className="mb-4">
           <div className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">{t.serverStatus}</div>

@@ -97,7 +97,6 @@ async function seed() {
   { name: 'Netflix', logo: 'fas fa-film', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 97, slug: 'netflix' },
       { name: 'YouTube', logo: 'fab fa-youtube', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 88, slug: 'youtube' },
   { name: 'Twitch', logo: 'fab fa-twitch', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 105, slug: 'twitch' },
-  { name: 'Spotify', logo: 'fab fa-spotify', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 95, slug: 'spotify' },
   { name: 'Disney+', logo: 'fas fa-film', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 110, slug: 'disney-plus' },
   { name: 'DAZN', logo: 'fas fa-football-ball', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 120, slug: 'dazn' },
   { name: 'NOW', logo: 'fas fa-tv', categoryId: categoryMap.get('streaming') || 6, status: StatusType.UP, responseTime: 115, slug: 'now' },
@@ -182,10 +181,12 @@ async function seed() {
       { name: 'Google Cloud', logo: 'fab fa-google', categoryId: categoryMap.get('cloud') || 10, status: StatusType.UP, responseTime: 120, slug: 'google-cloud' },
       { name: 'DigitalOcean', logo: 'fas fa-water', categoryId: categoryMap.get('cloud') || 10, status: StatusType.UP, responseTime: 120, slug: 'digitalocean' },
       { name: 'OVH', logo: 'fas fa-server', categoryId: categoryMap.get('cloud') || 10, status: StatusType.UP, responseTime: 120, slug: 'ovh' },
+      { name: 'Aruba', logo: 'fas fa-cloud', categoryId: categoryMap.get('cloud') || 10, status: StatusType.UP, responseTime: 120, slug: 'aruba' },
     );
 
     // Music
     servicesData.push(
+      { name: 'Spotify', logo: 'fab fa-spotify', categoryId: categoryMap.get('music') || 12, status: StatusType.UP, responseTime: 95, slug: 'spotify' },
       { name: 'Apple Music', logo: 'fab fa-apple', categoryId: categoryMap.get('music') || 12, status: StatusType.UP, responseTime: 100, slug: 'apple-music' },
       { name: 'YouTube Music', logo: 'fab fa-youtube', categoryId: categoryMap.get('music') || 12, status: StatusType.UP, responseTime: 100, slug: 'youtube-music' },
       { name: 'Amazon Music', logo: 'fab fa-amazon', categoryId: categoryMap.get('music') || 12, status: StatusType.UP, responseTime: 100, slug: 'amazon-music' },
@@ -214,6 +215,19 @@ async function seed() {
       { name: 'SNAI', logo: 'fas fa-dice', categoryId: categoryMap.get('betting') || 11, status: StatusType.UP, responseTime: 120, slug: 'snai' },
     );
 
+    // Various extras (richiesti)
+    servicesData.push(
+      { name: 'Binance', logo: 'fas fa-coins', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 140, slug: 'binance' },
+      { name: 'Siri', logo: 'fas fa-microphone', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 120, slug: 'siri' },
+      { name: 'Ryanair', logo: 'fas fa-plane', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 150, slug: 'ryanair' },
+      { name: 'Turkish Airlines', logo: 'fas fa-plane', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 150, slug: 'turkish-airlines' },
+      { name: 'Trustpilot', logo: 'fas fa-star', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 120, slug: 'trustpilot' },
+      { name: 'Allianz', logo: 'fas fa-shield-alt', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 120, slug: 'allianz' },
+      { name: 'Wikipedia', logo: 'fab fa-wikipedia-w', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 100, slug: 'wikipedia' },
+      { name: 'Booking', logo: 'fas fa-bed', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 120, slug: 'booking' },
+      { name: 'WeTransfer', logo: 'fas fa-paper-plane', categoryId: categoryMap.get('various') || 9, status: StatusType.UP, responseTime: 120, slug: 'wetransfer' },
+    );
+
   console.log("Deleting existing services with same slugs (if any)...");
   const slugs = servicesData.map(s => s.slug);
   await db.delete(services).where(inArray(services.slug, slugs));
@@ -223,6 +237,11 @@ async function seed() {
 
     console.log("✅ Database seeded successfully!");
   } catch (error) {
+    const msg = (error as any)?.message || String(error);
+    if ((error as any)?.code === 'XX000' || msg.includes('exceeded the compute time quota')) {
+      console.warn('⚠️  Neon: quota computazionale esaurita — seed saltato (i dati rimarranno quelli esistenti).');
+      return;
+    }
     console.error("Error seeding database:", error);
   }
 }

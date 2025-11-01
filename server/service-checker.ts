@@ -139,6 +139,8 @@ function getServiceURL(service: Service): string {
     'google-cloud': 'https://cloud.google.com',
     'digitalocean': 'https://www.digitalocean.com',
     'ovh': 'https://www.ovh.com',
+  // Cloud extra
+  'aruba': 'https://www.aruba.it',
     // ISP Italia
     'iliad': 'https://www.iliad.it',
     'windtre': 'https://www.windtre.it',
@@ -154,6 +156,16 @@ function getServiceURL(service: Service): string {
     'ing': 'https://www.ing.com',
     'satispay': 'https://www.satispay.com',
     'stripe': 'https://stripe.com',
+  // Various
+  'binance': 'https://www.binance.com',
+  'siri': 'https://www.apple.com/siri/',
+  'ryanair': 'https://www.ryanair.com',
+  'turkish-airlines': 'https://www.turkishairlines.com',
+  'trustpilot': 'https://www.trustpilot.com',
+  'allianz': 'https://www.allianz.com',
+  'wikipedia': 'https://www.wikipedia.org',
+  'booking': 'https://www.booking.com',
+  'wetransfer': 'https://wetransfer.com',
     // Giochi/piattaforme
     'battle-net': 'https://www.battle.net',
     'ubisoft': 'https://www.ubisoft.com',
