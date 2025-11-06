@@ -1,8 +1,9 @@
 services:
   - type: web
-    name: server-status-backend
+    name: server-status
     env: node
     plan: free
+    region: frankfurt
     buildCommand: npm ci && npm run build
     startCommand: npm start
     envVars:
@@ -15,4 +16,5 @@ services:
       - key: SESSION_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: "https://siteprova.onrender.com,http://localhost:3000"
+        value: "https://server-status.onrender.com,http://localhost:3000"
+    healthCheckPath: /api/categories
