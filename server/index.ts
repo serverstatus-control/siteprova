@@ -2,7 +2,8 @@ import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, log } from "./vite";
+import { serveStatic } from "./static";
 import { checkAllServices } from './service-checker';
 
 const app = express();
