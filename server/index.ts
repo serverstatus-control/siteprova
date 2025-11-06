@@ -18,7 +18,7 @@ const defaultAllowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "https://serverstatus-control.github.io",
-  "https://server-status.onrender.com"
+  "https://server-status-uarm.onrender.com"
 ];
 
 const finalAllowedOrigins = allowedOrigins.length > 0 ? allowedOrigins : defaultAllowedOrigins;

@@ -14,7 +14,7 @@ const getApiBaseUrl = () => {
   
   // Su GitHub Pages, usa il backend Render
   if (hostname === 'serverstatus-control.github.io') {
-    return 'https://server-status.onrender.com';
+    return 'https://server-status-uarm.onrender.com';
   }
   
   // Su Render stesso, usa percorsi relativi
