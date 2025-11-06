@@ -4,3 +4,20 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Vite cache
+.vite-cache
+client/.vite-cache
+.vite
+
+# Build artifacts
+*.log
+*.tmp
+
+# Environment files
+.env.local
+.env.*.local
+
+# IDE
+.vscode/settings.json.bak
+.idea
