@@ -31,6 +31,13 @@ function startOfWeek(date, options) {
   return _date;
 }
 
+// node_modules/date-fns/isSameWeek.mjs
+function isSameWeek(dateLeft, dateRight, options) {
+  const dateLeftStartOfWeek = startOfWeek(dateLeft, options);
+  const dateRightStartOfWeek = startOfWeek(dateRight, options);
+  return +dateLeftStartOfWeek === +dateRightStartOfWeek;
+}
+
 // node_modules/date-fns/locale/en-US/_lib/formatDistance.mjs
 var formatDistanceLocale = {
   lessThanXSeconds: {
@@ -540,27 +547,20 @@ var enUS = {
   }
 };
 
-// node_modules/date-fns/isSameWeek.mjs
-function isSameWeek(dateLeft, dateRight, options) {
-  const dateLeftStartOfWeek = startOfWeek(dateLeft, options);
-  const dateRightStartOfWeek = startOfWeek(dateRight, options);
-  return +dateLeftStartOfWeek === +dateRightStartOfWeek;
-}
-
 export {
+  buildFormatLongFn,
+  buildLocalizeFn,
+  buildMatchFn,
+  buildMatchPatternFn,
   toDate,
   getDefaultOptions,
   setDefaultOptions,
   startOfWeek,
+  isSameWeek,
   formatDistance,
-  buildFormatLongFn,
   formatRelative,
-  buildLocalizeFn,
   localize,
-  buildMatchFn,
-  buildMatchPatternFn,
   match,
-  enUS,
-  isSameWeek
+  enUS
 };
-//# sourceMappingURL=chunk-55ZZTX33.js.map
+//# sourceMappingURL=chunk-GWSZ7KQW.js.map

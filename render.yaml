@@ -1,36 +1,18 @@
 services:
   - type: web
-    name: server-status-frontend
-    env: static
-    plan: free
-  buildCommand: npm ci && npm run build:client:render
-    staticPublishPath: ./dist
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: RENDER
-        value: "true"
-    routes:
-      - type: rewrite
-        source: /siteprova/*
-        destination: /siteprova/index.html
-      - type: redirect
-        source: /
-        destination: /siteprova
-        status: 302
-
-  - type: web
     name: server-status-backend
     env: node
     plan: free
-  buildCommand: npm ci && npm run build:server
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
       - key: CORS_ORIGINS
-        value: "https://serverstatus-control.github.io,https://siteprova.onrender.com,http://localhost:3000"
-      - key: BASE_URL
-        value: https://serverstatus-control.github.io/siteprova
+        value: "https://siteprova.onrender.com,http://localhost:3000"

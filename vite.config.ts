@@ -25,12 +25,13 @@ export default defineConfig(({ mode, command }) => {
     process.env.RENDER === "true" || !!process.env.RENDER_EXTERNAL_HOSTNAME;
   const isProduction = mode === "production";
 
-  // Usa il base '/siteprova/' SOLO in build/preview. In dev manteniamo '/'
+  // Per Render usiamo base '/' perché serviamo tutto dalla root
+  // Per GitHub Pages usiamo '/siteprova/'
   const cmd = String(command) as "serve" | "build" | "preview";
   const isBuildOrPreview = cmd === "build" || cmd === "preview";
   const isServe = cmd === "serve";
   const base =
-    isBuildOrPreview && (isGithubPages || isRender) ? "/siteprova/" : "/";
+    isBuildOrPreview && isGithubPages ? "/siteprova/" : "/";
 
   return {
     base,
@@ -107,8 +108,8 @@ export default defineConfig(({ mode, command }) => {
     root: projectRoot,
     publicDir: path.resolve(projectRoot, "public"),
     build: {
-      // Su Render pubblichiamo sotto /siteprova: mettiamo l'output in una sottocartella
-      outDir: isRender ? path.join("dist", "siteprova") : "dist",
+      // Output sempre in dist per semplicità
+      outDir: "dist",
       emptyOutDir: true,
       sourcemap: process.env.NODE_ENV === "development",
       rollupOptions: {
