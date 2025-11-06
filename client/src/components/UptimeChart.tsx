@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { UptimeHistory } from '../types';
 import { useSettings } from '../hooks/use-settings';
 
@@ -11,8 +11,8 @@ const UptimeChart: React.FC<UptimeChartProps> = ({ history, className = '' }) =>
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { t } = useSettings();
 
-  // Converte la history reale in una serie per le ultime 24 ore, senza simulazioni
-  const buildLast24hSeries = () => {
+  // Memoizza la serie di dati per evitare ricalcoli ad ogni render
+  const chartData = useMemo(() => {
     const now = new Date();
     const cutoff = now.getTime() - 24 * 60 * 60 * 1000;
 
@@ -35,9 +35,8 @@ const UptimeChart: React.FC<UptimeChartProps> = ({ history, className = '' }) =>
     }
 
     // Costruisci una serie ordinata per tutte le ore dove abbiamo dati
-    const series = Array.from(byHour.values()).sort((a, b) => a.time.getTime() - b.time.getTime());
-    return series;
-  };
+    return Array.from(byHour.values()).sort((a, b) => a.time.getTime() - b.time.getTime());
+  }, [history]);
 
   const drawChart = () => {
     const canvas = canvasRef.current;
@@ -46,7 +45,7 @@ const UptimeChart: React.FC<UptimeChartProps> = ({ history, className = '' }) =>
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-  const data = buildLast24hSeries();
+    const data = chartData;
     const width = canvas.width;
     const height = canvas.height;
     const padding = 40;
@@ -191,7 +190,7 @@ const UptimeChart: React.FC<UptimeChartProps> = ({ history, className = '' }) =>
     }
 
     drawChart();
-  }, [history, t]);
+  }, [chartData, t]);
 
   return (
     <div className={`relative ${className}`}>

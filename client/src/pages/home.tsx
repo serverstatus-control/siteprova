@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useMemo, useCallback, useDeferredValue } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { queryClient } from '../lib/queryClient';
 import { Category, Service, ServiceWithDetails, UptimeHistory, Incident } from '../types';
@@ -17,6 +17,7 @@ const ServiceDetailModal = lazy(() => import('../components/ServiceDetailModal')
 const Home: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [serviceHistory, setServiceHistory] = useState<UptimeHistory[]>([]);
   const [serviceIncidents, setServiceIncidents] = useState<Incident[]>([]);
@@ -29,6 +30,7 @@ const Home: React.FC = () => {
     isLoading: isCategoriesLoading
   } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
+    staleTime: 10 * 60 * 1000, // 10 minuti - i dati delle categorie cambiano raramente
   });
 
   // Fetch services
@@ -37,6 +39,7 @@ const Home: React.FC = () => {
     isLoading: isServicesLoading
   } = useQuery<Service[]>({
     queryKey: ['/api/services'],
+    staleTime: 2 * 60 * 1000, // 2 minuti
   });
 
   // Fetch status summary
@@ -47,8 +50,8 @@ const Home: React.FC = () => {
   } = useQuery<import('../types').StatusSummary | null>({
     queryKey: ['/api/status-summary'],
     refetchInterval: 30000, // Aggiorna ogni 30 secondi
-    staleTime: 29000, // Considera i dati "stale" dopo 29 secondi
-    refetchOnMount: true
+    staleTime: 25000, // Considera i dati "stale" dopo 25 secondi
+    refetchOnMount: 'always'
   });
 
   // Check now mutation
@@ -69,67 +72,107 @@ const Home: React.FC = () => {
 
   // Fetch service details when a service is selected
   useEffect(() => {
-    if (selectedService) {
-      // Fetch service history
-      fetch(`/api/services/${selectedService.id}/history`, { credentials: 'include' })
-        .then(res => res.json())
-        .then(data => setServiceHistory(data))
-        .catch(err => console.error('Error fetching service history:', err));
-
-      // Fetch service incidents
-      fetch(`/api/services/${selectedService.id}/incidents`, { credentials: 'include' })
-        .then(res => res.json())
-        .then(data => setServiceIncidents(data))
-        .catch(err => console.error('Error fetching service incidents:', err));
+    if (!selectedService) {
+      return;
     }
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const fetchDetails = async () => {
+      try {
+        const [historyRes, incidentsRes] = await Promise.all([
+          fetch(`/api/services/${selectedService.id}/history`, {
+            credentials: 'include',
+            signal,
+          }),
+          fetch(`/api/services/${selectedService.id}/incidents`, {
+            credentials: 'include',
+            signal,
+          }),
+        ]);
+
+        if (signal.aborted) {
+          return;
+        }
+
+        const [historyData, incidentsData] = await Promise.all([
+          historyRes.json(),
+          incidentsRes.json(),
+        ]);
+
+        setServiceHistory(historyData);
+        setServiceIncidents(incidentsData);
+      } catch (err) {
+        if ((err as Error).name === 'AbortError') {
+          return;
+        }
+        console.error('Error fetching service details:', err);
+      }
+    };
+
+    fetchDetails();
+
+    return () => {
+      controller.abort();
+    };
   }, [selectedService]);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+  }, []);
 
-  const handleSearch = (term: string) => {
+  const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);
-  };
+  }, []);
 
-  const handleServiceClick = (service: Service) => {
+  const handleServiceClick = useCallback((service: Service) => {
     setSelectedService(service);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
-  };
+  }, []);
 
-  const handleCheckNow = () => {
+  const handleCheckNow = useCallback(() => {
     checkNow();
-  };
+  }, [checkNow]);
 
   // Filter services based on search term
-  const filteredServices = services.filter(service => 
-    service.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredServices = useMemo(() => {
+    const normalizedSearch = deferredSearchTerm.trim().toLowerCase();
+    if (!normalizedSearch) {
+      return services;
+    }
+
+    return services.filter((service) =>
+      service.name.toLowerCase().includes(normalizedSearch)
+    );
+  }, [services, deferredSearchTerm]);
 
   // Group services by category
-  const servicesByCategory: Record<number, Service[]> = {};
-  filteredServices.forEach(service => {
-    if (!servicesByCategory[service.categoryId]) {
-      servicesByCategory[service.categoryId] = [];
-    }
-    servicesByCategory[service.categoryId].push(service);
-  });
+  const servicesByCategory = useMemo(() => {
+    return filteredServices.reduce<Record<number, Service[]>>((acc, service) => {
+      if (!acc[service.categoryId]) {
+        acc[service.categoryId] = [];
+      }
+      acc[service.categoryId].push(service);
+      return acc;
+    }, {});
+  }, [filteredServices]);
 
   // Show loading state
   if (isCategoriesLoading || isServicesLoading || isSummaryLoading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="text-white text-xl">{t.loadingData}</div>
+      <div className="flex items-center justify-center min-h-screen bg-dark">
+        <div className="text-xl text-white">{t.loadingData}</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-dark text-gray-100 font-sans min-h-screen">
+    <div className="min-h-screen font-sans text-gray-100 bg-dark">
       <Header onMenuToggle={toggleMobileMenu} onSearch={handleSearch} services={services} />
       
       <div className="flex min-h-[calc(100vh-64px)]">
@@ -141,17 +184,17 @@ const Home: React.FC = () => {
           statusSummary={statusSummary}
         />
         
-        <main className="flex-1 lg:ml-64 pb-12">
+        <main className="flex-1 pb-12 lg:ml-64">
           <StatusSummary 
             summary={statusSummary} 
             onCheckNow={handleCheckNow}
             isChecking={isChecking} 
           />
           
-          <div className="container mx-auto px-4 py-6">
+          <div className="container px-4 py-6 mx-auto">
             {searchTerm && filteredServices.length === 0 ? (
-              <div className="text-center py-10">
-                <p className="text-gray-400 mb-2">No services found matching "{searchTerm}"</p>
+              <div className="py-10 text-center">
+                <p className="mb-2 text-gray-400">No services found matching "{searchTerm}"</p>
                 <button 
                   className="text-primary hover:text-blue-400"
                   onClick={() => setSearchTerm('')}
@@ -184,8 +227,8 @@ const Home: React.FC = () => {
       
       {isModalOpen && (
         <Suspense fallback={
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+            <div className="w-8 h-8 border-b-2 border-white rounded-full animate-spin"></div>
           </div>
         }>
           <ServiceDetailModal 

@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css');
+/* Fonts loaded via preload in HTML for better performance */
+/* Font Awesome CDN - loaded asynchronously */
 
 /* stylelint-disable at-rule-no-unknown */
 @tailwind base;
@@ -166,6 +166,24 @@
     @apply border-gray-700;
   }
 
+  /* Fix per le progress bar - garantisce visibilità minima */
+  .bg-gray-700 {
+    position: relative;
+    isolation: isolate;
+  }
+  
+  /* Garantisce rendering corretto delle barre di progresso */
+  [class*="rounded-full"].h-2 {
+    min-height: 0.5rem;
+    overflow: hidden;
+  }
+  
+  /* Fix per transizioni fluide */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
   @media (hover: none), (pointer: coarse) {
     * {
       cursor: auto !important;
@@ -304,23 +322,23 @@
     #cursor.hover {
       width: 32px;
       height: 32px;
-      border: 1.5px solid rgba(255, 255, 255, 1);
-      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(255, 255, 255, 1);
+      background: rgba(255, 255, 255, 0.12);
       
       /* Ultra-fast hover transition per responsività Windows-like */
-      transition: width 0.05s ease-out, 
-                  height 0.05s ease-out, 
-                  border 0.05s ease-out, 
-                  background 0.05s ease-out,
-                  box-shadow 0.05s ease-out;
+      transition: width 0.1s ease-out, 
+                  height 0.1s ease-out, 
+                  border 0.1s ease-out, 
+                  background 0.1s ease-out,
+                  box-shadow 0.1s ease-out;
       
       /* Enhanced visibility con performance optimization */
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
       
       /* Performance boost per hover state */
       contain: layout style paint;
       will-change: width, height, border, background, box-shadow;
-      contain-intrinsic-size: 32px 32px;
+      contain-intrinsic-size: 40px 40px;
     }
 
     #cursor.clicking {
@@ -339,32 +357,6 @@
       contain: layout style paint;
       will-change: opacity;
       visibility: hidden;
-    }
-
-    /* Ottimizzazione per ridurre il layout shift e migliorare performance */
-    #cursor::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 4px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: opacity 0.2s ease;
-      opacity: 0;
-      /* Performance optimization per pseudo-element */
-      contain: layout style paint;
-      will-change: opacity;
-    }
-
-    #cursor.hover::before {
-      opacity: 1;
-      transition: opacity 0.05s ease-out;
-      /* Performance boost per hover pseudo-element */
-      contain: layout style paint;
-      will-change: opacity;
     }
 
     /* Animazione per il bottone impostazioni */
@@ -395,5 +387,44 @@
   
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* Ottimizzazioni per dropdown/select - performance animazioni */
+  [data-radix-select-content],
+  [data-radix-select-viewport] {
+    /* Forza GPU acceleration per animazioni smooth */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    
+    /* Ottimizza il rendering durante le animazioni */
+    will-change: opacity, transform;
+    contain: layout style paint;
+  }
+
+  /* Ottimizza gli item del select durante hover/focus */
+  [data-radix-select-item] {
+    /* GPU acceleration per hover transitions */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    
+    /* Contenimento per performance */
+    contain: layout style paint;
+  }
+
+  /* Ottimizza il trigger del select */
+  [data-radix-select-trigger] {
+    /* GPU acceleration */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    
+    /* Contenimento */
+    contain: layout style paint;
+  }
+
+  /* Riduci il paint overhead per le icone nei dropdown */
+  [data-radix-select-icon] {
+    contain: strict;
+    will-change: transform;
   }
 }

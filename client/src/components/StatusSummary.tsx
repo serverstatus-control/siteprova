@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { StatusSummary } from '../types';
 import { formatTimeAgo } from '../lib/utils';
-import { apiRequest } from '../lib/queryClient';
 import { useToast } from '../hooks/use-toast';
 import { useSettings } from "@/hooks/use-settings";
 
@@ -18,18 +17,33 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
 }) => {
   const { toast } = useToast();
   const { t, language } = useSettings();
-  const op = summary?.operational ?? 0;
-  const deg = summary?.degraded ?? 0;
-  const down = summary?.down ?? 0;
-  const total = op + deg + down;
+  const { operationalPercentage, degradedPercentage, downPercentage } = useMemo(() => {
+    const op = summary?.operational ?? 0;
+    const deg = summary?.degraded ?? 0;
+    const down = summary?.down ?? 0;
+    const total = op + deg + down;
 
-  const operationalPercentage = total > 0 ? (op / total) * 100 : 0;
-  const degradedPercentage = total > 0 ? (deg / total) * 100 : 0;
-  const downPercentage = total > 0 ? (down / total) * 100 : 0;
+    if (!total) {
+      return {
+        operationalPercentage: 0,
+        degradedPercentage: 0,
+        downPercentage: 0,
+      };
+    }
 
-  const formattedLastChecked = summary?.lastChecked ? formatTimeAgo(summary.lastChecked, language) : t?.unknown || 'Unknown';
+    return {
+      operationalPercentage: (op / total) * 100,
+      degradedPercentage: (deg / total) * 100,
+      downPercentage: (down / total) * 100,
+    };
+  }, [summary]);
 
-  const handleCheckNow = async () => {
+  const lastChecked = summary?.lastChecked;
+  const formattedLastChecked = useMemo(() => (
+    lastChecked ? formatTimeAgo(lastChecked, language) : t?.unknown || 'Unknown'
+  ), [language, lastChecked, t]);
+
+  const handleCheckNow = useCallback(async () => {
     if (isChecking) return;
 
     try {
@@ -46,7 +60,7 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
         variant: "destructive"
       });
     }
-  };
+  }, [isChecking, onCheckNow, toast]);
 
   return (
     <div className="bg-dark-light p-3 md:p-5 border-b border-dark-lighter">
@@ -59,10 +73,10 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
               <h3 className="text-xs font-medium text-gray-400">{t.operational}</h3>
               <span className="text-xl font-bold text-success">{summary?.operational || 0}</span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+            <div className="w-full bg-gray-700 rounded-full h-2 mb-2 overflow-hidden">
               <div 
-                className="bg-success h-2 rounded-full transition-all" 
-                style={{ width: `${operationalPercentage}%` }}
+                className="bg-success h-2 rounded-full transition-all duration-300 ease-in-out" 
+                style={{ width: `${Math.max(operationalPercentage, operationalPercentage > 0 ? 2 : 0)}%` }}
               ></div>
             </div>
           </div>
@@ -71,10 +85,10 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
               <h3 className="text-xs font-medium text-gray-400">{t.degraded}</h3>
               <span className="text-xl font-bold text-warning">{summary?.degraded || 0}</span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+            <div className="w-full bg-gray-700 rounded-full h-2 mb-2 overflow-hidden">
               <div 
-                className="bg-warning h-2 rounded-full transition-all" 
-                style={{ width: `${degradedPercentage}%` }}
+                className="bg-warning h-2 rounded-full transition-all duration-300 ease-in-out" 
+                style={{ width: `${Math.max(degradedPercentage, degradedPercentage > 0 ? 2 : 0)}%` }}
               ></div>
             </div>
           </div>
@@ -83,10 +97,10 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
               <h3 className="text-xs font-medium text-gray-400">{t.down}</h3>
               <span className="text-xl font-bold text-danger">{summary?.down || 0}</span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+            <div className="w-full bg-gray-700 rounded-full h-2 mb-2 overflow-hidden">
               <div 
-                className="bg-danger h-2 rounded-full transition-all" 
-                style={{ width: `${downPercentage}%` }}
+                className="bg-danger h-2 rounded-full transition-all duration-300 ease-in-out" 
+                style={{ width: `${Math.max(downPercentage, downPercentage > 0 ? 2 : 0)}%` }}
               ></div>
             </div>
           </div>
@@ -109,4 +123,4 @@ const StatusSummaryComponent: React.FC<StatusSummaryProps> = ({
   );
 };
 
-export default StatusSummaryComponent;
+export default memo(StatusSummaryComponent);

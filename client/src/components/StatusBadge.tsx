@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { ServiceStatus } from '../types';
 
 interface StatusBadgeProps {
@@ -35,7 +35,7 @@ const getStatusInfo = (status: ServiceStatus): { label: string; bgColor: string;
   }
 };
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = '' }) => {
+const StatusBadgeComponent: React.FC<StatusBadgeProps> = ({ status, className = '' }) => {
   const { label, bgColor, textColor } = getStatusInfo(status);
 
   return (
@@ -46,4 +46,6 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = '' }) => 
   );
 };
 
-export default StatusBadge;
+StatusBadgeComponent.displayName = 'StatusBadge';
+
+export default memo(StatusBadgeComponent);

@@ -6,18 +6,19 @@ import Home from "@/pages/home"; // Manteniamo Home caricato subito per il First
 import { ProtectedRoute } from "@/lib/protected-route";
 import CustomCursor from "@/components/CustomCursor";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { usePrefetchRoutes } from "@/hooks/use-prefetch";
 
-// Lazy loading per le pagine non critiche
-const ServiceDetail = lazy(() => import("@/pages/service-detail"));
-const AdminPage = lazy(() => import("@/pages/admin-page"));
-const AuthPage = lazy(() => import("@/pages/auth-page"));
-const InfoPage = lazy(() => import("@/pages/info-page"));
-const UpdatesPage = lazy(() => import("@/pages/updates-page"));
-const AccountDashboard = lazy(() => import("@/pages/account-dashboard"));
-const ResetRequest = lazy(() => import("@/pages/reset-password"));
-const ResetConfirm = lazy(() => import("@/pages/reset-confirm"));
-const ForgotPassword = lazy(() => import("@/pages/forgot-password"));
-const ResetSuccess = lazy(() => import("@/pages/reset-success"));
+// Lazy loading per le pagine non critiche con prefetch hints
+const ServiceDetail = lazy(() => import(/* webpackPrefetch: true */ "@/pages/service-detail"));
+const AdminPage = lazy(() => import(/* webpackPrefetch: true */ "@/pages/admin-page"));
+const AuthPage = lazy(() => import(/* webpackPrefetch: true */ "@/pages/auth-page"));
+const InfoPage = lazy(() => import(/* webpackPrefetch: true */ "@/pages/info-page"));
+const UpdatesPage = lazy(() => import(/* webpackPrefetch: true */ "@/pages/updates-page"));
+const AccountDashboard = lazy(() => import(/* webpackPrefetch: true */ "@/pages/account-dashboard"));
+const ResetRequest = lazy(() => import(/* webpackPrefetch: true */ "@/pages/reset-password"));
+const ResetConfirm = lazy(() => import(/* webpackPrefetch: true */ "@/pages/reset-confirm"));
+const ForgotPassword = lazy(() => import(/* webpackPrefetch: true */ "@/pages/forgot-password"));
+const ResetSuccess = lazy(() => import(/* webpackPrefetch: true */ "@/pages/reset-success"));
 
 // Componente di loading riutilizzabile
 const PageLoader = () => (
@@ -140,6 +141,9 @@ function Router() {
 }
 
 function App() {
+  // Abilita il prefetching intelligente delle route
+  usePrefetchRoutes();
+  
   return (
     <ErrorBoundary>
       <CustomCursor />

@@ -1,4 +1,4 @@
-import { useEffect, memo, useCallback } from "react";
+import { useEffect, memo, useCallback, useDeferredValue } from "react";
 import { Service } from "@shared/schema";
 import { useSettings, Theme, Language } from "@/hooks/use-settings";
 import {
@@ -31,6 +31,10 @@ const SettingsDialog = memo(function SettingsDialog({
 }: SettingsDialogProps) {
   const { theme, setTheme, language, setLanguage, t } = useSettings();
 
+  // Defer theme/language for smoother dropdown interactions
+  const deferredTheme = useDeferredValue(theme);
+  const deferredLanguage = useDeferredValue(language);
+
   // Memoize delle callback per evitare re-render
   const handleThemeChange = useCallback((value: string) => {
     setTheme(value as Theme);
@@ -45,20 +49,20 @@ const SettingsDialog = memo(function SettingsDialog({
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
     
-    if (theme === "system") {
+    if (deferredTheme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
       root.classList.add(systemTheme);
     } else {
-      root.classList.add(theme);
+      root.classList.add(deferredTheme);
     }
-  }, [theme]);
+  }, [deferredTheme]);
 
   // Applica la lingua quando cambia
   useEffect(() => {
-    document.documentElement.lang = language;
-  }, [language]);
+    document.documentElement.lang = deferredLanguage;
+  }, [deferredLanguage]);
 
   // Listener per aprire il dialog impostazioni da mobile/tablet
   useEffect(() => {

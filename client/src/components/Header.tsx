@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
-import { UserRole } from "@shared/schema";
+import { UserRole, type Service as SharedService } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -80,9 +80,19 @@ const Header: React.FC<HeaderProps> = ({
     };
   }, []);
 
-  const favoriteServices = (services || []).filter((service) =>
-    isFavorite(service.id),
-  );
+  const favoriteServices = useMemo(() => (
+    (services || []).filter((service) => isFavorite(service.id))
+  ), [services, favorites, isFavorite]);
+
+  const settingsDialogServices = useMemo<SharedService[]>(() => (
+    services.map(service => ({
+      ...service,
+      categoryId: 0,
+      responseTime: null,
+      lastChecked: null,
+      uptimePercentage: null,
+    }))
+  ), [services]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -394,13 +404,7 @@ const Header: React.FC<HeaderProps> = ({
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
-        services={services.map(service => ({
-          ...service,
-          categoryId: 0, // Default value
-          responseTime: null, // Default value
-          lastChecked: null, // Default value
-          uptimePercentage: null, // Default value
-        }))}
+        services={settingsDialogServices}
       />
     </header>
   );

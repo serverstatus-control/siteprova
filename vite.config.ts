@@ -114,7 +114,7 @@ export default defineConfig(({ mode, command }) => {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
-            // Vendor chunks più granulari
+            // Vendor chunks più granulari per splitting ottimale
             if (id.includes("react") || id.includes("react-dom")) {
               return "react-vendor";
             }
@@ -133,17 +133,31 @@ export default defineConfig(({ mode, command }) => {
             if (id.includes("lucide-react") || id.includes("react-icons")) {
               return "icons";
             }
-            if (id.includes("zod") || id.includes("react-hook-form")) {
+            if (id.includes("zod") || id.includes("react-hook-form") || id.includes("@hookform")) {
               return "forms";
+            }
+            // UI components separati per lazy loading
+            if (id.includes("/components/ui/")) {
+              return "ui-components";
             }
             if (id.includes("node_modules")) {
               return "vendor";
             }
           },
-          // Ottimizzazione per file specifici
+          // Ottimizzazione per file specifici con naming migliore
           chunkFileNames: "assets/js/[name]-[hash].js",
           entryFileNames: "assets/js/[name]-[hash].js",
-          assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
+          assetFileNames: (assetInfo) => {
+            const info = assetInfo.name?.split('.') ?? [];
+            const ext = info[info.length - 1];
+            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
+              return `assets/img/[name]-[hash].[ext]`;
+            }
+            if (/woff2?|ttf|otf|eot/i.test(ext)) {
+              return `assets/fonts/[name]-[hash].[ext]`;
+            }
+            return `assets/[ext]/[name]-[hash].[ext]`;
+          },
         },
       },
       minify: "terser",
@@ -152,16 +166,21 @@ export default defineConfig(({ mode, command }) => {
           drop_console: process.env.NODE_ENV === "production",
           drop_debugger: true,
           pure_funcs: ["console.log", "console.info", "console.debug"],
+          passes: 2,
+        },
+        mangle: {
+          safari10: true,
         },
       },
       chunkSizeWarningLimit: 500,
       assetsDir: "assets",
       target: "esnext",
       reportCompressedSize: false,
+      cssCodeSplit: true,
+      cssMinify: true,
     },
     optimizeDeps: {
-      // Forza sempre la (ri)ottimizzazione in dev per evitare 504 Outdated Optimize Dep
-      force: true,
+      // Pre-bundle dependencies per ridurre i round-trip
       include: [
         "react",
         "react-dom",
@@ -173,6 +192,11 @@ export default defineConfig(({ mode, command }) => {
         "framer-motion",
         "zod",
         "react-hook-form",
+        "@radix-ui/react-dialog",
+        "@radix-ui/react-dropdown-menu",
+        "@radix-ui/react-select",
+        "@radix-ui/react-tooltip",
+        "date-fns",
       ],
       exclude: ["@fortawesome/fontawesome-free"],
       esbuildOptions: {

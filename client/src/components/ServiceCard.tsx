@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback, memo } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Service } from '../types';
 import StatusBadge from './StatusBadge';
@@ -16,7 +16,7 @@ interface ServiceCardProps {
   onClick?: () => void;
 }
 
-const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
+const ServiceCardComponent = ({ service, onClick }: ServiceCardProps) => {
   const [, setLocation] = useLocation();
   const {
     id,
@@ -33,55 +33,57 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
   const isFav = isFavorite(id);
 
   // Generate default history bars if no history is available
-  const statusHistory = (() => {
+  const historyFormatter = useMemo(() => {
+    const locale = language || 'en';
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'long',
+    });
+  }, [language]);
+
+  const statusHistory = useMemo(() => {
     const bars: React.ReactNode[] = [];
     for (let i = 0; i < 18; i++) {
       let statusClass = 'bg-success';
       let statusText = 'Nessun dato disponibile';
 
+      if (i === 0) {
+        if (status === 'down') {
+          statusClass = 'bg-danger';
+          statusText = 'Servizio non disponibile';
+        } else if (status === 'degraded') {
+          statusClass = 'bg-warning';
+          statusText = 'Servizio degradato';
+        }
+      }
 
-        // Se è l'ultima barra (i === 0), usa lo stato attuale del servizio
-        if (i === 0) {
-          if (status === 'down') {
+      const day = service.history?.[i];
+      if (day) {
+        const downtimeMinutes = day.downtimeMinutes ?? 0;
+
+        if (i !== 0) {
+          if (day.status === 'down') {
             statusClass = 'bg-danger';
             statusText = 'Servizio non disponibile';
-          } else if (status === 'degraded') {
+          } else if (day.status === 'degraded') {
             statusClass = 'bg-warning';
             statusText = 'Servizio degradato';
+          } else if (day.status === 'operational') {
+            if (downtimeMinutes >= 30) {
+              statusClass = 'bg-danger';
+              statusText = 'Non disponibile per più di 30 minuti';
+            } else if (downtimeMinutes > 0) {
+              statusClass = 'bg-warning';
+              statusText = `Non disponibile per ${downtimeMinutes} minuti`;
+            } else {
+              statusClass = 'bg-success';
+              statusText = 'Completamente operativo';
+            }
           }
         }
 
-        const day = service.history?.[i];
-        if (day) {
-          const dm = day.downtimeMinutes ?? 0;
-
-          // Per le barre storiche, mantieni la logica precedente
-          if (i !== 0) {
-            if (day.status === 'down') {
-              statusClass = 'bg-danger';
-              statusText = 'Servizio non disponibile';
-            } else if (day.status === 'degraded') {
-              statusClass = 'bg-warning';
-              statusText = 'Servizio degradato';
-            } else if (day.status === 'operational') {
-              // Quando è operational, controlla per quanto tempo è stato down
-              if (dm >= 30) {
-                statusClass = 'bg-danger';
-                statusText = 'Non disponibile per più di 30 minuti';
-              } else if (dm > 0) {
-                statusClass = 'bg-warning';
-                statusText = `Non disponibile per ${dm} minuti`;
-              } else {
-                statusClass = 'bg-success';
-                statusText = 'Completamente operativo';
-              }
-            }
-          }
         const date = new Date(day.date);
-        const formattedDate = new Intl.DateTimeFormat('it-IT', {
-          day: 'numeric',
-          month: 'long'
-        }).format(date);
+        const formattedDate = historyFormatter.format(date);
 
         bars.push(
           <div
@@ -101,29 +103,28 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
       }
     }
     return bars;
-  })();
+  }, [service.history, status, historyFormatter]);
 
-  const formattedLastChecked = lastChecked ? 
-    formatTimeAgo(lastChecked, language) : 
-    t.unknown || 'Unknown';
+  const formattedLastChecked = useMemo(() => (
+    lastChecked ? formatTimeAgo(lastChecked, language) : (t.unknown || 'Unknown')
+  ), [lastChecked, language, t]);
 
   const { toast } = useToast();
 
-  const handleFavoriteToggle = async (e: React.MouseEvent) => {
+  const handleFavoriteToggle = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    
+
     if (!user) {
       toast({
-        title: t.error || "Error",
+        title: t.error || 'Error',
         description: "Devi effettuare l'accesso per aggiungere servizi ai preferiti",
-        variant: "destructive",
+        variant: 'destructive',
       });
       return;
     }
 
     try {
-      console.log('Toggling favorite for service:', id, 'Current state:', isFav);
       if (isFav) {
         await removeFavorite(id);
       } else {
@@ -132,20 +133,28 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
       toast({
-        title: "Errore",
+        title: 'Errore',
         description: error instanceof Error ? error.message : "Errore nell'aggiornamento dei preferiti",
-        variant: "destructive",
+        variant: 'destructive',
       });
     }
-  };
+  }, [addFavorite, id, isFav, removeFavorite, t, toast, user]);
+
+  const handleCardClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (onClick) {
+      onClick();
+      return;
+    }
+
+    setLocation(`/services/${slug}`);
+  }, [onClick, setLocation, slug]);
 
   return (
     <div 
         className="relative w-full overflow-hidden transition-all duration-300 border rounded-lg cursor-pointer bg-card border-border hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 group"
-        onClick={(e) => { 
-          e.preventDefault(); 
-          setLocation(`/services/${slug}`);
-        }}
+        onClick={handleCardClick}
         aria-label={t.viewDetails || 'View Details'}
         role="button"
         tabIndex={0}>
@@ -202,7 +211,7 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
                         ? 'text-amber-400 hover:border-amber-400 hover:-translate-y-1' 
                         : 'text-gray-400 hover:text-amber-400 hover:border-amber-400 hover:-translate-y-1'}
                       group flex items-center justify-center hover:bg-background/50`}
-                    onClick={(e) => { e.stopPropagation(); handleFavoriteToggle(e); }}
+                    onClick={handleFavoriteToggle}
                     aria-label={isFav ? t.removeFromFavorites : t.addToFavorites}
                   >
                     {isFav ? (
@@ -220,4 +229,6 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
   );
 };
 
-export default ServiceCard;
+ServiceCardComponent.displayName = 'ServiceCard';
+
+export default memo(ServiceCardComponent);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, memo, useDeferredValue } from 'react';
 import { Service } from '../types';
 import ServiceCard from './ServiceCard';
 import { useSettings, type Translation } from '@/hooks/use-settings';
@@ -20,7 +20,7 @@ interface CategorySectionProps {
   onServiceClick: (service: Service) => void;
 }
 
-const CategorySection: React.FC<CategorySectionProps> = ({ 
+const CategorySectionComponent: React.FC<CategorySectionProps> = ({ 
   name, 
   icon, 
   services, 
@@ -29,40 +29,44 @@ const CategorySection: React.FC<CategorySectionProps> = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [sortBy, setSortBy] = useState<'alpha' | 'status' | 'responseTime' | 'uptimePercentage'>('status');
-  const { t, language } = useSettings();
+  const { t } = useSettings();
 
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  // Defer sorting for better interaction responsiveness
+  const deferredSortBy = useDeferredValue(sortBy);
 
-  // Traduci il nome della categoria
-  const getCategoryTranslation = (categoryName: string): string => {
-    // Ottieni la chiave di traduzione dal nome della categoria
-    const key = categoryName.toLowerCase().replace(/[^a-z]/g, '') as keyof Translation;
-    // Usa la traduzione se disponibile e se è una stringa, altrimenti usa il nome originale
+  const toggleCollapse = useCallback(() => {
+    setIsCollapsed((prev) => !prev);
+  }, []);
+
+  const translatedCategoryName = useMemo(() => {
+    const key = name.toLowerCase().replace(/[^a-z]/g, '') as keyof Translation;
     const translation = t[key];
-    return (typeof translation === 'string' ? translation : categoryName);
-  };
+    return typeof translation === 'string' ? translation : name;
+  }, [name, t]);
 
-  // Ordina i servizi in base al criterio selezionato
-  const sortedServices = [...services].sort((a, b) => {
-    switch (sortBy) {
-      case 'alpha':
-        return a.name.localeCompare(b.name);
-      case 'status':
-        // Prima i down, poi i degraded, poi gli operational
-        const statusOrder = { down: 0, degraded: 1, operational: 2 };
-        return statusOrder[a.status] - statusOrder[b.status];
-      case 'responseTime':
-        // I più veloci prima (tempo di risposta minore)
-        return a.responseTime - b.responseTime;
-      case 'uptimePercentage':
-        // Uptime maggiore prima
-        return b.uptimePercentage - a.uptimePercentage;
-      default:
-        return 0;
-    }
-  });
+  const sortedServices = useMemo(() => {
+    const next = [...services];
+    return next.sort((a, b) => {
+      switch (deferredSortBy) {
+        case 'alpha':
+          return a.name.localeCompare(b.name);
+        case 'status': {
+          const statusOrder = { down: 0, degraded: 1, operational: 2 };
+          return statusOrder[a.status] - statusOrder[b.status];
+        }
+        case 'responseTime':
+          return a.responseTime - b.responseTime;
+        case 'uptimePercentage':
+          return b.uptimePercentage - a.uptimePercentage;
+        default:
+          return 0;
+      }
+    });
+  }, [services, deferredSortBy]);
+
+  const handleSortChange = useCallback((value: string) => {
+    setSortBy(value as typeof sortBy);
+  }, []);
 
   return (
     <section id={id} className="px-1 mb-8 sm:mb-10 sm:px-0">
@@ -74,7 +78,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <span className="flex items-center justify-center w-8 h-8 mr-2 text-white transition-transform duration-300 rounded-full shadow-lg bg-gradient-to-br from-primary to-blue-400 group-hover:scale-110">
             {getCategoryIconComponent(name, 'w-5 h-5 text-white')}
           </span>
-          {getCategoryTranslation(name)}
+          {translatedCategoryName}
           <i className={`fas ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-down'} ml-2 text-sm opacity-60 group-hover:opacity-100`}></i>
         </button>
         
@@ -82,7 +86,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
           <div className="flex items-center gap-2">
             <Select
               value={sortBy}
-              onValueChange={(value) => setSortBy(value as typeof sortBy)}
+              onValueChange={handleSortChange}
             >
               <SelectTrigger className="w-[180px] h-9">
                 <SelectValue placeholder={t.sortBy + "..."} />
@@ -119,23 +123,20 @@ const CategorySection: React.FC<CategorySectionProps> = ({
       </div>
 
       {!isCollapsed && (
-        <>
-          <div className="w-full overflow-x-auto">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {sortedServices.map(service => (
-                <div
-                  key={service.id}
-                  className={`mb-3 ${service.name === 'Fascicolo Sanitario' ? 'ml-2' : ''}`}
-                >
-                  <ServiceCard service={service} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          {sortedServices.map(service => (
+            <ServiceCard 
+              key={service.id} 
+              service={service} 
+              onClick={() => onServiceClick(service)}
+            />
+          ))}
+        </div>
       )}
     </section>
   );
 };
 
-export default CategorySection;
+CategorySectionComponent.displayName = 'CategorySection';
+
+export default memo(CategorySectionComponent);
