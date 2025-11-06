@@ -1,19 +1,26 @@
-services:
-  - type: web
-    name: siteprova
-    env: node
-    plan: free
-    region: frankfurt
-    buildCommand: npm ci && npm run build
-    startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
+version: "1"
+projects:
+- name: server status
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: server-status
+      runtime: node
+      repo: https://github.com/serverstatus-control/siteprova
+      plan: free
+      envVars:
+      - key: SESSION_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
       - key: PORT
-        value: 10000
+        sync: false
+      - key: NODE_ENV
+        sync: false
       - key: DATABASE_URL
         sync: false
-      - key: SESSION_SECRET
-        generateValue: true
-      - key: CORS_ORIGINS
-        value: "https://serverstatus-control.github.io,https://siteprova.onrender.com,http://localhost:3000"
+      region: oregon
+      buildCommand: npm ci; npm run build
+      startCommand: npm start
+      autoDeployTrigger: commit
