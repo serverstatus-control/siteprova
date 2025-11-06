@@ -12,12 +12,15 @@ const getApiBaseUrl = () => {
   // In production, usa il backend appropriato
   const hostname = window.location.hostname;
   
-  // Su GitHub Pages serviamo solo statici; API via percorso relativo (passa da reverse proxy se presente)
+  // Su GitHub Pages, usa il backend Render
   if (hostname === 'serverstatus-control.github.io') {
-    return '';
+    return 'https://siteprova.onrender.com';
   }
   
-  // Non forziamo più domini onrender.com in produzione, a meno che non sia definito VITE_API_BASE.
+  // Su Render stesso, usa percorsi relativi
+  if (hostname.includes('onrender.com')) {
+    return '';
+  }
   
   // Fallback per altri domini
   return '';
