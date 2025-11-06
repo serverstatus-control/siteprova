@@ -30,8 +30,9 @@ export default defineConfig(({ mode, command }) => {
   const cmd = String(command) as "serve" | "build" | "preview";
   const isBuildOrPreview = cmd === "build" || cmd === "preview";
   const isServe = cmd === "serve";
-  const base =
-    isBuildOrPreview && isGithubPages ? "/siteprova/" : "/";
+  
+  // Base path configuration
+  const base = isGithubPages ? "/siteprova/" : "/";
 
   return {
     base,
