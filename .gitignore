@@ -18,6 +18,9 @@ client/.vite-cache
 .env.local
 .env.*.local
 
+# Netlify
+.netlify
+
 # IDE
 .vscode/settings.json.bak
 .idea

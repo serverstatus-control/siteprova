@@ -23,9 +23,11 @@ export default defineConfig(({ mode, command }) => {
   // Rileva ambiente Render (Render setta queste variabili)
   const isRender =
     process.env.RENDER === "true" || !!process.env.RENDER_EXTERNAL_HOSTNAME;
+  // Rileva ambiente Netlify
+  const isNetlify = process.env.NETLIFY === "true" || !!process.env.NETLIFY_SITE_ID;
   const isProduction = mode === "production";
 
-  // Per Render usiamo base '/' perché serviamo tutto dalla root
+  // Per Render e Netlify usiamo base '/' perché serviamo tutto dalla root
   // Per GitHub Pages usiamo '/siteprova/'
   const cmd = String(command) as "serve" | "build" | "preview";
   const isBuildOrPreview = cmd === "build" || cmd === "preview";

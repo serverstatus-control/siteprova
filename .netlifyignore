@@ -1,0 +1,57 @@
+# File e directory da escludere dal deploy Netlify
+
+# Server (non necessario per il client-only deploy)
+server/
+server_old/
+
+# Scripts di sviluppo
+scripts/
+
+# Client vecchio
+client_old/
+
+# Documentazione non necessaria per il deploy
+*.md
+!README.md
+
+# File di configurazione non necessari
+.vscode/
+.idea/
+*.log
+*.tmp
+
+# File di test
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Coverage reports
+coverage/
+
+# Build di altri ambienti
+render.yaml
+RENDER_SETUP.md
+DEPLOY_RENDER.md
+build-render.*
+
+# Git
+.git/
+.gitignore
+
+# Environment locale
+.env.local
+.env.*.local
+
+# Cache
+.cache/
+.vite-cache/
+
+# Backup files
+*.bak
+*.backup
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
