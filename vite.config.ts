@@ -16,46 +16,24 @@ export default defineConfig(({ mode, command }) => {
 
   const env = loadEnv(mode, process.cwd(), "");
 
-  // Configurazione base per GitHub Pages
-  const isGithubPages =
-    process.env.GITHUB_PAGES === "true" ||
-    process.env.NODE_ENV === "github-pages";
-  // Rileva ambiente Render (Render setta queste variabili)
+  // Rileva ambiente Render
   const isRender =
     process.env.RENDER === "true" || !!process.env.RENDER_EXTERNAL_HOSTNAME;
-  // Rileva ambiente Netlify
-  const isNetlify = process.env.NETLIFY === "true" || !!process.env.NETLIFY_SITE_ID;
   const isProduction = mode === "production";
 
-  // Per Render e Netlify usiamo base '/' perché serviamo tutto dalla root
-  // Per GitHub Pages usiamo '/siteprova/'
+  // Base sempre '/' (solo Netlify)
   const cmd = String(command) as "serve" | "build" | "preview";
   const isBuildOrPreview = cmd === "build" || cmd === "preview";
   const isServe = cmd === "serve";
   
   // Base path configuration
-  // Se stiamo buildando per GitHub Pages forziamo la base corretta.
-  // Usa anche variabile d'ambiente VITE_PUBLIC_BASE se presente per override manuale.
   const explicitBase = process.env.VITE_PUBLIC_BASE;
-  const base = explicitBase || (isGithubPages ? "/siteprova/" : "/");
+  const base = explicitBase || "/";
 
   return {
     base,
     plugins: [
       react(),
-      // In dev consenti di aprire l'app anche su /siteprova/* riscrivendo a /
-      {
-        name: "dev-base-rewrite",
-        apply: "serve",
-        configureServer(server) {
-          server.middlewares.use((req, _res, next) => {
-            if (req.url && req.url.startsWith("/siteprova/")) {
-              req.url = req.url.replace(/^\/siteprova/, "");
-            }
-            next();
-          });
-        },
-      },
       // Analisi del bundle solo in produzione
       ...(process.env.ANALYZE === "true"
         ? [
@@ -116,9 +94,8 @@ export default defineConfig(({ mode, command }) => {
     build: {
       // Output sempre in dist per semplicità
       outDir: "dist",
-      assetsDir: "assets",
-      // Assicura path relativi corretti su GitHub Pages
-  manifest: isGithubPages,
+    assetsDir: "assets",
+    manifest: false,
       emptyOutDir: true,
       sourcemap: process.env.NODE_ENV === "development",
       rollupOptions: {

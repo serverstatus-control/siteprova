@@ -14,8 +14,7 @@
     "dev:client:force": "vite --force",
     "dev:all": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "build:client": "vite build",
-    "build:client:gh": "cross-env GITHUB_PAGES=true vite build",
+  "build:client": "vite build",
     "build:client:render": "vite build",
     "build:client:netlify": "cd client && npm install && npm run build",
     "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
@@ -25,8 +24,8 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "seed": "tsx server/seed.ts",
-    "predeploy": "npm run build:client:gh",
-    "deploy": "gh-pages -d client/dist"
+    "predeploy": "echo 'GitHub Pages disabilitato. Usa Netlify.'",
+    "deploy": "echo 'GitHub Pages disabilitato. Usa Netlify.'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
@@ -120,7 +119,6 @@
     "cssnano": "^7.1.1",
     "drizzle-kit": "^0.31.5",
     "esbuild": "^0.25.10",
-    "gh-pages": "^6.3.0",
     "postcss": "^8.5.3",
     "rollup-plugin-visualizer": "^6.0.3",
     "tailwindcss": "^3.4.17",

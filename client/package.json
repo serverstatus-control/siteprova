@@ -5,9 +5,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "build:netlify": "vite build",
-    "predeploy": "echo Use 'npm run deploy' from project root",
-    "deploy": "npm -C .. run deploy"
+    "preview": "vite preview"
   }
 }
