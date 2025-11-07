@@ -1,8 +1,9 @@
 # Netlify Configuration File
 
 [build]
-  # Comando di build (dalla root, installa e builda)
-  command = "npm install && npm run build:client"
+  # Comando di build (dalla root, installa devDependencies e builda)
+  # Usa npm ci se presente package-lock.json, altrimenti npm install
+  command = "if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi && npm run build:client"
   
   # Directory di output (dove Vite mette i file buildati)
   publish = "client/dist"
@@ -13,6 +14,9 @@
   
   # NPM version
   NPM_VERSION = "10"
+  # Assicura l'installazione delle devDependencies su Netlify
+  NPM_FLAGS = "--include=dev"
+  NPM_CONFIG_PRODUCTION = "false"
 
 # SPA redirect - tutte le route vanno a index.html
 [[redirects]]

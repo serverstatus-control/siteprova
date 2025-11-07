@@ -7,6 +7,22 @@ Write-Host ""
 
 $allGood = $true
 
+# Verifica variabili d'ambiente Netlify per installare devDependencies
+Write-Host "🧪 Verifico variabili per devDependencies..." -ForegroundColor Yellow
+$expectedFlags = "--include=dev"
+if ($env:NPM_CONFIG_PRODUCTION -eq 'false') {
+    Write-Host "   ✅ NPM_CONFIG_PRODUCTION=false" -ForegroundColor Green
+} else {
+    Write-Host "   ❌ NPM_CONFIG_PRODUCTION=$($env:NPM_CONFIG_PRODUCTION) (atteso: false)" -ForegroundColor Red
+    $allGood = $false
+}
+if ($env:NPM_FLAGS -like '*--include=dev*') {
+    Write-Host "   ✅ NPM_FLAGS contiene --include=dev" -ForegroundColor Green
+} else {
+    Write-Host "   ❌ NPM_FLAGS non contiene --include=dev (atteso per installare vite)" -ForegroundColor Red
+    $allGood = $false
+}
+
 # Verifica file netlify.toml
 Write-Host "📄 Verifico netlify.toml..." -ForegroundColor Yellow
 if (Test-Path "netlify.toml") {
