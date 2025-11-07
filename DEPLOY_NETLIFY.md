@@ -16,10 +16,11 @@ Questo progetto è configurato per il deployment su Netlify.
 
 Le seguenti impostazioni sono già configurate:
 
-- **Base directory**: `client/`
-- **Build command**: `npm run build`
-- **Publish directory**: `dist`
-- **Node version**: 18
+- **Build command**: `npm install && npm run build:client`
+- **Publish directory**: `client/dist`
+- **Node version**: 20
+
+**Nota Importante**: Il build usa il `package.json` della root (non quello in `client/`) perché contiene tutte le dipendenze necessarie.
 
 ### 3. Deploy Manuale (opzionale)
 

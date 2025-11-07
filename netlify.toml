@@ -1,14 +1,11 @@
 # Netlify Configuration File
 
 [build]
-  # Directory del client
-  base = "client/"
-  
-  # Comando di build
-  command = "npm run build"
+  # Comando di build (dalla root, installa e builda)
+  command = "npm install && npm run build:client"
   
   # Directory di output (dove Vite mette i file buildati)
-  publish = "dist"
+  publish = "client/dist"
 
 [build.environment]
   # Node version

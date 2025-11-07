@@ -63,13 +63,14 @@ git push origin main
 
 ```toml
 [build]
-  base = "client/"
-  command = "npm run build"
-  publish = "dist"
+  command = "npm install && npm run build:client"
+  publish = "client/dist"
   
 [build.environment]
   NODE_VERSION = "20"
 ```
+
+**Nota**: Netlify usa il `package.json` della root (non `client/package.json`) perché contiene tutte le dipendenze necessarie.
 
 ## 🌟 Features Attive
 

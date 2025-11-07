@@ -22,9 +22,8 @@
 
 4. **Conferma Impostazioni**
    - Netlify rileverà automaticamente le impostazioni da `netlify.toml`:
-     - Base directory: `client/`
-     - Build command: `npm run build`
-     - Publish directory: `dist`
+     - Build command: `npm install && npm run build:client`
+     - Publish directory: `client/dist`
    - Click "Deploy site"
 
 5. **✅ Fatto!**
