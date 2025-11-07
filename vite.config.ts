@@ -34,7 +34,10 @@ export default defineConfig(({ mode, command }) => {
   const isServe = cmd === "serve";
   
   // Base path configuration
-  const base = isGithubPages ? "/siteprova/" : "/";
+  // Se stiamo buildando per GitHub Pages forziamo la base corretta.
+  // Usa anche variabile d'ambiente VITE_PUBLIC_BASE se presente per override manuale.
+  const explicitBase = process.env.VITE_PUBLIC_BASE;
+  const base = explicitBase || (isGithubPages ? "/siteprova/" : "/");
 
   return {
     base,
@@ -113,6 +116,9 @@ export default defineConfig(({ mode, command }) => {
     build: {
       // Output sempre in dist per semplicità
       outDir: "dist",
+      assetsDir: "assets",
+      // Assicura path relativi corretti su GitHub Pages
+  manifest: isGithubPages,
       emptyOutDir: true,
       sourcemap: process.env.NODE_ENV === "development",
       rollupOptions: {
@@ -176,12 +182,10 @@ export default defineConfig(({ mode, command }) => {
           safari10: true,
         },
       },
-      chunkSizeWarningLimit: 500,
-      assetsDir: "assets",
-      target: "esnext",
-      reportCompressedSize: false,
-      cssCodeSplit: true,
-      cssMinify: true,
+  chunkSizeWarningLimit: 500,
+  target: "esnext",
+  reportCompressedSize: false,
+  cssCodeSplit: true,
     },
     optimizeDeps: {
       // Pre-bundle dependencies per ridurre i round-trip
