@@ -7,9 +7,6 @@ server_old/
 # Scripts di sviluppo
 scripts/
 
-# Client vecchio
-client_old/
-
 # Documentazione non necessaria per il deploy
 *.md
 !README.md
