@@ -1,7 +1,4 @@
 import {
-  external_exports
-} from "./chunk-OWX5DDD5.js";
-import {
   Column,
   SQL,
   entityKind,
@@ -11,6 +8,9 @@ import {
   isTable,
   isView
 } from "./chunk-XHRCHDKM.js";
+import {
+  external_exports
+} from "./chunk-OWX5DDD5.js";
 import "./chunk-G3PMV62Z.js";
 
 // node_modules/drizzle-orm/logger.js
