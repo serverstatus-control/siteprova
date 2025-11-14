@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
@@ -14,14 +15,22 @@ const basePath = isProd && (host === 'serverstatus-control.github.io' || host.en
   ? '/siteprova'
   : '';
 
-createRoot(document.getElementById("root")!).render(
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <SettingsProvider>
-        <Router base={basePath}>
-          <App />
-        </Router>
-      </SettingsProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+// Ensure DOM is ready before mounting
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Failed to find the root element");
+}
+
+createRoot(rootElement).render(
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <SettingsProvider>
+          <Router base={basePath}>
+            <App />
+          </Router>
+        </SettingsProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </StrictMode>
 );
