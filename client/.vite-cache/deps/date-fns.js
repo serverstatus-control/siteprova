@@ -1,12 +1,16 @@
-import {
-  enUS,
-  getDefaultOptions,
-  isSameWeek,
-  setDefaultOptions,
-  startOfWeek,
-  toDate
-} from "./chunk-55ZZTX33.js";
 import "./chunk-G3PMV62Z.js";
+
+// node_modules/date-fns/toDate.mjs
+function toDate(argument) {
+  const argStr = Object.prototype.toString.call(argument);
+  if (argument instanceof Date || typeof argument === "object" && argStr === "[object Date]") {
+    return new argument.constructor(+argument);
+  } else if (typeof argument === "number" || argStr === "[object Number]" || typeof argument === "string" || argStr === "[object String]") {
+    return new Date(argument);
+  } else {
+    return /* @__PURE__ */ new Date(NaN);
+  }
+}
 
 // node_modules/date-fns/constructFrom.mjs
 function constructFrom(date, value) {
@@ -144,6 +148,27 @@ var secondsInQuarter = secondsInMonth * 3;
 // node_modules/date-fns/addHours.mjs
 function addHours(date, amount) {
   return addMilliseconds(date, amount * millisecondsInHour);
+}
+
+// node_modules/date-fns/_lib/defaultOptions.mjs
+var defaultOptions = {};
+function getDefaultOptions() {
+  return defaultOptions;
+}
+function setDefaultOptions(newOptions) {
+  defaultOptions = newOptions;
+}
+
+// node_modules/date-fns/startOfWeek.mjs
+function startOfWeek(date, options) {
+  const defaultOptions2 = getDefaultOptions();
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
+  const _date = toDate(date);
+  const day = _date.getDay();
+  const diff = (day < weekStartsOn ? 7 : 0) + day - weekStartsOn;
+  _date.setDate(_date.getDate() - diff);
+  _date.setHours(0, 0, 0, 0);
+  return _date;
 }
 
 // node_modules/date-fns/startOfISOWeek.mjs
@@ -879,8 +904,8 @@ function endOfHour(date) {
 
 // node_modules/date-fns/endOfWeek.mjs
 function endOfWeek(date, options) {
-  const defaultOptions = getDefaultOptions();
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions.weekStartsOn ?? defaultOptions.locale?.options?.weekStartsOn ?? 0;
+  const defaultOptions2 = getDefaultOptions();
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
   const _date = toDate(date);
   const day = _date.getDay();
   const diff = (day < weekStartsOn ? -7 : 0) + 6 - (day - weekStartsOn);
@@ -958,6 +983,515 @@ function endOfYesterday() {
   return date;
 }
 
+// node_modules/date-fns/locale/en-US/_lib/formatDistance.mjs
+var formatDistanceLocale = {
+  lessThanXSeconds: {
+    one: "less than a second",
+    other: "less than {{count}} seconds"
+  },
+  xSeconds: {
+    one: "1 second",
+    other: "{{count}} seconds"
+  },
+  halfAMinute: "half a minute",
+  lessThanXMinutes: {
+    one: "less than a minute",
+    other: "less than {{count}} minutes"
+  },
+  xMinutes: {
+    one: "1 minute",
+    other: "{{count}} minutes"
+  },
+  aboutXHours: {
+    one: "about 1 hour",
+    other: "about {{count}} hours"
+  },
+  xHours: {
+    one: "1 hour",
+    other: "{{count}} hours"
+  },
+  xDays: {
+    one: "1 day",
+    other: "{{count}} days"
+  },
+  aboutXWeeks: {
+    one: "about 1 week",
+    other: "about {{count}} weeks"
+  },
+  xWeeks: {
+    one: "1 week",
+    other: "{{count}} weeks"
+  },
+  aboutXMonths: {
+    one: "about 1 month",
+    other: "about {{count}} months"
+  },
+  xMonths: {
+    one: "1 month",
+    other: "{{count}} months"
+  },
+  aboutXYears: {
+    one: "about 1 year",
+    other: "about {{count}} years"
+  },
+  xYears: {
+    one: "1 year",
+    other: "{{count}} years"
+  },
+  overXYears: {
+    one: "over 1 year",
+    other: "over {{count}} years"
+  },
+  almostXYears: {
+    one: "almost 1 year",
+    other: "almost {{count}} years"
+  }
+};
+var formatDistance = (token, count, options) => {
+  let result;
+  const tokenValue = formatDistanceLocale[token];
+  if (typeof tokenValue === "string") {
+    result = tokenValue;
+  } else if (count === 1) {
+    result = tokenValue.one;
+  } else {
+    result = tokenValue.other.replace("{{count}}", count.toString());
+  }
+  if (options?.addSuffix) {
+    if (options.comparison && options.comparison > 0) {
+      return "in " + result;
+    } else {
+      return result + " ago";
+    }
+  }
+  return result;
+};
+
+// node_modules/date-fns/locale/_lib/buildFormatLongFn.mjs
+function buildFormatLongFn(args) {
+  return (options = {}) => {
+    const width = options.width ? String(options.width) : args.defaultWidth;
+    const format2 = args.formats[width] || args.formats[args.defaultWidth];
+    return format2;
+  };
+}
+
+// node_modules/date-fns/locale/en-US/_lib/formatLong.mjs
+var dateFormats = {
+  full: "EEEE, MMMM do, y",
+  long: "MMMM do, y",
+  medium: "MMM d, y",
+  short: "MM/dd/yyyy"
+};
+var timeFormats = {
+  full: "h:mm:ss a zzzz",
+  long: "h:mm:ss a z",
+  medium: "h:mm:ss a",
+  short: "h:mm a"
+};
+var dateTimeFormats = {
+  full: "{{date}} 'at' {{time}}",
+  long: "{{date}} 'at' {{time}}",
+  medium: "{{date}}, {{time}}",
+  short: "{{date}}, {{time}}"
+};
+var formatLong = {
+  date: buildFormatLongFn({
+    formats: dateFormats,
+    defaultWidth: "full"
+  }),
+  time: buildFormatLongFn({
+    formats: timeFormats,
+    defaultWidth: "full"
+  }),
+  dateTime: buildFormatLongFn({
+    formats: dateTimeFormats,
+    defaultWidth: "full"
+  })
+};
+
+// node_modules/date-fns/locale/en-US/_lib/formatRelative.mjs
+var formatRelativeLocale = {
+  lastWeek: "'last' eeee 'at' p",
+  yesterday: "'yesterday at' p",
+  today: "'today at' p",
+  tomorrow: "'tomorrow at' p",
+  nextWeek: "eeee 'at' p",
+  other: "P"
+};
+var formatRelative = (token, _date, _baseDate, _options) => formatRelativeLocale[token];
+
+// node_modules/date-fns/locale/_lib/buildLocalizeFn.mjs
+function buildLocalizeFn(args) {
+  return (value, options) => {
+    const context = options?.context ? String(options.context) : "standalone";
+    let valuesArray;
+    if (context === "formatting" && args.formattingValues) {
+      const defaultWidth = args.defaultFormattingWidth || args.defaultWidth;
+      const width = options?.width ? String(options.width) : defaultWidth;
+      valuesArray = args.formattingValues[width] || args.formattingValues[defaultWidth];
+    } else {
+      const defaultWidth = args.defaultWidth;
+      const width = options?.width ? String(options.width) : args.defaultWidth;
+      valuesArray = args.values[width] || args.values[defaultWidth];
+    }
+    const index = args.argumentCallback ? args.argumentCallback(value) : value;
+    return valuesArray[index];
+  };
+}
+
+// node_modules/date-fns/locale/en-US/_lib/localize.mjs
+var eraValues = {
+  narrow: ["B", "A"],
+  abbreviated: ["BC", "AD"],
+  wide: ["Before Christ", "Anno Domini"]
+};
+var quarterValues = {
+  narrow: ["1", "2", "3", "4"],
+  abbreviated: ["Q1", "Q2", "Q3", "Q4"],
+  wide: ["1st quarter", "2nd quarter", "3rd quarter", "4th quarter"]
+};
+var monthValues = {
+  narrow: ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
+  abbreviated: [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ],
+  wide: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ]
+};
+var dayValues = {
+  narrow: ["S", "M", "T", "W", "T", "F", "S"],
+  short: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+  abbreviated: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  wide: [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ]
+};
+var dayPeriodValues = {
+  narrow: {
+    am: "a",
+    pm: "p",
+    midnight: "mi",
+    noon: "n",
+    morning: "morning",
+    afternoon: "afternoon",
+    evening: "evening",
+    night: "night"
+  },
+  abbreviated: {
+    am: "AM",
+    pm: "PM",
+    midnight: "midnight",
+    noon: "noon",
+    morning: "morning",
+    afternoon: "afternoon",
+    evening: "evening",
+    night: "night"
+  },
+  wide: {
+    am: "a.m.",
+    pm: "p.m.",
+    midnight: "midnight",
+    noon: "noon",
+    morning: "morning",
+    afternoon: "afternoon",
+    evening: "evening",
+    night: "night"
+  }
+};
+var formattingDayPeriodValues = {
+  narrow: {
+    am: "a",
+    pm: "p",
+    midnight: "mi",
+    noon: "n",
+    morning: "in the morning",
+    afternoon: "in the afternoon",
+    evening: "in the evening",
+    night: "at night"
+  },
+  abbreviated: {
+    am: "AM",
+    pm: "PM",
+    midnight: "midnight",
+    noon: "noon",
+    morning: "in the morning",
+    afternoon: "in the afternoon",
+    evening: "in the evening",
+    night: "at night"
+  },
+  wide: {
+    am: "a.m.",
+    pm: "p.m.",
+    midnight: "midnight",
+    noon: "noon",
+    morning: "in the morning",
+    afternoon: "in the afternoon",
+    evening: "in the evening",
+    night: "at night"
+  }
+};
+var ordinalNumber = (dirtyNumber, _options) => {
+  const number = Number(dirtyNumber);
+  const rem100 = number % 100;
+  if (rem100 > 20 || rem100 < 10) {
+    switch (rem100 % 10) {
+      case 1:
+        return number + "st";
+      case 2:
+        return number + "nd";
+      case 3:
+        return number + "rd";
+    }
+  }
+  return number + "th";
+};
+var localize = {
+  ordinalNumber,
+  era: buildLocalizeFn({
+    values: eraValues,
+    defaultWidth: "wide"
+  }),
+  quarter: buildLocalizeFn({
+    values: quarterValues,
+    defaultWidth: "wide",
+    argumentCallback: (quarter) => quarter - 1
+  }),
+  month: buildLocalizeFn({
+    values: monthValues,
+    defaultWidth: "wide"
+  }),
+  day: buildLocalizeFn({
+    values: dayValues,
+    defaultWidth: "wide"
+  }),
+  dayPeriod: buildLocalizeFn({
+    values: dayPeriodValues,
+    defaultWidth: "wide",
+    formattingValues: formattingDayPeriodValues,
+    defaultFormattingWidth: "wide"
+  })
+};
+
+// node_modules/date-fns/locale/_lib/buildMatchFn.mjs
+function buildMatchFn(args) {
+  return (string, options = {}) => {
+    const width = options.width;
+    const matchPattern = width && args.matchPatterns[width] || args.matchPatterns[args.defaultMatchWidth];
+    const matchResult = string.match(matchPattern);
+    if (!matchResult) {
+      return null;
+    }
+    const matchedString = matchResult[0];
+    const parsePatterns = width && args.parsePatterns[width] || args.parsePatterns[args.defaultParseWidth];
+    const key = Array.isArray(parsePatterns) ? findIndex(parsePatterns, (pattern) => pattern.test(matchedString)) : (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- I challange you to fix the type
+      findKey(parsePatterns, (pattern) => pattern.test(matchedString))
+    );
+    let value;
+    value = args.valueCallback ? args.valueCallback(key) : key;
+    value = options.valueCallback ? (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- I challange you to fix the type
+      options.valueCallback(value)
+    ) : value;
+    const rest = string.slice(matchedString.length);
+    return { value, rest };
+  };
+}
+function findKey(object, predicate) {
+  for (const key in object) {
+    if (Object.prototype.hasOwnProperty.call(object, key) && predicate(object[key])) {
+      return key;
+    }
+  }
+  return void 0;
+}
+function findIndex(array, predicate) {
+  for (let key = 0; key < array.length; key++) {
+    if (predicate(array[key])) {
+      return key;
+    }
+  }
+  return void 0;
+}
+
+// node_modules/date-fns/locale/_lib/buildMatchPatternFn.mjs
+function buildMatchPatternFn(args) {
+  return (string, options = {}) => {
+    const matchResult = string.match(args.matchPattern);
+    if (!matchResult) return null;
+    const matchedString = matchResult[0];
+    const parseResult = string.match(args.parsePattern);
+    if (!parseResult) return null;
+    let value = args.valueCallback ? args.valueCallback(parseResult[0]) : parseResult[0];
+    value = options.valueCallback ? options.valueCallback(value) : value;
+    const rest = string.slice(matchedString.length);
+    return { value, rest };
+  };
+}
+
+// node_modules/date-fns/locale/en-US/_lib/match.mjs
+var matchOrdinalNumberPattern = /^(\d+)(th|st|nd|rd)?/i;
+var parseOrdinalNumberPattern = /\d+/i;
+var matchEraPatterns = {
+  narrow: /^(b|a)/i,
+  abbreviated: /^(b\.?\s?c\.?|b\.?\s?c\.?\s?e\.?|a\.?\s?d\.?|c\.?\s?e\.?)/i,
+  wide: /^(before christ|before common era|anno domini|common era)/i
+};
+var parseEraPatterns = {
+  any: [/^b/i, /^(a|c)/i]
+};
+var matchQuarterPatterns = {
+  narrow: /^[1234]/i,
+  abbreviated: /^q[1234]/i,
+  wide: /^[1234](th|st|nd|rd)? quarter/i
+};
+var parseQuarterPatterns = {
+  any: [/1/i, /2/i, /3/i, /4/i]
+};
+var matchMonthPatterns = {
+  narrow: /^[jfmasond]/i,
+  abbreviated: /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i,
+  wide: /^(january|february|march|april|may|june|july|august|september|october|november|december)/i
+};
+var parseMonthPatterns = {
+  narrow: [
+    /^j/i,
+    /^f/i,
+    /^m/i,
+    /^a/i,
+    /^m/i,
+    /^j/i,
+    /^j/i,
+    /^a/i,
+    /^s/i,
+    /^o/i,
+    /^n/i,
+    /^d/i
+  ],
+  any: [
+    /^ja/i,
+    /^f/i,
+    /^mar/i,
+    /^ap/i,
+    /^may/i,
+    /^jun/i,
+    /^jul/i,
+    /^au/i,
+    /^s/i,
+    /^o/i,
+    /^n/i,
+    /^d/i
+  ]
+};
+var matchDayPatterns = {
+  narrow: /^[smtwf]/i,
+  short: /^(su|mo|tu|we|th|fr|sa)/i,
+  abbreviated: /^(sun|mon|tue|wed|thu|fri|sat)/i,
+  wide: /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/i
+};
+var parseDayPatterns = {
+  narrow: [/^s/i, /^m/i, /^t/i, /^w/i, /^t/i, /^f/i, /^s/i],
+  any: [/^su/i, /^m/i, /^tu/i, /^w/i, /^th/i, /^f/i, /^sa/i]
+};
+var matchDayPeriodPatterns = {
+  narrow: /^(a|p|mi|n|(in the|at) (morning|afternoon|evening|night))/i,
+  any: /^([ap]\.?\s?m\.?|midnight|noon|(in the|at) (morning|afternoon|evening|night))/i
+};
+var parseDayPeriodPatterns = {
+  any: {
+    am: /^a/i,
+    pm: /^p/i,
+    midnight: /^mi/i,
+    noon: /^no/i,
+    morning: /morning/i,
+    afternoon: /afternoon/i,
+    evening: /evening/i,
+    night: /night/i
+  }
+};
+var match = {
+  ordinalNumber: buildMatchPatternFn({
+    matchPattern: matchOrdinalNumberPattern,
+    parsePattern: parseOrdinalNumberPattern,
+    valueCallback: (value) => parseInt(value, 10)
+  }),
+  era: buildMatchFn({
+    matchPatterns: matchEraPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseEraPatterns,
+    defaultParseWidth: "any"
+  }),
+  quarter: buildMatchFn({
+    matchPatterns: matchQuarterPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseQuarterPatterns,
+    defaultParseWidth: "any",
+    valueCallback: (index) => index + 1
+  }),
+  month: buildMatchFn({
+    matchPatterns: matchMonthPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseMonthPatterns,
+    defaultParseWidth: "any"
+  }),
+  day: buildMatchFn({
+    matchPatterns: matchDayPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseDayPatterns,
+    defaultParseWidth: "any"
+  }),
+  dayPeriod: buildMatchFn({
+    matchPatterns: matchDayPeriodPatterns,
+    defaultMatchWidth: "any",
+    parsePatterns: parseDayPeriodPatterns,
+    defaultParseWidth: "any"
+  })
+};
+
+// node_modules/date-fns/locale/en-US.mjs
+var enUS = {
+  code: "en-US",
+  formatDistance,
+  formatLong,
+  formatRelative,
+  localize,
+  match,
+  options: {
+    weekStartsOn: 0,
+    firstWeekContainsDate: 1
+  }
+};
+
 // node_modules/date-fns/getDayOfYear.mjs
 function getDayOfYear(date) {
   const _date = toDate(date);
@@ -977,8 +1511,8 @@ function getISOWeek(date) {
 function getWeekYear(date, options) {
   const _date = toDate(date);
   const year = _date.getFullYear();
-  const defaultOptions = getDefaultOptions();
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions.firstWeekContainsDate ?? defaultOptions.locale?.options?.firstWeekContainsDate ?? 1;
+  const defaultOptions2 = getDefaultOptions();
+  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
   const firstWeekOfNextYear = constructFrom(date, 0);
   firstWeekOfNextYear.setFullYear(year + 1, 0, firstWeekContainsDate);
   firstWeekOfNextYear.setHours(0, 0, 0, 0);
@@ -998,8 +1532,8 @@ function getWeekYear(date, options) {
 
 // node_modules/date-fns/startOfWeekYear.mjs
 function startOfWeekYear(date, options) {
-  const defaultOptions = getDefaultOptions();
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions.firstWeekContainsDate ?? defaultOptions.locale?.options?.firstWeekContainsDate ?? 1;
+  const defaultOptions2 = getDefaultOptions();
+  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
   const year = getWeekYear(date, options);
   const firstWeek = constructFrom(date, 0);
   firstWeek.setFullYear(year, 0, firstWeekContainsDate);
@@ -1095,34 +1629,34 @@ var dayPeriodEnum = {
 };
 var formatters = {
   // Era
-  G: function(date, token, localize) {
+  G: function(date, token, localize2) {
     const era = date.getFullYear() > 0 ? 1 : 0;
     switch (token) {
       // AD, BC
       case "G":
       case "GG":
       case "GGG":
-        return localize.era(era, { width: "abbreviated" });
+        return localize2.era(era, { width: "abbreviated" });
       // A, B
       case "GGGGG":
-        return localize.era(era, { width: "narrow" });
+        return localize2.era(era, { width: "narrow" });
       // Anno Domini, Before Christ
       case "GGGG":
       default:
-        return localize.era(era, { width: "wide" });
+        return localize2.era(era, { width: "wide" });
     }
   },
   // Year
-  y: function(date, token, localize) {
+  y: function(date, token, localize2) {
     if (token === "yo") {
       const signedYear = date.getFullYear();
       const year = signedYear > 0 ? signedYear : 1 - signedYear;
-      return localize.ordinalNumber(year, { unit: "year" });
+      return localize2.ordinalNumber(year, { unit: "year" });
     }
     return lightFormatters.y(date, token);
   },
   // Local week-numbering year
-  Y: function(date, token, localize, options) {
+  Y: function(date, token, localize2, options) {
     const signedWeekYear = getWeekYear(date, options);
     const weekYear = signedWeekYear > 0 ? signedWeekYear : 1 - signedWeekYear;
     if (token === "YY") {
@@ -1130,7 +1664,7 @@ var formatters = {
       return addLeadingZeros(twoDigitYear, 2);
     }
     if (token === "Yo") {
-      return localize.ordinalNumber(weekYear, { unit: "year" });
+      return localize2.ordinalNumber(weekYear, { unit: "year" });
     }
     return addLeadingZeros(weekYear, token.length);
   },
@@ -1153,7 +1687,7 @@ var formatters = {
     return addLeadingZeros(year, token.length);
   },
   // Quarter
-  Q: function(date, token, localize) {
+  Q: function(date, token, localize2) {
     const quarter = Math.ceil((date.getMonth() + 1) / 3);
     switch (token) {
       // 1, 2, 3, 4
@@ -1164,30 +1698,30 @@ var formatters = {
         return addLeadingZeros(quarter, 2);
       // 1st, 2nd, 3rd, 4th
       case "Qo":
-        return localize.ordinalNumber(quarter, { unit: "quarter" });
+        return localize2.ordinalNumber(quarter, { unit: "quarter" });
       // Q1, Q2, Q3, Q4
       case "QQQ":
-        return localize.quarter(quarter, {
+        return localize2.quarter(quarter, {
           width: "abbreviated",
           context: "formatting"
         });
       // 1, 2, 3, 4 (narrow quarter; could be not numerical)
       case "QQQQQ":
-        return localize.quarter(quarter, {
+        return localize2.quarter(quarter, {
           width: "narrow",
           context: "formatting"
         });
       // 1st quarter, 2nd quarter, ...
       case "QQQQ":
       default:
-        return localize.quarter(quarter, {
+        return localize2.quarter(quarter, {
           width: "wide",
           context: "formatting"
         });
     }
   },
   // Stand-alone quarter
-  q: function(date, token, localize) {
+  q: function(date, token, localize2) {
     const quarter = Math.ceil((date.getMonth() + 1) / 3);
     switch (token) {
       // 1, 2, 3, 4
@@ -1198,30 +1732,30 @@ var formatters = {
         return addLeadingZeros(quarter, 2);
       // 1st, 2nd, 3rd, 4th
       case "qo":
-        return localize.ordinalNumber(quarter, { unit: "quarter" });
+        return localize2.ordinalNumber(quarter, { unit: "quarter" });
       // Q1, Q2, Q3, Q4
       case "qqq":
-        return localize.quarter(quarter, {
+        return localize2.quarter(quarter, {
           width: "abbreviated",
           context: "standalone"
         });
       // 1, 2, 3, 4 (narrow quarter; could be not numerical)
       case "qqqqq":
-        return localize.quarter(quarter, {
+        return localize2.quarter(quarter, {
           width: "narrow",
           context: "standalone"
         });
       // 1st quarter, 2nd quarter, ...
       case "qqqq":
       default:
-        return localize.quarter(quarter, {
+        return localize2.quarter(quarter, {
           width: "wide",
           context: "standalone"
         });
     }
   },
   // Month
-  M: function(date, token, localize) {
+  M: function(date, token, localize2) {
     const month = date.getMonth();
     switch (token) {
       case "M":
@@ -1229,27 +1763,27 @@ var formatters = {
         return lightFormatters.M(date, token);
       // 1st, 2nd, ..., 12th
       case "Mo":
-        return localize.ordinalNumber(month + 1, { unit: "month" });
+        return localize2.ordinalNumber(month + 1, { unit: "month" });
       // Jan, Feb, ..., Dec
       case "MMM":
-        return localize.month(month, {
+        return localize2.month(month, {
           width: "abbreviated",
           context: "formatting"
         });
       // J, F, ..., D
       case "MMMMM":
-        return localize.month(month, {
+        return localize2.month(month, {
           width: "narrow",
           context: "formatting"
         });
       // January, February, ..., December
       case "MMMM":
       default:
-        return localize.month(month, { width: "wide", context: "formatting" });
+        return localize2.month(month, { width: "wide", context: "formatting" });
     }
   },
   // Stand-alone month
-  L: function(date, token, localize) {
+  L: function(date, token, localize2) {
     const month = date.getMonth();
     switch (token) {
       // 1, 2, ..., 12
@@ -1260,91 +1794,91 @@ var formatters = {
         return addLeadingZeros(month + 1, 2);
       // 1st, 2nd, ..., 12th
       case "Lo":
-        return localize.ordinalNumber(month + 1, { unit: "month" });
+        return localize2.ordinalNumber(month + 1, { unit: "month" });
       // Jan, Feb, ..., Dec
       case "LLL":
-        return localize.month(month, {
+        return localize2.month(month, {
           width: "abbreviated",
           context: "standalone"
         });
       // J, F, ..., D
       case "LLLLL":
-        return localize.month(month, {
+        return localize2.month(month, {
           width: "narrow",
           context: "standalone"
         });
       // January, February, ..., December
       case "LLLL":
       default:
-        return localize.month(month, { width: "wide", context: "standalone" });
+        return localize2.month(month, { width: "wide", context: "standalone" });
     }
   },
   // Local week of year
-  w: function(date, token, localize, options) {
+  w: function(date, token, localize2, options) {
     const week = getWeek(date, options);
     if (token === "wo") {
-      return localize.ordinalNumber(week, { unit: "week" });
+      return localize2.ordinalNumber(week, { unit: "week" });
     }
     return addLeadingZeros(week, token.length);
   },
   // ISO week of year
-  I: function(date, token, localize) {
+  I: function(date, token, localize2) {
     const isoWeek = getISOWeek(date);
     if (token === "Io") {
-      return localize.ordinalNumber(isoWeek, { unit: "week" });
+      return localize2.ordinalNumber(isoWeek, { unit: "week" });
     }
     return addLeadingZeros(isoWeek, token.length);
   },
   // Day of the month
-  d: function(date, token, localize) {
+  d: function(date, token, localize2) {
     if (token === "do") {
-      return localize.ordinalNumber(date.getDate(), { unit: "date" });
+      return localize2.ordinalNumber(date.getDate(), { unit: "date" });
     }
     return lightFormatters.d(date, token);
   },
   // Day of year
-  D: function(date, token, localize) {
+  D: function(date, token, localize2) {
     const dayOfYear = getDayOfYear(date);
     if (token === "Do") {
-      return localize.ordinalNumber(dayOfYear, { unit: "dayOfYear" });
+      return localize2.ordinalNumber(dayOfYear, { unit: "dayOfYear" });
     }
     return addLeadingZeros(dayOfYear, token.length);
   },
   // Day of week
-  E: function(date, token, localize) {
+  E: function(date, token, localize2) {
     const dayOfWeek = date.getDay();
     switch (token) {
       // Tue
       case "E":
       case "EE":
       case "EEE":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "abbreviated",
           context: "formatting"
         });
       // T
       case "EEEEE":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "narrow",
           context: "formatting"
         });
       // Tu
       case "EEEEEE":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "short",
           context: "formatting"
         });
       // Tuesday
       case "EEEE":
       default:
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "wide",
           context: "formatting"
         });
     }
   },
   // Local day of week
-  e: function(date, token, localize, options) {
+  e: function(date, token, localize2, options) {
     const dayOfWeek = date.getDay();
     const localDayOfWeek = (dayOfWeek - options.weekStartsOn + 8) % 7 || 7;
     switch (token) {
@@ -1356,35 +1890,35 @@ var formatters = {
         return addLeadingZeros(localDayOfWeek, 2);
       // 1st, 2nd, ..., 7th
       case "eo":
-        return localize.ordinalNumber(localDayOfWeek, { unit: "day" });
+        return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
       case "eee":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "abbreviated",
           context: "formatting"
         });
       // T
       case "eeeee":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "narrow",
           context: "formatting"
         });
       // Tu
       case "eeeeee":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "short",
           context: "formatting"
         });
       // Tuesday
       case "eeee":
       default:
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "wide",
           context: "formatting"
         });
     }
   },
   // Stand-alone local day of week
-  c: function(date, token, localize, options) {
+  c: function(date, token, localize2, options) {
     const dayOfWeek = date.getDay();
     const localDayOfWeek = (dayOfWeek - options.weekStartsOn + 8) % 7 || 7;
     switch (token) {
@@ -1396,35 +1930,35 @@ var formatters = {
         return addLeadingZeros(localDayOfWeek, token.length);
       // 1st, 2nd, ..., 7th
       case "co":
-        return localize.ordinalNumber(localDayOfWeek, { unit: "day" });
+        return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
       case "ccc":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "abbreviated",
           context: "standalone"
         });
       // T
       case "ccccc":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "narrow",
           context: "standalone"
         });
       // Tu
       case "cccccc":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "short",
           context: "standalone"
         });
       // Tuesday
       case "cccc":
       default:
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "wide",
           context: "standalone"
         });
     }
   },
   // ISO day of week
-  i: function(date, token, localize) {
+  i: function(date, token, localize2) {
     const dayOfWeek = date.getDay();
     const isoDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
     switch (token) {
@@ -1436,65 +1970,65 @@ var formatters = {
         return addLeadingZeros(isoDayOfWeek, token.length);
       // 2nd
       case "io":
-        return localize.ordinalNumber(isoDayOfWeek, { unit: "day" });
+        return localize2.ordinalNumber(isoDayOfWeek, { unit: "day" });
       // Tue
       case "iii":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "abbreviated",
           context: "formatting"
         });
       // T
       case "iiiii":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "narrow",
           context: "formatting"
         });
       // Tu
       case "iiiiii":
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "short",
           context: "formatting"
         });
       // Tuesday
       case "iiii":
       default:
-        return localize.day(dayOfWeek, {
+        return localize2.day(dayOfWeek, {
           width: "wide",
           context: "formatting"
         });
     }
   },
   // AM or PM
-  a: function(date, token, localize) {
+  a: function(date, token, localize2) {
     const hours = date.getHours();
     const dayPeriodEnumValue = hours / 12 >= 1 ? "pm" : "am";
     switch (token) {
       case "a":
       case "aa":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "abbreviated",
           context: "formatting"
         });
       case "aaa":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "abbreviated",
           context: "formatting"
         }).toLowerCase();
       case "aaaaa":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "narrow",
           context: "formatting"
         });
       case "aaaa":
       default:
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "wide",
           context: "formatting"
         });
     }
   },
   // AM, PM, midnight, noon
-  b: function(date, token, localize) {
+  b: function(date, token, localize2) {
     const hours = date.getHours();
     let dayPeriodEnumValue;
     if (hours === 12) {
@@ -1507,30 +2041,30 @@ var formatters = {
     switch (token) {
       case "b":
       case "bb":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "abbreviated",
           context: "formatting"
         });
       case "bbb":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "abbreviated",
           context: "formatting"
         }).toLowerCase();
       case "bbbbb":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "narrow",
           context: "formatting"
         });
       case "bbbb":
       default:
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "wide",
           context: "formatting"
         });
     }
   },
   // in the morning, in the afternoon, in the evening, at night
-  B: function(date, token, localize) {
+  B: function(date, token, localize2) {
     const hours = date.getHours();
     let dayPeriodEnumValue;
     if (hours >= 17) {
@@ -1546,67 +2080,67 @@ var formatters = {
       case "B":
       case "BB":
       case "BBB":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "abbreviated",
           context: "formatting"
         });
       case "BBBBB":
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "narrow",
           context: "formatting"
         });
       case "BBBB":
       default:
-        return localize.dayPeriod(dayPeriodEnumValue, {
+        return localize2.dayPeriod(dayPeriodEnumValue, {
           width: "wide",
           context: "formatting"
         });
     }
   },
   // Hour [1-12]
-  h: function(date, token, localize) {
+  h: function(date, token, localize2) {
     if (token === "ho") {
       let hours = date.getHours() % 12;
       if (hours === 0) hours = 12;
-      return localize.ordinalNumber(hours, { unit: "hour" });
+      return localize2.ordinalNumber(hours, { unit: "hour" });
     }
     return lightFormatters.h(date, token);
   },
   // Hour [0-23]
-  H: function(date, token, localize) {
+  H: function(date, token, localize2) {
     if (token === "Ho") {
-      return localize.ordinalNumber(date.getHours(), { unit: "hour" });
+      return localize2.ordinalNumber(date.getHours(), { unit: "hour" });
     }
     return lightFormatters.H(date, token);
   },
   // Hour [0-11]
-  K: function(date, token, localize) {
+  K: function(date, token, localize2) {
     const hours = date.getHours() % 12;
     if (token === "Ko") {
-      return localize.ordinalNumber(hours, { unit: "hour" });
+      return localize2.ordinalNumber(hours, { unit: "hour" });
     }
     return addLeadingZeros(hours, token.length);
   },
   // Hour [1-24]
-  k: function(date, token, localize) {
+  k: function(date, token, localize2) {
     let hours = date.getHours();
     if (hours === 0) hours = 24;
     if (token === "ko") {
-      return localize.ordinalNumber(hours, { unit: "hour" });
+      return localize2.ordinalNumber(hours, { unit: "hour" });
     }
     return addLeadingZeros(hours, token.length);
   },
   // Minute
-  m: function(date, token, localize) {
+  m: function(date, token, localize2) {
     if (token === "mo") {
-      return localize.ordinalNumber(date.getMinutes(), { unit: "minute" });
+      return localize2.ordinalNumber(date.getMinutes(), { unit: "minute" });
     }
     return lightFormatters.m(date, token);
   },
   // Second
-  s: function(date, token, localize) {
+  s: function(date, token, localize2) {
     if (token === "so") {
-      return localize.ordinalNumber(date.getSeconds(), { unit: "second" });
+      return localize2.ordinalNumber(date.getSeconds(), { unit: "second" });
     }
     return lightFormatters.s(date, token);
   },
@@ -1730,56 +2264,56 @@ function formatTimezone(offset, delimiter = "") {
 }
 
 // node_modules/date-fns/_lib/format/longFormatters.mjs
-var dateLongFormatter = (pattern, formatLong) => {
+var dateLongFormatter = (pattern, formatLong2) => {
   switch (pattern) {
     case "P":
-      return formatLong.date({ width: "short" });
+      return formatLong2.date({ width: "short" });
     case "PP":
-      return formatLong.date({ width: "medium" });
+      return formatLong2.date({ width: "medium" });
     case "PPP":
-      return formatLong.date({ width: "long" });
+      return formatLong2.date({ width: "long" });
     case "PPPP":
     default:
-      return formatLong.date({ width: "full" });
+      return formatLong2.date({ width: "full" });
   }
 };
-var timeLongFormatter = (pattern, formatLong) => {
+var timeLongFormatter = (pattern, formatLong2) => {
   switch (pattern) {
     case "p":
-      return formatLong.time({ width: "short" });
+      return formatLong2.time({ width: "short" });
     case "pp":
-      return formatLong.time({ width: "medium" });
+      return formatLong2.time({ width: "medium" });
     case "ppp":
-      return formatLong.time({ width: "long" });
+      return formatLong2.time({ width: "long" });
     case "pppp":
     default:
-      return formatLong.time({ width: "full" });
+      return formatLong2.time({ width: "full" });
   }
 };
-var dateTimeLongFormatter = (pattern, formatLong) => {
+var dateTimeLongFormatter = (pattern, formatLong2) => {
   const matchResult = pattern.match(/(P+)(p+)?/) || [];
   const datePattern = matchResult[1];
   const timePattern = matchResult[2];
   if (!timePattern) {
-    return dateLongFormatter(pattern, formatLong);
+    return dateLongFormatter(pattern, formatLong2);
   }
   let dateTimeFormat;
   switch (datePattern) {
     case "P":
-      dateTimeFormat = formatLong.dateTime({ width: "short" });
+      dateTimeFormat = formatLong2.dateTime({ width: "short" });
       break;
     case "PP":
-      dateTimeFormat = formatLong.dateTime({ width: "medium" });
+      dateTimeFormat = formatLong2.dateTime({ width: "medium" });
       break;
     case "PPP":
-      dateTimeFormat = formatLong.dateTime({ width: "long" });
+      dateTimeFormat = formatLong2.dateTime({ width: "long" });
       break;
     case "PPPP":
     default:
-      dateTimeFormat = formatLong.dateTime({ width: "full" });
+      dateTimeFormat = formatLong2.dateTime({ width: "full" });
       break;
   }
-  return dateTimeFormat.replace("{{date}}", dateLongFormatter(datePattern, formatLong)).replace("{{time}}", timeLongFormatter(timePattern, formatLong));
+  return dateTimeFormat.replace("{{date}}", dateLongFormatter(datePattern, formatLong2)).replace("{{time}}", timeLongFormatter(timePattern, formatLong2));
 };
 var longFormatters = {
   p: timeLongFormatter,
@@ -1813,10 +2347,10 @@ var escapedStringRegExp = /^'([^]*?)'?$/;
 var doubleQuoteRegExp = /''/g;
 var unescapedLatinCharacterRegExp = /[a-zA-Z]/;
 function format(date, formatStr, options) {
-  const defaultOptions = getDefaultOptions();
-  const locale = options?.locale ?? defaultOptions.locale ?? enUS;
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions.firstWeekContainsDate ?? defaultOptions.locale?.options?.firstWeekContainsDate ?? 1;
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions.weekStartsOn ?? defaultOptions.locale?.options?.weekStartsOn ?? 0;
+  const defaultOptions2 = getDefaultOptions();
+  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
+  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
   const originalDate = toDate(date);
   if (!isValid(originalDate)) {
     throw new RangeError("Invalid time value");
@@ -1873,9 +2407,9 @@ function cleanEscapedString(input) {
 }
 
 // node_modules/date-fns/formatDistance.mjs
-function formatDistance(date, baseDate, options) {
-  const defaultOptions = getDefaultOptions();
-  const locale = options?.locale ?? defaultOptions.locale ?? enUS;
+function formatDistance2(date, baseDate, options) {
+  const defaultOptions2 = getDefaultOptions();
+  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
   const minutesInAlmostTwoDays = 2520;
   const comparison = compareAsc(date, baseDate);
   if (isNaN(comparison)) {
@@ -1955,8 +2489,8 @@ function formatDistance(date, baseDate, options) {
 
 // node_modules/date-fns/formatDistanceStrict.mjs
 function formatDistanceStrict(date, baseDate, options) {
-  const defaultOptions = getDefaultOptions();
-  const locale = options?.locale ?? defaultOptions.locale ?? enUS;
+  const defaultOptions2 = getDefaultOptions();
+  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
   const comparison = compareAsc(date, baseDate);
   if (isNaN(comparison)) {
     throw new RangeError("Invalid time value");
@@ -2021,7 +2555,7 @@ function formatDistanceStrict(date, baseDate, options) {
 
 // node_modules/date-fns/formatDistanceToNow.mjs
 function formatDistanceToNow(date, options) {
-  return formatDistance(date, constructNow(date), options);
+  return formatDistance2(date, constructNow(date), options);
 }
 
 // node_modules/date-fns/formatDistanceToNowStrict.mjs
@@ -2040,8 +2574,8 @@ var defaultFormat = [
   "seconds"
 ];
 function formatDuration(duration, options) {
-  const defaultOptions = getDefaultOptions();
-  const locale = options?.locale ?? defaultOptions.locale ?? enUS;
+  const defaultOptions2 = getDefaultOptions();
+  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
   const format2 = options?.format ?? defaultFormat;
   const zero = options?.zero ?? false;
   const delimiter = options?.delimiter ?? " ";
@@ -2205,12 +2739,12 @@ function formatRFC7231(date) {
 }
 
 // node_modules/date-fns/formatRelative.mjs
-function formatRelative(date, baseDate, options) {
+function formatRelative2(date, baseDate, options) {
   const _date = toDate(date);
   const _baseDate = toDate(baseDate);
-  const defaultOptions = getDefaultOptions();
-  const locale = options?.locale ?? defaultOptions.locale ?? enUS;
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions.weekStartsOn ?? defaultOptions.locale?.options?.weekStartsOn ?? 0;
+  const defaultOptions2 = getDefaultOptions();
+  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
   const diff = differenceInCalendarDays(_date, _baseDate);
   if (isNaN(diff)) {
     throw new RangeError("Invalid time value");
@@ -2383,8 +2917,8 @@ function getUnixTime(date) {
 
 // node_modules/date-fns/getWeekOfMonth.mjs
 function getWeekOfMonth(date, options) {
-  const defaultOptions = getDefaultOptions();
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions.weekStartsOn ?? defaultOptions.locale?.options?.weekStartsOn ?? 0;
+  const defaultOptions2 = getDefaultOptions();
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
   const currentDayOfMonth = getDate(date);
   if (isNaN(currentDayOfMonth)) return NaN;
   const startWeekDay = getDay(startOfMonth(date));
@@ -2645,8 +3179,8 @@ var DateToSystemTimezoneSetter = class extends Setter {
 
 // node_modules/date-fns/parse/_lib/Parser.mjs
 var Parser = class {
-  run(dateString, token, match, options) {
-    const result = this.parse(dateString, token, match, options);
+  run(dateString, token, match2, options) {
+    const result = this.parse(dateString, token, match2, options);
     if (!result) {
       return null;
     }
@@ -2669,20 +3203,20 @@ var Parser = class {
 // node_modules/date-fns/parse/_lib/parsers/EraParser.mjs
 var EraParser = class extends Parser {
   priority = 140;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       // AD, BC
       case "G":
       case "GG":
       case "GGG":
-        return match.era(dateString, { width: "abbreviated" }) || match.era(dateString, { width: "narrow" });
+        return match2.era(dateString, { width: "abbreviated" }) || match2.era(dateString, { width: "narrow" });
       // A, B
       case "GGGGG":
-        return match.era(dateString, { width: "narrow" });
+        return match2.era(dateString, { width: "narrow" });
       // Anno Domini, Before Christ
       case "GGGG":
       default:
-        return match.era(dateString, { width: "wide" }) || match.era(dateString, { width: "abbreviated" }) || match.era(dateString, { width: "narrow" });
+        return match2.era(dateString, { width: "wide" }) || match2.era(dateString, { width: "abbreviated" }) || match2.era(dateString, { width: "narrow" });
     }
   }
   set(date, flags, value) {
@@ -2852,7 +3386,7 @@ function isLeapYearIndex(year) {
 var YearParser = class extends Parser {
   priority = 130;
   incompatibleTokens = ["Y", "R", "u", "w", "I", "i", "e", "c", "t", "T"];
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     const valueCallback = (year) => ({
       year,
       isTwoDigitYear: token === "yy"
@@ -2862,7 +3396,7 @@ var YearParser = class extends Parser {
         return mapValue(parseNDigits(4, dateString), valueCallback);
       case "yo":
         return mapValue(
-          match.ordinalNumber(dateString, {
+          match2.ordinalNumber(dateString, {
             unit: "year"
           }),
           valueCallback
@@ -2895,7 +3429,7 @@ var YearParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/LocalWeekYearParser.mjs
 var LocalWeekYearParser = class extends Parser {
   priority = 130;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     const valueCallback = (year) => ({
       year,
       isTwoDigitYear: token === "YY"
@@ -2905,7 +3439,7 @@ var LocalWeekYearParser = class extends Parser {
         return mapValue(parseNDigits(4, dateString), valueCallback);
       case "Yo":
         return mapValue(
-          match.ordinalNumber(dateString, {
+          match2.ordinalNumber(dateString, {
             unit: "year"
           }),
           valueCallback
@@ -3008,7 +3542,7 @@ var ExtendedYearParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/QuarterParser.mjs
 var QuarterParser = class extends Parser {
   priority = 120;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       // 1, 2, 3, 4
       case "Q":
@@ -3016,32 +3550,32 @@ var QuarterParser = class extends Parser {
         return parseNDigits(token.length, dateString);
       // 1st, 2nd, 3rd, 4th
       case "Qo":
-        return match.ordinalNumber(dateString, { unit: "quarter" });
+        return match2.ordinalNumber(dateString, { unit: "quarter" });
       // Q1, Q2, Q3, Q4
       case "QQQ":
-        return match.quarter(dateString, {
+        return match2.quarter(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.quarter(dateString, {
+        }) || match2.quarter(dateString, {
           width: "narrow",
           context: "formatting"
         });
       // 1, 2, 3, 4 (narrow quarter; could be not numerical)
       case "QQQQQ":
-        return match.quarter(dateString, {
+        return match2.quarter(dateString, {
           width: "narrow",
           context: "formatting"
         });
       // 1st quarter, 2nd quarter, ...
       case "QQQQ":
       default:
-        return match.quarter(dateString, {
+        return match2.quarter(dateString, {
           width: "wide",
           context: "formatting"
-        }) || match.quarter(dateString, {
+        }) || match2.quarter(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.quarter(dateString, {
+        }) || match2.quarter(dateString, {
           width: "narrow",
           context: "formatting"
         });
@@ -3076,7 +3610,7 @@ var QuarterParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/StandAloneQuarterParser.mjs
 var StandAloneQuarterParser = class extends Parser {
   priority = 120;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       // 1, 2, 3, 4
       case "q":
@@ -3084,32 +3618,32 @@ var StandAloneQuarterParser = class extends Parser {
         return parseNDigits(token.length, dateString);
       // 1st, 2nd, 3rd, 4th
       case "qo":
-        return match.ordinalNumber(dateString, { unit: "quarter" });
+        return match2.ordinalNumber(dateString, { unit: "quarter" });
       // Q1, Q2, Q3, Q4
       case "qqq":
-        return match.quarter(dateString, {
+        return match2.quarter(dateString, {
           width: "abbreviated",
           context: "standalone"
-        }) || match.quarter(dateString, {
+        }) || match2.quarter(dateString, {
           width: "narrow",
           context: "standalone"
         });
       // 1, 2, 3, 4 (narrow quarter; could be not numerical)
       case "qqqqq":
-        return match.quarter(dateString, {
+        return match2.quarter(dateString, {
           width: "narrow",
           context: "standalone"
         });
       // 1st quarter, 2nd quarter, ...
       case "qqqq":
       default:
-        return match.quarter(dateString, {
+        return match2.quarter(dateString, {
           width: "wide",
           context: "standalone"
-        }) || match.quarter(dateString, {
+        }) || match2.quarter(dateString, {
           width: "abbreviated",
           context: "standalone"
-        }) || match.quarter(dateString, {
+        }) || match2.quarter(dateString, {
           width: "narrow",
           context: "standalone"
         });
@@ -3159,7 +3693,7 @@ var MonthParser = class extends Parser {
     "T"
   ];
   priority = 110;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     const valueCallback = (value) => value - 1;
     switch (token) {
       // 1, 2, ..., 12
@@ -3174,30 +3708,30 @@ var MonthParser = class extends Parser {
       // 1st, 2nd, ..., 12th
       case "Mo":
         return mapValue(
-          match.ordinalNumber(dateString, {
+          match2.ordinalNumber(dateString, {
             unit: "month"
           }),
           valueCallback
         );
       // Jan, Feb, ..., Dec
       case "MMM":
-        return match.month(dateString, {
+        return match2.month(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.month(dateString, { width: "narrow", context: "formatting" });
+        }) || match2.month(dateString, { width: "narrow", context: "formatting" });
       // J, F, ..., D
       case "MMMMM":
-        return match.month(dateString, {
+        return match2.month(dateString, {
           width: "narrow",
           context: "formatting"
         });
       // January, February, ..., December
       case "MMMM":
       default:
-        return match.month(dateString, { width: "wide", context: "formatting" }) || match.month(dateString, {
+        return match2.month(dateString, { width: "wide", context: "formatting" }) || match2.month(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.month(dateString, { width: "narrow", context: "formatting" });
+        }) || match2.month(dateString, { width: "narrow", context: "formatting" });
     }
   }
   validate(_date, value) {
@@ -3213,7 +3747,7 @@ var MonthParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/StandAloneMonthParser.mjs
 var StandAloneMonthParser = class extends Parser {
   priority = 110;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     const valueCallback = (value) => value - 1;
     switch (token) {
       // 1, 2, ..., 12
@@ -3228,30 +3762,30 @@ var StandAloneMonthParser = class extends Parser {
       // 1st, 2nd, ..., 12th
       case "Lo":
         return mapValue(
-          match.ordinalNumber(dateString, {
+          match2.ordinalNumber(dateString, {
             unit: "month"
           }),
           valueCallback
         );
       // Jan, Feb, ..., Dec
       case "LLL":
-        return match.month(dateString, {
+        return match2.month(dateString, {
           width: "abbreviated",
           context: "standalone"
-        }) || match.month(dateString, { width: "narrow", context: "standalone" });
+        }) || match2.month(dateString, { width: "narrow", context: "standalone" });
       // J, F, ..., D
       case "LLLLL":
-        return match.month(dateString, {
+        return match2.month(dateString, {
           width: "narrow",
           context: "standalone"
         });
       // January, February, ..., December
       case "LLLL":
       default:
-        return match.month(dateString, { width: "wide", context: "standalone" }) || match.month(dateString, {
+        return match2.month(dateString, { width: "wide", context: "standalone" }) || match2.month(dateString, {
           width: "abbreviated",
           context: "standalone"
-        }) || match.month(dateString, { width: "narrow", context: "standalone" });
+        }) || match2.month(dateString, { width: "narrow", context: "standalone" });
     }
   }
   validate(_date, value) {
@@ -3290,12 +3824,12 @@ function setWeek(date, week, options) {
 // node_modules/date-fns/parse/_lib/parsers/LocalWeekParser.mjs
 var LocalWeekParser = class extends Parser {
   priority = 100;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "w":
         return parseNumericPattern(numericPatterns.week, dateString);
       case "wo":
-        return match.ordinalNumber(dateString, { unit: "week" });
+        return match2.ordinalNumber(dateString, { unit: "week" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -3334,12 +3868,12 @@ function setISOWeek(date, week) {
 // node_modules/date-fns/parse/_lib/parsers/ISOWeekParser.mjs
 var ISOWeekParser = class extends Parser {
   priority = 100;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "I":
         return parseNumericPattern(numericPatterns.week, dateString);
       case "Io":
-        return match.ordinalNumber(dateString, { unit: "week" });
+        return match2.ordinalNumber(dateString, { unit: "week" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -3387,12 +3921,12 @@ var DAYS_IN_MONTH_LEAP_YEAR = [
 var DateParser = class extends Parser {
   priority = 90;
   subPriority = 1;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "d":
         return parseNumericPattern(numericPatterns.date, dateString);
       case "do":
-        return match.ordinalNumber(dateString, { unit: "date" });
+        return match2.ordinalNumber(dateString, { unit: "date" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -3432,13 +3966,13 @@ var DateParser = class extends Parser {
 var DayOfYearParser = class extends Parser {
   priority = 90;
   subpriority = 1;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "D":
       case "DD":
         return parseNumericPattern(numericPatterns.dayOfYear, dateString);
       case "Do":
-        return match.ordinalNumber(dateString, { unit: "date" });
+        return match2.ordinalNumber(dateString, { unit: "date" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -3478,8 +4012,8 @@ var DayOfYearParser = class extends Parser {
 
 // node_modules/date-fns/setDay.mjs
 function setDay(date, day, options) {
-  const defaultOptions = getDefaultOptions();
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions.weekStartsOn ?? defaultOptions.locale?.options?.weekStartsOn ?? 0;
+  const defaultOptions2 = getDefaultOptions();
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
   const _date = toDate(date);
   const currentDay = _date.getDay();
   const remainder = day % 7;
@@ -3492,32 +4026,32 @@ function setDay(date, day, options) {
 // node_modules/date-fns/parse/_lib/parsers/DayParser.mjs
 var DayParser = class extends Parser {
   priority = 90;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       // Tue
       case "E":
       case "EE":
       case "EEE":
-        return match.day(dateString, {
+        return match2.day(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.day(dateString, { width: "short", context: "formatting" }) || match.day(dateString, { width: "narrow", context: "formatting" });
+        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
       // T
       case "EEEEE":
-        return match.day(dateString, {
+        return match2.day(dateString, {
           width: "narrow",
           context: "formatting"
         });
       // Tu
       case "EEEEEE":
-        return match.day(dateString, { width: "short", context: "formatting" }) || match.day(dateString, { width: "narrow", context: "formatting" });
+        return match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
       // Tuesday
       case "EEEE":
       default:
-        return match.day(dateString, { width: "wide", context: "formatting" }) || match.day(dateString, {
+        return match2.day(dateString, { width: "wide", context: "formatting" }) || match2.day(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.day(dateString, { width: "short", context: "formatting" }) || match.day(dateString, { width: "narrow", context: "formatting" });
+        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
     }
   }
   validate(_date, value) {
@@ -3534,7 +4068,7 @@ var DayParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/LocalDayParser.mjs
 var LocalDayParser = class extends Parser {
   priority = 90;
-  parse(dateString, token, match, options) {
+  parse(dateString, token, match2, options) {
     const valueCallback = (value) => {
       const wholeWeekDays = Math.floor((value - 1) / 7) * 7;
       return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
@@ -3547,33 +4081,33 @@ var LocalDayParser = class extends Parser {
       // 3rd
       case "eo":
         return mapValue(
-          match.ordinalNumber(dateString, {
+          match2.ordinalNumber(dateString, {
             unit: "day"
           }),
           valueCallback
         );
       // Tue
       case "eee":
-        return match.day(dateString, {
+        return match2.day(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.day(dateString, { width: "short", context: "formatting" }) || match.day(dateString, { width: "narrow", context: "formatting" });
+        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
       // T
       case "eeeee":
-        return match.day(dateString, {
+        return match2.day(dateString, {
           width: "narrow",
           context: "formatting"
         });
       // Tu
       case "eeeeee":
-        return match.day(dateString, { width: "short", context: "formatting" }) || match.day(dateString, { width: "narrow", context: "formatting" });
+        return match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
       // Tuesday
       case "eeee":
       default:
-        return match.day(dateString, { width: "wide", context: "formatting" }) || match.day(dateString, {
+        return match2.day(dateString, { width: "wide", context: "formatting" }) || match2.day(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.day(dateString, { width: "short", context: "formatting" }) || match.day(dateString, { width: "narrow", context: "formatting" });
+        }) || match2.day(dateString, { width: "short", context: "formatting" }) || match2.day(dateString, { width: "narrow", context: "formatting" });
     }
   }
   validate(_date, value) {
@@ -3606,7 +4140,7 @@ var LocalDayParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/StandAloneLocalDayParser.mjs
 var StandAloneLocalDayParser = class extends Parser {
   priority = 90;
-  parse(dateString, token, match, options) {
+  parse(dateString, token, match2, options) {
     const valueCallback = (value) => {
       const wholeWeekDays = Math.floor((value - 1) / 7) * 7;
       return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
@@ -3619,33 +4153,33 @@ var StandAloneLocalDayParser = class extends Parser {
       // 3rd
       case "co":
         return mapValue(
-          match.ordinalNumber(dateString, {
+          match2.ordinalNumber(dateString, {
             unit: "day"
           }),
           valueCallback
         );
       // Tue
       case "ccc":
-        return match.day(dateString, {
+        return match2.day(dateString, {
           width: "abbreviated",
           context: "standalone"
-        }) || match.day(dateString, { width: "short", context: "standalone" }) || match.day(dateString, { width: "narrow", context: "standalone" });
+        }) || match2.day(dateString, { width: "short", context: "standalone" }) || match2.day(dateString, { width: "narrow", context: "standalone" });
       // T
       case "ccccc":
-        return match.day(dateString, {
+        return match2.day(dateString, {
           width: "narrow",
           context: "standalone"
         });
       // Tu
       case "cccccc":
-        return match.day(dateString, { width: "short", context: "standalone" }) || match.day(dateString, { width: "narrow", context: "standalone" });
+        return match2.day(dateString, { width: "short", context: "standalone" }) || match2.day(dateString, { width: "narrow", context: "standalone" });
       // Tuesday
       case "cccc":
       default:
-        return match.day(dateString, { width: "wide", context: "standalone" }) || match.day(dateString, {
+        return match2.day(dateString, { width: "wide", context: "standalone" }) || match2.day(dateString, {
           width: "abbreviated",
           context: "standalone"
-        }) || match.day(dateString, { width: "short", context: "standalone" }) || match.day(dateString, { width: "narrow", context: "standalone" });
+        }) || match2.day(dateString, { width: "short", context: "standalone" }) || match2.day(dateString, { width: "narrow", context: "standalone" });
     }
   }
   validate(_date, value) {
@@ -3686,7 +4220,7 @@ function setISODay(date, day) {
 // node_modules/date-fns/parse/_lib/parsers/ISODayParser.mjs
 var ISODayParser = class extends Parser {
   priority = 90;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     const valueCallback = (value) => {
       if (value === 0) {
         return 7;
@@ -3700,17 +4234,17 @@ var ISODayParser = class extends Parser {
         return parseNDigits(token.length, dateString);
       // 2nd
       case "io":
-        return match.ordinalNumber(dateString, { unit: "day" });
+        return match2.ordinalNumber(dateString, { unit: "day" });
       // Tue
       case "iii":
         return mapValue(
-          match.day(dateString, {
+          match2.day(dateString, {
             width: "abbreviated",
             context: "formatting"
-          }) || match.day(dateString, {
+          }) || match2.day(dateString, {
             width: "short",
             context: "formatting"
-          }) || match.day(dateString, {
+          }) || match2.day(dateString, {
             width: "narrow",
             context: "formatting"
           }),
@@ -3719,7 +4253,7 @@ var ISODayParser = class extends Parser {
       // T
       case "iiiii":
         return mapValue(
-          match.day(dateString, {
+          match2.day(dateString, {
             width: "narrow",
             context: "formatting"
           }),
@@ -3728,10 +4262,10 @@ var ISODayParser = class extends Parser {
       // Tu
       case "iiiiii":
         return mapValue(
-          match.day(dateString, {
+          match2.day(dateString, {
             width: "short",
             context: "formatting"
-          }) || match.day(dateString, {
+          }) || match2.day(dateString, {
             width: "narrow",
             context: "formatting"
           }),
@@ -3741,16 +4275,16 @@ var ISODayParser = class extends Parser {
       case "iiii":
       default:
         return mapValue(
-          match.day(dateString, {
+          match2.day(dateString, {
             width: "wide",
             context: "formatting"
-          }) || match.day(dateString, {
+          }) || match2.day(dateString, {
             width: "abbreviated",
             context: "formatting"
-          }) || match.day(dateString, {
+          }) || match2.day(dateString, {
             width: "short",
             context: "formatting"
-          }) || match.day(dateString, {
+          }) || match2.day(dateString, {
             width: "narrow",
             context: "formatting"
           }),
@@ -3788,32 +4322,32 @@ var ISODayParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/AMPMParser.mjs
 var AMPMParser = class extends Parser {
   priority = 80;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "a":
       case "aa":
       case "aaa":
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
       case "aaaaa":
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
       case "aaaa":
       default:
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "wide",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
@@ -3829,32 +4363,32 @@ var AMPMParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/AMPMMidnightParser.mjs
 var AMPMMidnightParser = class extends Parser {
   priority = 80;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "b":
       case "bb":
       case "bbb":
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
       case "bbbbb":
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
       case "bbbb":
       default:
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "wide",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
@@ -3870,32 +4404,32 @@ var AMPMMidnightParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/DayPeriodParser.mjs
 var DayPeriodParser = class extends Parser {
   priority = 80;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "B":
       case "BB":
       case "BBB":
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
       case "BBBBB":
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
       case "BBBB":
       default:
-        return match.dayPeriod(dateString, {
+        return match2.dayPeriod(dateString, {
           width: "wide",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "abbreviated",
           context: "formatting"
-        }) || match.dayPeriod(dateString, {
+        }) || match2.dayPeriod(dateString, {
           width: "narrow",
           context: "formatting"
         });
@@ -3911,12 +4445,12 @@ var DayPeriodParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/Hour1to12Parser.mjs
 var Hour1to12Parser = class extends Parser {
   priority = 70;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "h":
         return parseNumericPattern(numericPatterns.hour12h, dateString);
       case "ho":
-        return match.ordinalNumber(dateString, { unit: "hour" });
+        return match2.ordinalNumber(dateString, { unit: "hour" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -3941,12 +4475,12 @@ var Hour1to12Parser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/Hour0to23Parser.mjs
 var Hour0to23Parser = class extends Parser {
   priority = 70;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "H":
         return parseNumericPattern(numericPatterns.hour23h, dateString);
       case "Ho":
-        return match.ordinalNumber(dateString, { unit: "hour" });
+        return match2.ordinalNumber(dateString, { unit: "hour" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -3964,12 +4498,12 @@ var Hour0to23Parser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/Hour0To11Parser.mjs
 var Hour0To11Parser = class extends Parser {
   priority = 70;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "K":
         return parseNumericPattern(numericPatterns.hour11h, dateString);
       case "Ko":
-        return match.ordinalNumber(dateString, { unit: "hour" });
+        return match2.ordinalNumber(dateString, { unit: "hour" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -3992,12 +4526,12 @@ var Hour0To11Parser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/Hour1To24Parser.mjs
 var Hour1To24Parser = class extends Parser {
   priority = 70;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "k":
         return parseNumericPattern(numericPatterns.hour24h, dateString);
       case "ko":
-        return match.ordinalNumber(dateString, { unit: "hour" });
+        return match2.ordinalNumber(dateString, { unit: "hour" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -4016,12 +4550,12 @@ var Hour1To24Parser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/MinuteParser.mjs
 var MinuteParser = class extends Parser {
   priority = 60;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "m":
         return parseNumericPattern(numericPatterns.minute, dateString);
       case "mo":
-        return match.ordinalNumber(dateString, { unit: "minute" });
+        return match2.ordinalNumber(dateString, { unit: "minute" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -4039,12 +4573,12 @@ var MinuteParser = class extends Parser {
 // node_modules/date-fns/parse/_lib/parsers/SecondParser.mjs
 var SecondParser = class extends Parser {
   priority = 50;
-  parse(dateString, token, match) {
+  parse(dateString, token, match2) {
     switch (token) {
       case "s":
         return parseNumericPattern(numericPatterns.second, dateString);
       case "so":
-        return match.ordinalNumber(dateString, { unit: "second" });
+        return match2.ordinalNumber(dateString, { unit: "second" });
       default:
         return parseNDigits(token.length, dateString);
     }
@@ -4214,10 +4748,10 @@ var doubleQuoteRegExp2 = /''/g;
 var notWhitespaceRegExp = /\S/;
 var unescapedLatinCharacterRegExp2 = /[a-zA-Z]/;
 function parse(dateStr, formatStr, referenceDate, options) {
-  const defaultOptions = getDefaultOptions2();
-  const locale = options?.locale ?? defaultOptions.locale ?? enUS;
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions.firstWeekContainsDate ?? defaultOptions.locale?.options?.firstWeekContainsDate ?? 1;
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions.weekStartsOn ?? defaultOptions.locale?.options?.weekStartsOn ?? 0;
+  const defaultOptions2 = getDefaultOptions2();
+  const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
+  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
   if (formatStr === "") {
     if (dateStr === "") {
       return toDate(referenceDate);
@@ -4351,6 +4885,13 @@ function isSameHour(dateLeft, dateRight) {
   const dateLeftStartOfHour = startOfHour(dateLeft);
   const dateRightStartOfHour = startOfHour(dateRight);
   return +dateLeftStartOfHour === +dateRightStartOfHour;
+}
+
+// node_modules/date-fns/isSameWeek.mjs
+function isSameWeek(dateLeft, dateRight, options) {
+  const dateLeftStartOfWeek = startOfWeek(dateLeft, options);
+  const dateRightStartOfWeek = startOfWeek(dateRight, options);
+  return +dateLeftStartOfWeek === +dateRightStartOfWeek;
 }
 
 // node_modules/date-fns/isSameISOWeek.mjs
@@ -4504,8 +5045,8 @@ function lastDayOfDecade(date) {
 
 // node_modules/date-fns/lastDayOfWeek.mjs
 function lastDayOfWeek(date, options) {
-  const defaultOptions = getDefaultOptions();
-  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions.weekStartsOn ?? defaultOptions.locale?.options?.weekStartsOn ?? 0;
+  const defaultOptions2 = getDefaultOptions();
+  const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
   const _date = toDate(date);
   const day = _date.getDay();
   const diff = (day < weekStartsOn ? -7 : 0) + 6 - (day - weekStartsOn);
@@ -5065,10 +5606,10 @@ function setDayOfYear(date, dayOfYear) {
 // node_modules/date-fns/setDefaultOptions.mjs
 function setDefaultOptions2(options) {
   const result = {};
-  const defaultOptions = getDefaultOptions();
-  for (const property in defaultOptions) {
-    if (Object.prototype.hasOwnProperty.call(defaultOptions, property)) {
-      result[property] = defaultOptions[property];
+  const defaultOptions2 = getDefaultOptions();
+  for (const property in defaultOptions2) {
+    if (Object.prototype.hasOwnProperty.call(defaultOptions2, property)) {
+      result[property] = defaultOptions2[property];
     }
   }
   for (const property in options) {
@@ -5121,8 +5662,8 @@ function setSeconds(date, seconds) {
 
 // node_modules/date-fns/setWeekYear.mjs
 function setWeekYear(date, weekYear, options) {
-  const defaultOptions = getDefaultOptions();
-  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions.firstWeekContainsDate ?? defaultOptions.locale?.options?.firstWeekContainsDate ?? 1;
+  const defaultOptions2 = getDefaultOptions();
+  const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
   let _date = toDate(date);
   const diff = differenceInCalendarDays(_date, startOfWeekYear(_date, options));
   const firstWeek = constructFrom(date, 0);
@@ -5332,7 +5873,7 @@ export {
   endOfYesterday,
   format,
   format as formatDate,
-  formatDistance,
+  formatDistance2 as formatDistance,
   formatDistanceStrict,
   formatDistanceToNow,
   formatDistanceToNowStrict,
@@ -5342,7 +5883,7 @@ export {
   formatISODuration,
   formatRFC3339,
   formatRFC7231,
-  formatRelative,
+  formatRelative2 as formatRelative,
   formatters,
   fromUnixTime,
   getDate,
